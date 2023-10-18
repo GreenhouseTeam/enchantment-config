@@ -22,7 +22,7 @@ public class DefaultableCodec<A> extends OptionalFieldCodec<A> {
     @Override
     public <T> DataResult<Optional<A>> decode(DynamicOps<T> ops, MapLike<T> input) {
         T value = input.get(((OptionalFieldCodecAccessor)this).enchantmentconfig$getName());
-        if (value instanceof String str && (str.toLowerCase(Locale.ROOT).equals(DEFAULT_KEY))) {
+        if (value == null || value instanceof String str && (str.toLowerCase(Locale.ROOT).equals(DEFAULT_KEY))) {
             return DataResult.success(Optional.empty());
         }
         final DataResult<A> parsed = ((OptionalFieldCodecAccessor)this).enchantmentconfig$getElementCodec().parse(ops, value);
