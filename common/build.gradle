@@ -5,7 +5,7 @@ plugins {
     id 'org.spongepowered.gradle.vanilla'
 }
 base {
-    archivesName = "${mod_name}-common-${minecraft_version}"
+    archivesName = "${archives_base_name}-common"
 }
 minecraft {
     version(minecraft_version)
@@ -15,9 +15,22 @@ minecraft {
 }
 
 dependencies {
-     compileOnly group:'org.spongepowered', name:'mixin', version:'0.8.5'
-     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
+    compileOnly group:'org.spongepowered', name:'mixin', version:'0.8.5'
+    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
+
+    compileOnly group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
+    annotationProcessor group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
+
+    annotationProcessor "io.github.llamalad7:mixinextras-common:${mixin_extras_version}"
 }
+
+tasks.register('apiJar', Jar) {
+    archiveClassifier = "api"
+    include "pack.mcmeta"
+    include "dev/greenhouseteam/enchantmentconfig/api/**"
+}
+
+build.dependsOn apiJar
 
 publishing {
     publications {
