@@ -95,9 +95,8 @@ public class EnchantmentConfigCodecs {
 
     /**
      * A codec that allows specifying 'DEFAULT' (case-insensitive)
-     * to return {@link Optional#empty()}.
-     *
-     *
+     * to return {@link Optional#empty()}, but will error unlike
+     * {@link com.mojang.serialization.codecs.OptionalFieldCodec}.
      *
      * @param fieldName The name of the field for parsing.
      * @param codec     The codec to use outside the default.
