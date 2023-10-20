@@ -1,6 +1,6 @@
 {
     "schemaVersion": 1,
-    "id": "${mod_id}",
+    "id": "enchantmentconfigapi",
     "version": "${version}",
     "name": "${mod_name}",
     "description": "${mod_description}",
@@ -15,15 +15,8 @@
     "license": "${mod_license}",
     "icon": "assets/enchantmentconfig/icon.png",
     "environment": "*",
-    "entrypoints": {
-        "main": [
-          "dev.greenhouseteam.enchantmentconfig.impl.EnchantmentConfigFabric"
-        ]
-    },
     "mixins": [
-        "enchantmentconfigapi.mixins.json",
-        "enchantmentconfig.mixins.json",
-        "enchantmentconfig.fabric.mixins.json"
+        "enchantmentconfigapi.mixins.json"
     ],
     "depends": {
         "fabricloader": ">=0.14",

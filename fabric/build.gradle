@@ -48,18 +48,25 @@ loom {
 
 tasks.withType(JavaCompile).configureEach {
     source(project(":common").sourceSets.main.allSource)
+    exclude "api.fabric.mod.json"
 }
 tasks.withType(Javadoc).configureEach {
     source(project(":common").sourceSets.main.allJava)
 }
+
 tasks.named("sourcesJar", Jar) {
     from(project(":common").sourceSets.main.allSource)
 }
 
 tasks.register('apiJar', Jar) {
     archiveClassifier = "api"
-    include "pack.mcmeta"
+    dependsOn remapJar
+    from zipTree(remapJar.archivePath)
+    include "api.fabric.mod.json"
+    rename "api.fabric.mod.json", "fabric.mod.json"
     include "dev/greenhouseteam/enchantmentconfig/api/**"
+    include "dev/greenhouseteam/enchantmentconfig/mixin/api/**"
+    include "enchantmentconfigapi.mixins.json"
 }
 
 build.dependsOn apiJar

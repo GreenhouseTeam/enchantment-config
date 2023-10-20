@@ -26,8 +26,10 @@ dependencies {
 
 tasks.register('apiJar', Jar) {
     archiveClassifier = "api"
-    include "pack.mcmeta"
     include "dev/greenhouseteam/enchantmentconfig/api/**"
+    include "dev/greenhouseteam/enchantmentconfig/mixin/api/**"
+    include "enchantmentconfigapi.mixins.json"
+    include "pack.mcmeta"
 }
 
 build.dependsOn apiJar
