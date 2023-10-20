@@ -6,6 +6,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.greenhouseteam.enchantmentconfig.api.codec.ExtraFieldsCodec;
 import dev.greenhouseteam.enchantmentconfig.api.config.field.ExtraFieldType;
 import dev.greenhouseteam.enchantmentconfig.api.config.field.GlobalEnchantmentFields;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.enchantment.Enchantment;
 
 import java.util.Map;
 import java.util.Optional;
@@ -13,11 +15,17 @@ import java.util.Optional;
 public class EnchantmentConfiguration {
 
     private Codec<EnchantmentConfiguration> codec;
+    private ResourceKey<Enchantment> enchantment;
 
     private Map<String, ExtraFieldType<Object>> extraFieldTypes = Maps.newHashMap();
 
-    public EnchantmentConfiguration(Codec<EnchantmentConfiguration> codec) {
+    public EnchantmentConfiguration(Codec<EnchantmentConfiguration> codec, ResourceKey<Enchantment> enchantment) {
         this.codec = codec;
+        this.enchantment = enchantment;
+    }
+
+    public ResourceKey<Enchantment> getEnchantment() {
+        return this.enchantment;
     }
 
     public Map<String, ExtraFieldType<Object>> getExtraFieldTypes() {

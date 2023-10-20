@@ -1,4 +1,4 @@
-package dev.greenhouseteam.enchantmentconfig.mixin;
+package dev.greenhouseteam.enchantmentconfig.mixin.api.accessor;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.OptionalFieldCodec;

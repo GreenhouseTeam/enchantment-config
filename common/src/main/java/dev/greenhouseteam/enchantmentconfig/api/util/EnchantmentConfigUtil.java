@@ -1,5 +1,6 @@
 package dev.greenhouseteam.enchantmentconfig.api.util;
 
+import dev.greenhouseteam.enchantmentconfig.api.config.EnchantmentConfiguration;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -13,19 +14,20 @@ public class EnchantmentConfigUtil {
     public static final String MOD_NAME = "Enchantment Config";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_NAME);
 
-    public static boolean hasEffectivenessOverride(ResourceKey<Enchantment> enchantment, int level) {
+    public static boolean hasEffectivenessOverride(EnchantmentConfiguration enchantment, int level) {
         return IEnchantmentConfigGetter.INSTANCE.getConfig(enchantment).getGlobalFields().effectivenessOverrides().containsKey(level);
     }
 
-    public static int getEffectivenessOverride(ResourceKey<Enchantment> enchantment, int level) {
+    public static int getEffectivenessOverride(EnchantmentConfiguration enchantment, int level) {
         return IEnchantmentConfigGetter.INSTANCE.getConfig(enchantment).getGlobalFields().effectivenessOverrides().getOrDefault(level, level);
     }
 
-    public static boolean isCompatible(ResourceKey<Enchantment> enchantment, ResourceKey<Enchantment> other) {
+    public static boolean isCompatible(EnchantmentConfiguration enchantment, EnchantmentConfiguration other) {
         return checkCompatibility(enchantment, other) && checkCompatibility(other, enchantment);
     }
 
-    private static boolean checkCompatibility(ResourceKey<Enchantment> enchantment, ResourceKey<Enchantment> other) {
-        return IEnchantmentConfigGetter.INSTANCE.getConfig(enchantment).getGlobalFields().incompatibilities().isPresent() ? IEnchantmentConfigGetter.INSTANCE.getConfig(enchantment).getGlobalFields().incompatibilities().get().stream().anyMatch(holders -> holders.contains(BuiltInRegistries.ENCHANTMENT.getHolderOrThrow(other))) : Objects.requireNonNull(BuiltInRegistries.ENCHANTMENT.get(enchantment)).isCompatibleWith(Objects.requireNonNull(BuiltInRegistries.ENCHANTMENT.get(other)));
+    private static boolean checkCompatibility(EnchantmentConfiguration enchantment, EnchantmentConfiguration other) {
+        return IEnchantmentConfigGetter.INSTANCE.getConfig(enchantment).getGlobalFields().incompatibilities().isPresent() ? IEnchantmentConfigGetter.INSTANCE.getConfig(enchantment).getGlobalFields().incompatibilities().get().stream().anyMatch(holders -> holders.contains(BuiltInRegistries.ENCHANTMENT.getHolderOrThrow(other.getEnchantment()))) : Objects.requireNonNull(BuiltInRegistries.ENCHANTMENT.get(enchantment.getEnchantment())).isCompatibleWith(Objects.requireNonNull(BuiltInRegistries.ENCHANTMENT.get(other.getEnchantment())));
     }
+
 }

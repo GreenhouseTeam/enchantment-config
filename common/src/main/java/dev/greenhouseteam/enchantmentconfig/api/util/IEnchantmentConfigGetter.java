@@ -1,15 +1,15 @@
 package dev.greenhouseteam.enchantmentconfig.api.util;
 
 import dev.greenhouseteam.enchantmentconfig.api.config.ConfiguredEnchantment;
+import dev.greenhouseteam.enchantmentconfig.api.config.EnchantmentConfiguration;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.item.enchantment.Enchantment;
 
 import java.util.ServiceLoader;
 
 public interface IEnchantmentConfigGetter {
     IEnchantmentConfigGetter INSTANCE = load(IEnchantmentConfigGetter.class);
-    <T extends ConfiguredEnchantment> T getConfig(ResourceKey<Enchantment> enchantment);
+
+    <T extends EnchantmentConfiguration> ConfiguredEnchantment<T> getConfig(T configuration);
 
     RegistryAccess getRegistryAccess();
     static <T> T load(Class<T> clazz) {

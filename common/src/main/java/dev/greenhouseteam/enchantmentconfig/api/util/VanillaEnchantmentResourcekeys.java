@@ -1,4 +1,4 @@
-package dev.greenhouseteam.enchantmentconfig.api;
+package dev.greenhouseteam.enchantmentconfig.api.util;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
@@ -10,10 +10,9 @@ import net.minecraft.world.item.enchantment.Enchantments;
  * enchantments. As vanilla does not register their enchantments
  * using resource keys.
  */
-public class EnchantmentResourceKeys {
+public class VanillaEnchantmentResourcekeys {
     /**
-     * Gets the ResourceKey (Mojmap) /RegistryKey (Yarn) for a specified
-     * enchantment.
+     * Gets the {@link ResourceKey} for a specified enchantment.
      *
      * @param enchantment The enchantment to get the key for.
      * @return            The enchantment's key, or null

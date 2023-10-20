@@ -7,7 +7,7 @@ import com.mojang.serialization.MapLike;
 import com.mojang.serialization.RecordBuilder;
 import com.mojang.serialization.codecs.OptionalFieldCodec;
 import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
-import dev.greenhouseteam.enchantmentconfig.mixin.OptionalFieldCodecAccessor;
+import dev.greenhouseteam.enchantmentconfig.mixin.api.accessor.OptionalFieldCodecAccessor;
 
 import java.util.Locale;
 import java.util.Optional;
