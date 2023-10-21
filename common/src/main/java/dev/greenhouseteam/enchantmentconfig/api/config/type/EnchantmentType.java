@@ -10,10 +10,8 @@ import dev.greenhouseteam.enchantmentconfig.api.config.field.ExtraFieldType;
 import dev.greenhouseteam.enchantmentconfig.api.config.field.GlobalEnchantmentFields;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.enchantment.Enchantment;
-import org.checkerframework.checker.units.qual.C;
 
 import java.util.Map;
-import java.util.Optional;
 
 public class EnchantmentType<T extends EnchantmentConfiguration> {
 
