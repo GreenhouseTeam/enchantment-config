@@ -15,8 +15,26 @@ public class MergeUtil {
         return globalValue.isPresent() && globalPriority > priority ? globalValue.get() : oldPriority > priority ? oldValue : currentValue;
     }
 
+    /**
+     * Creates a merged list of values present inside a current map,
+     * old map, and global map.
+     *
+     * @param currentValue      The current list to merge with the old list
+     * @param oldValue          The old map to use as a starting point.
+     * @param globalValue       The global list to merge with the current list,
+     *                          optional as it may not be present.
+     * @param priority          The priority of the current merge.
+     * @param oldPriority       The value at which the priority must be lower than to
+     *                          have the old value be used if it is present.
+     * @param globalPriority    The value at which the priority must be lower than to
+     *      *                   have the global value be used if it is present.
+     *
+     * @return                  An optional created from the value presented.
+     *
+     * @param <T>               The type parameter of the optional.
+     */
     public static <T> Optional<T> mergePrimitiveOptional(Optional<T> currentValue, Optional<T> oldValue, Optional<T> globalValue, int priority, int oldPriority, int globalPriority) {
-        return globalValue.isPresent() && globalPriority > priority ? globalValue : currentValue.isEmpty() || oldPriority > priority ? oldValue : currentValue;
+        return globalValue.isPresent() && globalPriority > priority ? globalValue : oldValue.isPresent() && oldPriority > priority ? oldValue : currentValue;
     }
 
     /**

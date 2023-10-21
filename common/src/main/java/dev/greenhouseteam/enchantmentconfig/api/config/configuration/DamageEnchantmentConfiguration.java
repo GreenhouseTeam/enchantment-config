@@ -3,6 +3,7 @@ package dev.greenhouseteam.enchantmentconfig.api.config.configuration;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.greenhouseteam.enchantmentconfig.api.codec.EnchantmentConfigCodecs;
+import dev.greenhouseteam.enchantmentconfig.api.util.MergeUtil;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.util.Mth;
@@ -53,7 +54,13 @@ public record DamageEnchantmentConfiguration(Optional<List<HolderSet<EntityType<
     }
 
     @Override
-    public EnchantmentConfiguration merge(EnchantmentConfiguration oldConfiguration, Optional<EnchantmentConfiguration> globalConfiguration, int priority, int oldPriority, int globalPriority) {
-        return null;
+    public DamageEnchantmentConfiguration merge(EnchantmentConfiguration oldConfiguration, Optional<EnchantmentConfiguration> globalConfiguration, int priority, int oldPriority, int globalPriority) {
+        DamageEnchantmentConfiguration castedOld = (DamageEnchantmentConfiguration) oldConfiguration;
+        Optional<DamageEnchantmentConfiguration> castedGlobal = globalConfiguration.map(c-> (DamageEnchantmentConfiguration)c);
+
+        Optional<List<HolderSet<EntityType<?>>>> affectedEntities = MergeUtil.mergeList(this.affectedEntities(), castedOld.affectedEntities(), castedGlobal.flatMap(DamageEnchantmentConfiguration::affectedEntities), priority, oldPriority, globalPriority);
+        Map<Integer, Float> damage = MergeUtil.mergeMap(this.damage(), castedOld.damage(), castedGlobal.map(DamageEnchantmentConfiguration::damage), priority, oldPriority, globalPriority);
+
+        return new DamageEnchantmentConfiguration(affectedEntities, damage);
     }
 }
