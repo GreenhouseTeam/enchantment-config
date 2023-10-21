@@ -13,7 +13,6 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 
-import java.util.Map;
 import java.util.Optional;
 
 public class EnchantmentConfigCodecs {
@@ -35,6 +34,31 @@ public class EnchantmentConfigCodecs {
         @Override
         public <T> T write(DynamicOps<T> ops, Integer value) {
             return ops.createInt(value);
+        }
+
+        @Override
+        public String toString() {
+            return "EnchantmentConfigInt";
+        }
+    };
+
+    /**
+     * A float codec that will error upon fail.
+     * Prefer using this over {@link Codec#FLOAT}
+     */
+    public static PrimitiveCodec<Float> FLOAT = new PrimitiveCodec<>() {
+        @Override
+        public <T> DataResult<Float> read(DynamicOps<T> ops, T input) {
+            DataResult<Float> decoded = Codec.FLOAT.parse(ops, input);
+            if (decoded.error().isPresent()) {
+                return DataResult.error(() -> "Failed to parse float value from input '" + input + "'.");
+            }
+            return decoded;
+        }
+
+        @Override
+        public <T> T write(DynamicOps<T> ops, Float value) {
+            return ops.createFloat(value);
         }
 
         @Override
@@ -109,6 +133,10 @@ public class EnchantmentConfigCodecs {
 
     public static <K, V> MapCollectionCodec<K, V> mapCollectionCodec(String keyName, String valueName, Codec<K> keyCodec, Codec<V> valueCodec) {
         return new MapCollectionCodec<>(keyName, valueName, keyCodec, valueCodec);
+    }
+
+    public static <V> MapCollectionCodec<Integer, V> levelToValueCodec(String keyName, String valueName, Codec<V> valueCodec) {
+        return new LevelKeyMapCodec<>(keyName, valueName, valueCodec);
     }
 
     public static <T> Codec<HolderSet<T>> tagOrElementCodec(ResourceKey<Registry<T>> registryKey) {

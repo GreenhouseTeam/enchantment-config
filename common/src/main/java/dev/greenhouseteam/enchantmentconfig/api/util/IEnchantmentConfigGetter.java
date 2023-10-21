@@ -1,7 +1,8 @@
 package dev.greenhouseteam.enchantmentconfig.api.util;
 
 import dev.greenhouseteam.enchantmentconfig.api.config.ConfiguredEnchantment;
-import dev.greenhouseteam.enchantmentconfig.api.config.EnchantmentConfiguration;
+import dev.greenhouseteam.enchantmentconfig.api.config.configuration.EnchantmentConfiguration;
+import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
 import net.minecraft.core.RegistryAccess;
 
 import java.util.ServiceLoader;
@@ -9,7 +10,7 @@ import java.util.ServiceLoader;
 public interface IEnchantmentConfigGetter {
     IEnchantmentConfigGetter INSTANCE = load(IEnchantmentConfigGetter.class);
 
-    <T extends EnchantmentConfiguration> ConfiguredEnchantment<T> getConfig(T configuration);
+    <C extends EnchantmentConfiguration, T extends EnchantmentType<C>> ConfiguredEnchantment<C, T> getConfig(T configuration);
 
     RegistryAccess getRegistryAccess();
     static <T> T load(Class<T> clazz) {

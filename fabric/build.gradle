@@ -64,6 +64,10 @@ tasks.register('apiJar', Jar) {
     from zipTree(remapJar.archivePath)
     include "api.fabric.mod.json"
     rename "api.fabric.mod.json", "fabric.mod.json"
+    filesMatching(['fabric.mod.json', '*.mixins.json']) {
+        expand project.properties
+    }
+    include "assets/enchantmentconfig/icon.png"
     include "dev/greenhouseteam/enchantmentconfig/api/**"
     include "dev/greenhouseteam/enchantmentconfig/mixin/api/**"
     include "enchantmentconfigapi.mixins.json"

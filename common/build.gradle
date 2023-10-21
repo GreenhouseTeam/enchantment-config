@@ -30,6 +30,9 @@ tasks.register('apiJar', Jar) {
     include "dev/greenhouseteam/enchantmentconfig/mixin/api/**"
     include "enchantmentconfigapi.mixins.json"
     include "pack.mcmeta"
+    filesMatching(['pack.mcmeta', '*.mixins.json']) {
+        expand project.properties
+    }
 }
 
 build.dependsOn apiJar

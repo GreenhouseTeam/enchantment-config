@@ -15,10 +15,10 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class MapCollectionCodec<K, V> implements Codec<Map<K, V>> {
-    String keyName;
-    String elementName;
-    Codec<K> keyCodec;
-    Codec<V> elementCodec;
+    protected final String keyName;
+    protected final String elementName;
+    protected final Codec<K> keyCodec;
+    protected final Codec<V> elementCodec;
 
     public MapCollectionCodec(String keyName, String elementName, Codec<K> keyCodec, Codec<V> elementCodec) {
         this.keyName = keyName;

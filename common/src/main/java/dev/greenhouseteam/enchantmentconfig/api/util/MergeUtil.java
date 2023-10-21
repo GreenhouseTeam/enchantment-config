@@ -1,7 +1,11 @@
 package dev.greenhouseteam.enchantmentconfig.api.util;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import org.apache.commons.compress.utils.Lists;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -16,8 +20,75 @@ public class MergeUtil {
     }
 
     /**
+     * Creates a merged list of values present inside a current map,
+     * old map, and global map.
+     *
+     * @param currentList       The current list to merge with the old list
+     * @param oldList           The old map to use as a starting point.
+     * @param globalList        The global list to merge with the current list,
+     *                          optional as it may not be present.
+     * @param priority          The priority of the current merge.
+     * @param oldPriority       The value at which the priority must be higher than to
+     *                          have the current value be merged if it is present.
+     * @param globalPriority    The value at which the priority must be lower than to
+     *                          have the global value be merged if it is present.
+     *
+     * @return                  A map with all the values of the other maps.
+     *
+     * @param <T>               The type parameter of the list objects.
+     */
+    public static <T> List<T> mergeList(List<T> currentList, List<T> oldList, Optional<List<T>> globalList, int priority, int oldPriority, int globalPriority) {
+        List<T> list = Lists.newArrayList();
+        list.addAll(oldList);
+        currentList.forEach((value) -> {
+            if (!list.contains(value) || list.contains(value) && priority > oldPriority)
+                list.add(value);
+        });
+        globalList.ifPresent(ls -> ls.forEach((value) -> {
+            if (!list.contains(value) || list.contains(value) && globalPriority > priority)
+                list.add(value);
+        }));
+        return ImmutableList.copyOf(list);
+    }
+
+
+    /**
+     * Creates a merged optional list of values present inside an optional current map,
+     * old map, and global map.
+     *
+     * @param currentList       The current list to merge with the old list
+     * @param oldList           The old map to use as a starting point.
+     * @param globalList        The global list to merge with the current list.
+     * @param priority          The priority of the current merge.
+     * @param oldPriority       The value at which the priority must be higher than to
+     *                          have the current value be merged if it is present.
+     * @param globalPriority    The value at which the priority must be lower than to
+     *                          have the global value be merged if it is present.
+     *
+     * @return                  A map with all the values of the other maps.
+     *
+     * @param <T>               The type parameter of the list objects.
+     */
+    public static <T> Optional<List<T>> mergeList(Optional<List<T>> currentList, Optional<List<T>> oldList, Optional<List<T>> globalList, int priority, int oldPriority, int globalPriority) {
+        if (currentList.isEmpty() && oldList.isEmpty() && globalList.isEmpty())
+            return Optional.empty();
+
+        List<T> list = Lists.newArrayList();
+        oldList.ifPresent(list::addAll);
+        currentList.ifPresent(ls -> ls.forEach((value) -> {
+            if (!list.contains(value) || list.contains(value) && priority > oldPriority)
+                list.add(value);
+        }));
+        globalList.ifPresent(ls -> ls.forEach((value) -> {
+            if (!list.contains(value) || list.contains(value) && globalPriority > priority)
+                list.add(value);
+        }));
+        return Optional.of(ImmutableList.copyOf(list));
+    }
+
+    /**
      * Creates a map out of values present inside a current map,
-     * an old map, and a global map.
+     * old map, and global map.
      *
      * @param currentMap        The current map to merge with the old map.
      * @param oldMap            The old map to use as a starting point.
@@ -45,12 +116,12 @@ public class MergeUtil {
             if (!map.containsKey(key) || map.containsKey(key) && globalPriority > priority)
                 map.put(key, value);
         }));
-        return map;
+        return ImmutableMap.copyOf(map);
     }
 
     /**
-     * Creates an optional map out of values present inside a current map,
-     * an old map, and a global map.
+     * Creates an optional map out of values present inside an optional current map,
+     * old map, and global map.
      *
      * @param currentMap        The current map to merge with the old map.
      * @param oldMap            The old map to use as a starting point.
@@ -81,7 +152,7 @@ public class MergeUtil {
             if (!map.containsKey(key) || map.containsKey(key) && globalPriority > priority)
                 map.put(key, value);
         }));
-        return Optional.of(map);
+        return Optional.of(ImmutableMap.copyOf(map));
     }
 
 }
