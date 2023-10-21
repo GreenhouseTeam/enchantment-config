@@ -22,4 +22,15 @@ public interface EnchantmentConfiguration {
      */
     EnchantmentConfiguration merge(EnchantmentConfiguration oldConfiguration, Optional<EnchantmentConfiguration> globalConfiguration, int priority, int oldPriority, int globalPriority);
 
+    default EnchantmentConfiguration mergeInternal(EnchantmentConfiguration oldConfiguration, Optional<EnchantmentConfiguration> globalConfiguration, int priority, int oldPriority, int globalPriority) {
+        if (!isSameType(oldConfiguration, globalConfiguration)) {
+            throw new ClassCastException("Could not merge enchantment configurations of different types.");
+        }
+        return this.merge(oldConfiguration, globalConfiguration, priority, oldPriority, globalPriority);
+    }
+
+    default boolean isSameType(EnchantmentConfiguration oldConfiguration, Optional<EnchantmentConfiguration> globalConfiguration) {
+        return oldConfiguration.getClass().isAssignableFrom(this.getClass()) && (globalConfiguration.isEmpty() || globalConfiguration.get().getClass().isAssignableFrom(this.getClass()));
+    }
+
 }

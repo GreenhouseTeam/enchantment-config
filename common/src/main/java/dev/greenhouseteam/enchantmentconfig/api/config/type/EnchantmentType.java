@@ -3,6 +3,7 @@ package dev.greenhouseteam.enchantmentconfig.api.config.type;
 import com.google.common.collect.Maps;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.greenhouseteam.enchantmentconfig.api.codec.EnchantmentConfigCodecs;
 import dev.greenhouseteam.enchantmentconfig.api.codec.ExtraFieldsCodec;
 import dev.greenhouseteam.enchantmentconfig.api.config.ConfiguredEnchantment;
 import dev.greenhouseteam.enchantmentconfig.api.config.configuration.EnchantmentConfiguration;
@@ -35,10 +36,11 @@ public class EnchantmentType<T extends EnchantmentConfiguration> {
 
     public Codec<ConfiguredEnchantment<T, EnchantmentType<T>>> codec() {
         return RecordCodecBuilder.create(inst -> inst.group(
+                EnchantmentConfigCodecs.INT.optionalFieldOf("priority", 0).forGetter(ConfiguredEnchantment::getPriority),
                 codec.fieldOf("value").forGetter(ConfiguredEnchantment::getConfiguration),
                 GlobalEnchantmentFields.CODEC.forGetter(ConfiguredEnchantment::getGlobalFields),
                 new ExtraFieldsCodec(extraFieldTypes).forGetter(ConfiguredEnchantment::getExtraFields)
-        ).apply(inst, (t1, t2, t3) -> new ConfiguredEnchantment<>(this, t1, t2, t3)));
+        ).apply(inst, (t1, t2, t3, t4) -> new ConfiguredEnchantment<>(t1, this, t2, t3, t4)));
     }
 
 }

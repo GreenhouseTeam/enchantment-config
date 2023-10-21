@@ -5,37 +5,45 @@ import dev.greenhouseteam.enchantmentconfig.api.config.configuration.Enchantment
 import dev.greenhouseteam.enchantmentconfig.api.config.field.ExtraFieldType;
 import dev.greenhouseteam.enchantmentconfig.api.config.field.GlobalEnchantmentFields;
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
+import dev.greenhouseteam.enchantmentconfig.api.util.MergeUtil;
 
 import java.util.Map;
 import java.util.Optional;
 
 public class ConfiguredEnchantment<C extends EnchantmentConfiguration, T extends EnchantmentType<C>> {
 
+    private final int priority;
     private final T type;
     private final C configuration;
     private final GlobalEnchantmentFields globalFields;
     private final Map<String, Object> extraFields;
 
-    public ConfiguredEnchantment(T type,
+    public ConfiguredEnchantment(int priority,
+                                 T type,
                                  C configuration,
                                  GlobalEnchantmentFields globalFields,
                                  Map<String, Object> extraFields) {
+        this.priority = priority;
         this.type = type;
         this.configuration = configuration;
         this.globalFields = globalFields;
         this.extraFields = extraFields;
     }
 
+    public int getPriority() {
+        return this.priority;
+    }
+
     public T getType() {
-        return type;
+        return this.type;
     }
 
     public C getConfiguration() {
-        return configuration;
+        return this.configuration;
     }
 
     public GlobalEnchantmentFields getGlobalFields() {
-        return globalFields;
+        return this.globalFields;
     }
 
     public Map<String, Object> getExtraFields() {
@@ -67,18 +75,15 @@ public class ConfiguredEnchantment<C extends EnchantmentConfiguration, T extends
      * @return                  A merged EnchantmentConfiguration.
      */
     public ConfiguredEnchantment<C, T> merge(ConfiguredEnchantment<C, T> oldConfigured, Optional<ConfiguredEnchantment<C, T>> globalConfigured, int priority, int oldPriority, int globalPriority) {
-        C configuration = (C) this.getConfiguration().merge(oldConfigured.getConfiguration(), globalConfigured.map(ConfiguredEnchantment::getConfiguration), priority, oldPriority, globalPriority);
+        int newPriority = Math.max(priority, oldPriority);
+
+        C configuration = (C) this.getConfiguration().mergeInternal(oldConfigured.getConfiguration(), globalConfigured.map(ConfiguredEnchantment::getConfiguration), priority, oldPriority, globalPriority);
 
         GlobalEnchantmentFields globalFields = this.getGlobalFields().merge(oldConfigured.getGlobalFields(), globalConfigured.map(ConfiguredEnchantment::getGlobalFields), priority, oldPriority, globalPriority);
 
-        Map<String, Object> extraFields = Maps.newHashMap();
-        Map<String, ExtraFieldType<Object>> extraFieldTypes = this.getType().getExtraFieldTypes();
-        this.getExtraFields().forEach((name, o) -> {
-            Object newObject = extraFieldTypes.get(name).merge(o, oldConfigured.getExtraFields().get(name), globalConfigured.map(c -> c.getExtraFields().get(name)), priority, oldPriority, globalPriority);
-            extraFields.put(name, newObject);
-        });
+        Map<String, Object> extraFields = MergeUtil.mergeMap(this.getExtraFields(), oldConfigured.getExtraFields(), globalConfigured.map(ConfiguredEnchantment::getExtraFields), priority, oldPriority, globalPriority)
 
-        return new ConfiguredEnchantment<>(this.getType(), configuration, globalFields, extraFields);
+        return new ConfiguredEnchantment<>(newPriority, this.getType(), configuration, globalFields, extraFields);
     }
 
 }
