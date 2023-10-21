@@ -79,7 +79,7 @@ public class ConfiguredEnchantment<C extends EnchantmentConfiguration, T extends
 
         GlobalEnchantmentFields globalFields = this.getGlobalFields().merge(oldConfigured.getGlobalFields(), globalConfigured.map(ConfiguredEnchantment::getGlobalFields), priority, oldPriority, globalPriority);
 
-        Map<String, Object> extraFields = MergeUtil.mergeMap(this.getExtraFields(), oldConfigured.getExtraFields(), globalConfigured.map(ConfiguredEnchantment::getExtraFields), priority, oldPriority, globalPriority)
+        Map<String, Object> extraFields = MergeUtil.mergeMap(this.getExtraFields(), oldConfigured.getExtraFields(), globalConfigured.map(ConfiguredEnchantment::getExtraFields), priority, oldPriority, globalPriority);
 
         return new ConfiguredEnchantment<>(newPriority, this.getType(), configuration, globalFields, extraFields);
     }
