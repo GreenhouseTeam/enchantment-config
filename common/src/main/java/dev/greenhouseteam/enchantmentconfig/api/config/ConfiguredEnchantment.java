@@ -50,30 +50,28 @@ public class ConfiguredEnchantment<C extends EnchantmentConfiguration, T extends
         return this.extraFields;
     }
 
-    public <F> F getExtraField(String name, Class<F> castClass) {
-        Object object = this.extraFields.get(name);
+    /**
+     * Retrieves an extra field of this enchantment.
+     *
+     * @param key                   The JSON key of the field.
+     * @param castClass             The class of the field.
+     *
+     * @return                      Returns the field of the specified name
+     *
+     * @param <F>                   The type of the castClass field.
+     * @throws  ClassCastException  If the value cannot be cast to the class cast field.
+     */
+    public <F> F getExtraField(String key, Class<F> castClass) {
+        if (!this.extraFields.containsKey(key))
+            return null;
+
+        Object object = this.extraFields.get(key);
         if (!object.getClass().isAssignableFrom(castClass)) {
-            throw new ClassCastException("Attempted to cast incorrect field type to extra field object '" + name + "'.");
+            throw new ClassCastException("Attempted to cast incorrect field type to extra field object '" + key + "'.");
         }
         return (F) object;
     }
 
-    /**
-     * Defines how to merge this configured enchantment into the previous one.
-     * This also accounts for the global configured enchantments.
-     *
-     * @param oldConfigured     The original configuration to merge into this config.
-     * @param globalConfigured  The global configuration for merging the global value
-     *                          into this config. Is not always present and should
-     *                          be ignored when so.
-     * @param priority          The priority of the current merge.
-     * @param oldPriority       The value at which the priority must be higher than to
-     *                          have the current value be merged.
-     * @param globalPriority    The value at which the priority must be lower than to
-     *                          have the global value be merged if it is present.
-     *
-     * @return                  A merged EnchantmentConfiguration.
-     */
     public ConfiguredEnchantment<C, T> merge(ConfiguredEnchantment<C, T> oldConfigured, Optional<ConfiguredEnchantment<C, T>> globalConfigured, int priority, int oldPriority, int globalPriority) {
         int newPriority = Math.max(priority, oldPriority);
 
