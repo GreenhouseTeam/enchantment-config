@@ -1,6 +1,11 @@
 package dev.greenhouseteam.enchantmentconfig.platform.services;
 
+import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
+import dev.greenhouseteam.enchantmentconfig.platform.Services;
+import net.minecraft.core.Registry;
+
 public interface IPlatformHelper {
+    IPlatformHelper INSTANCE = Services.load(IPlatformHelper.class);
 
     /**
      * Gets the name of the current platform
@@ -30,7 +35,13 @@ public interface IPlatformHelper {
      * @return The name of the environment type.
      */
     default String getEnvironmentName() {
-
         return isDevelopmentEnvironment() ? "development" : "production";
     }
+
+    /**
+     * Gets the Enchantment Type registry.
+     *
+     * @return The enchantment type registry.
+     */
+    Registry<EnchantmentType<?>> getEnchantmentTypeRegistry();
 }
