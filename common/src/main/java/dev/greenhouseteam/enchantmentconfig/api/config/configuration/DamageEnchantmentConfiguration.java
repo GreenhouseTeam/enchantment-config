@@ -58,7 +58,7 @@ public record DamageEnchantmentConfiguration(Optional<List<HolderSet<EntityType<
         DamageEnchantmentConfiguration castedOld = (DamageEnchantmentConfiguration) oldConfiguration;
         Optional<DamageEnchantmentConfiguration> castedGlobal = globalConfiguration.map(c-> (DamageEnchantmentConfiguration)c);
 
-        Optional<List<HolderSet<EntityType<?>>>> affectedEntities = MergeUtil.mergeList(this.affectedEntities(), castedOld.affectedEntities(), castedGlobal.flatMap(DamageEnchantmentConfiguration::affectedEntities), priority, oldPriority, globalPriority);
+        Optional<List<HolderSet<EntityType<?>>>> affectedEntities = MergeUtil.mergeOptionalList(this.affectedEntities(), castedOld.affectedEntities(), castedGlobal.flatMap(DamageEnchantmentConfiguration::affectedEntities), priority, oldPriority, globalPriority);
         Map<Integer, Float> damage = MergeUtil.mergeMap(this.damage(), castedOld.damage(), castedGlobal.map(DamageEnchantmentConfiguration::damage), priority, oldPriority, globalPriority);
 
         return new DamageEnchantmentConfiguration(affectedEntities, damage);

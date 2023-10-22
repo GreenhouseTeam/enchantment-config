@@ -87,7 +87,7 @@ public class MergeUtil {
      *
      * @param <T>               The type parameter of the list objects.
      */
-    public static <T> Optional<List<T>> mergeList(Optional<List<T>> currentList, Optional<List<T>> oldList, Optional<List<T>> globalList, int priority, int oldPriority, int globalPriority) {
+    public static <T> Optional<List<T>> mergeOptionalList(Optional<List<T>> currentList, Optional<List<T>> oldList, Optional<List<T>> globalList, int priority, int oldPriority, int globalPriority) {
         if (currentList.isEmpty() && oldList.isEmpty() && globalList.isEmpty())
             return Optional.empty();
 
@@ -156,7 +156,7 @@ public class MergeUtil {
      * @param <K>               The key type parameter of the map.
      * @param <V>               The value type parameter of the map.
      */
-    public static <K, V> Optional<Map<K, V>> mergeMapOptional(Optional<Map<K, V>> currentMap, Optional<Map<K, V>> oldMap, Optional<Map<K, V>> globalMap, int priority, int oldPriority, int globalPriority) {
+    public static <K, V> Optional<Map<K, V>> mergeOptionalMap(Optional<Map<K, V>> currentMap, Optional<Map<K, V>> oldMap, Optional<Map<K, V>> globalMap, int priority, int oldPriority, int globalPriority) {
         if (currentMap.isEmpty() && oldMap.isEmpty() && globalMap.isEmpty())
             return Optional.empty();
 
