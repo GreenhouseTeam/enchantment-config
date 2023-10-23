@@ -15,7 +15,7 @@ import java.util.Map;
 
 @AutoService(IEnchantmentConfigGetter.class)
 public class EnchantmentConfigGetter implements IEnchantmentConfigGetter {
-    private Map<ResourceKey<Enchantment>, ConfiguredEnchantment<?, ?>> ENTRIES = Maps.newHashMap();
+    private final Map<ResourceKey<Enchantment>, ConfiguredEnchantment<?, ?>> ENTRIES = Maps.newHashMap();
     @Override
     @SuppressWarnings("unchecked")
     public <C extends EnchantmentConfiguration, T extends EnchantmentType<C>> ConfiguredEnchantment<C, T> getConfig(T configuration) {
