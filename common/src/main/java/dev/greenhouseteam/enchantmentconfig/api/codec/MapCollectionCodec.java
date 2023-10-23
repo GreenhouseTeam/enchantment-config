@@ -1,5 +1,6 @@
 package dev.greenhouseteam.enchantmentconfig.api.codec;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.datafixers.util.Unit;
@@ -9,40 +10,64 @@ import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.Lifecycle;
 import com.mojang.serialization.RecordBuilder;
 import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class MapCollectionCodec<K, V> implements Codec<Map<K, V>> {
     protected final String keyName;
-    protected final String elementName;
+    protected final String valueName;
     protected final Codec<K> keyCodec;
-    protected final Codec<V> elementCodec;
+    protected final Codec<V> valueCodec;
 
-    public MapCollectionCodec(String keyName, String elementName, Codec<K> keyCodec, Codec<V> elementCodec) {
+    public MapCollectionCodec(String keyName, String valueName, Codec<K> keyCodec, Codec<V> valueCodec) {
         this.keyName = keyName;
-        this.elementName = elementName;
+        this.valueName = valueName;
         this.keyCodec = keyCodec;
-        this.elementCodec = elementCodec;
+        this.valueCodec = valueCodec;
     }
 
     @Override
     public <T> DataResult<Pair<Map<K, V>, T>> decode(DynamicOps<T> ops, T input) {
-        return ops.getMapEntries(input).flatMap(map -> {
+        return ops.getList(input).flatMap(value -> {
             final ImmutableMap.Builder<K, V> read = ImmutableMap.builder();
-            final ImmutableMap.Builder<T, T> failed = ImmutableMap.builder();
+            final ImmutableList.Builder<T> failed = ImmutableList.builder();
+            final List<String> errorMessage = new ArrayList<>();
 
             final AtomicReference<DataResult<Unit>> result = new AtomicReference<>();
             result.setPlain(DataResult.success(Unit.INSTANCE, Lifecycle.experimental()));
 
-            map.accept((key, value) -> {
-                final DataResult<K> k = keyCodec.parse(ops, key);
-                final DataResult<V> v = elementCodec.parse(ops, value);
+            value.accept((val) -> {
+                final DataResult<T> keyResult = ops.get(val, keyName);
+                final DataResult<T> valueResult = ops.get(val, valueName);
+
+                if (keyResult.result().isEmpty()) {
+                    failed.add(val);
+                    errorMessage.add("Failed to find '" + keyName + "' field");
+                }
+
+                if (valueResult.result().isEmpty()) {
+                    failed.add(val);
+                    errorMessage.add("Failed to find '" + valueName + "' field");
+                }
+
+                final DataResult<K> k = keyCodec.parse(ops, keyResult.result().get());
+                final DataResult<V> v = valueCodec.parse(ops, valueResult.result().get());
+
+                k.error().ifPresent(e -> {
+                    failed.add(val);
+                    errorMessage.add("Failed to decode '" + keyName + "' object");
+                });
+                v.error().ifPresent(e -> {
+                    failed.add(val);
+                    errorMessage.add("Failed to decode '" + valueName + "' object");
+                });
 
                 final DataResult<Pair<K, V>> readEntry = k.apply2stable(Pair::new, v);
-
-                readEntry.error().ifPresent(e -> EnchantmentConfigUtil.LOGGER.error("Failed to decode object '{}' inside MapCollectionCodec. {}", value, e));
 
                 result.setPlain(result.getPlain().apply2stable((u, e) -> {
                     read.put(e.getFirst(), e.getSecond());
@@ -51,12 +76,38 @@ public class MapCollectionCodec<K, V> implements Codec<Map<K, V>> {
             });
 
             final ImmutableMap<K, V> elements = read.build();
-            final T errors = ops.createMap(failed.build());
+            final ImmutableList<T> errorList = failed.build();
+            final T errors = ops.createList(errorList.stream());
+            if (elements.isEmpty()) {
+                return null;
+            }
 
             final Pair<Map<K, V>, T> pair = Pair.of(elements, errors);
 
-            return result.getPlain().map(unit -> pair).setPartial(pair);
+            DataResult<Pair<Map<K, V>, T>> retValue = result.getPlain().map(unit -> pair);
+            if (!errorList.isEmpty()) {
+                StringBuilder stringBuilder = errorMessageBuilder(errorList, errorMessage);
+                retValue.setPartial(pair).mapError(s -> stringBuilder.toString());
+            }
+            return retValue;
         });
+    }
+
+    @NotNull
+    protected static <T> StringBuilder errorMessageBuilder(ImmutableList<T> errorList, List<String> errorMessage) {
+        StringBuilder stringBuilder = new StringBuilder();
+        if (errorList.size() > 1) {
+            stringBuilder.append("Multiple errors found whilst decoding: \n");
+        }
+        for (int i = 0; i < errorMessage.size(); ++i) {
+            stringBuilder.append(errorMessage.get(i));
+            if (i == errorList.size() - 1)
+                stringBuilder.append(".");
+            else
+                stringBuilder.append(";\n");
+
+        }
+        return stringBuilder;
     }
 
     @Override
@@ -64,7 +115,7 @@ public class MapCollectionCodec<K, V> implements Codec<Map<K, V>> {
         final RecordBuilder<T> builder = ops.mapBuilder();
 
         for (final Map.Entry<K, V> pair : input.entrySet()) {
-            builder.add(keyCodec.encodeStart(ops, pair.getKey()), elementCodec.encodeStart(ops, pair.getValue()));
+            builder.add(keyCodec.encodeStart(ops, pair.getKey()), valueCodec.encodeStart(ops, pair.getValue()));
         }
 
         return builder.build(prefix);
@@ -79,16 +130,16 @@ public class MapCollectionCodec<K, V> implements Codec<Map<K, V>> {
             return false;
         }
         MapCollectionCodec<?, ?> mapCollectionCodec = (MapCollectionCodec<?, ?>)o;
-        return Objects.equals(keyName, mapCollectionCodec.keyName) && Objects.equals(elementName, mapCollectionCodec.elementName) && Objects.equals(keyCodec, mapCollectionCodec.keyCodec) && Objects.equals(elementCodec, mapCollectionCodec.elementCodec);
+        return Objects.equals(keyName, mapCollectionCodec.keyName) && Objects.equals(valueName, mapCollectionCodec.valueCodec) && Objects.equals(keyCodec, mapCollectionCodec.keyCodec) && Objects.equals(valueCodec, mapCollectionCodec.valueCodec);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(keyName, elementName, keyCodec, elementCodec);
+        return Objects.hash(keyName, valueName, keyCodec, valueCodec);
     }
 
     @Override
     public String toString() {
-        return "MapCollectionCodec[" + keyName + ": " + keyCodec + ", " + elementName + ": " + elementCodec + ']';
+        return "MapCollectionCodec[" + keyName + ": " + keyCodec + ", " + valueName + ": " + valueCodec + ']';
     }
 }

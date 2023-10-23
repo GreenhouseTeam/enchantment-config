@@ -135,8 +135,8 @@ public class EnchantmentConfigCodecs {
         return new MapCollectionCodec<>(keyName, valueName, keyCodec, valueCodec);
     }
 
-    public static <V> MapCollectionCodec<Integer, V> levelToValueCodec(String keyName, String valueName, Codec<V> valueCodec) {
-        return new LevelKeyMapCodec<>(keyName, valueName, valueCodec);
+    public static <V> MapCollectionCodec<Integer, V> rangeAllowedIntegerCodec(String keyName, String valueName, Codec<V> valueCodec) {
+        return new RangeAllowedIntegerMapCodec<>(keyName, valueName, valueCodec);
     }
 
     public static <T> Codec<HolderSet<T>> tagOrElementCodec(ResourceKey<Registry<T>> registryKey) {
