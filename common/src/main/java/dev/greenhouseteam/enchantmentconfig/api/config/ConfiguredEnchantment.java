@@ -1,8 +1,6 @@
 package dev.greenhouseteam.enchantmentconfig.api.config;
 
-import com.google.common.collect.Maps;
 import dev.greenhouseteam.enchantmentconfig.api.config.configuration.EnchantmentConfiguration;
-import dev.greenhouseteam.enchantmentconfig.api.config.field.ExtraFieldType;
 import dev.greenhouseteam.enchantmentconfig.api.config.field.GlobalEnchantmentFields;
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
 import dev.greenhouseteam.enchantmentconfig.api.util.MergeUtil;
