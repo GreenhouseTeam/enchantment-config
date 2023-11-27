@@ -1,0 +1,60 @@
+import net.fabricmc.loom.task.AbstractRemapJarTask
+import net.fabricmc.loom.task.RemapJarTask
+
+plugins {
+    id 'java'
+    id 'idea'
+    id 'maven-publish'
+    id 'fabric-loom'
+}
+base {
+    archivesName = "${archives_base_name}-intermediary"
+}
+
+evaluationDependsOn ':common'
+
+dependencies {
+    minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
+    mappings loom.officialMojangMappings()
+}
+
+// Shoutouts to Witixin. https://gist.github.com/Witixin1512/bbb8484523ea6a0e8440f17621f89f95
+tasks.register("remapApiJar", RemapJarTask,  task -> {
+    final AbstractArchiveTask jarTask = project(":common").getTasks().named("apiJar", AbstractArchiveTask.class).get();
+    task.dependsOn(jarTask)
+
+    task.getInputFile().convention(jarTask.getArchiveFile())
+    task.dependsOn(project(":common").getTasks().named("apiJar"))
+    task.archiveFileName.set(archiveFileName.get().replace(".jar", "-api.jar"))
+    task.targetNamespace.set("intermediary")
+
+    remapperIsolation = true
+})
+
+build.dependsOn remapApiJar
+
+tasks.withType(Jar).configureEach {
+    it.enabled = false
+}
+
+tasks.withType(AbstractRemapJarTask).configureEach {
+    if (it.name == "remapApiJar") return
+    it.enabled = false
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId base.archivesName.get()
+            artifact(remapApiJar) {
+                builtBy remapApiJar
+                classifier 'api'
+            }
+        }
+    }
+    repositories {
+        maven {
+            url "file://" + System.getenv("local_maven")
+        }
+    }
+}

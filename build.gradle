@@ -11,9 +11,12 @@ subprojects {
     java.toolchain.languageVersion = JavaLanguageVersion.of(17)
     java.withSourcesJar()
     java.withJavadocJar()
-        
+
     jar {
         from(rootProject.file("LICENSE")) {
+            rename { "${it}_${mod_name}" }
+        }
+        from(rootProject.file("ALTERNATE_LICENSES")) {
             rename { "${it}_${mod_name}" }
         }
         manifest {
@@ -34,6 +37,9 @@ subprojects {
 
     sourcesJar {
         from(rootProject.file("LICENSE")) {
+            rename { "${it}_${mod_name}" }
+        }
+        from(rootProject.file("ALTERNATE_LICENSES")) {
             rename { "${it}_${mod_name}" }
         }
     }
