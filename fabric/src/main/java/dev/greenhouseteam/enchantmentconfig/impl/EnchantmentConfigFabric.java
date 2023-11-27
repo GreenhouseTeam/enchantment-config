@@ -9,5 +9,6 @@ public class EnchantmentConfigFabric implements ModInitializer {
     public void onInitialize() {
         EnchantmentConfig.init();
         ServerLifecycleEvents.SERVER_STARTED.register(EnchantmentConfig::setServer);
+        ServerLifecycleEvents.SERVER_STOPPING.register((server) -> EnchantmentConfig.clearServer());
     }
 }

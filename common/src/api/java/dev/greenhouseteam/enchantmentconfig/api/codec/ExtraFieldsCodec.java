@@ -13,20 +13,20 @@ import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public class ExtraFieldsCodec extends MapCodec<Map<String, Object>> {
-    private final Map<String, ExtraFieldType<Object>> fields;
+public class ExtraFieldsCodec extends MapCodec<Map<String, ?>> {
+    private final Map<String, ExtraFieldType<?>> fields;
 
-    public ExtraFieldsCodec(Map<String, ExtraFieldType<Object>> fields) {
+    public ExtraFieldsCodec(Map<String, ExtraFieldType<?>> fields) {
         this.fields = fields;
     }
 
     @Override
-    public <T> DataResult<Map<String, Object>> decode(DynamicOps<T> ops, MapLike<T> input) {
+    public <T> DataResult<Map<String, ?>> decode(DynamicOps<T> ops, MapLike<T> input) {
         final ImmutableMap.Builder<String, Object> read = ImmutableMap.builder();
 
-        for (Map.Entry<String, ExtraFieldType<Object>> field : fields.entrySet()) {
+        for (Map.Entry<String, ExtraFieldType<?>> field : fields.entrySet()) {
             T value = input.get(field.getKey());
-            DataResult<Pair<Object, T>> result = field.getValue().codec().decode(ops, value);
+            DataResult<Pair<?, T>> result = field.getValue().objectCodec().decode(ops, value).map(pair -> pair);
 
             if (result.error().isPresent()) {
                 EnchantmentConfigUtil.LOGGER.error("Failed to decode extra field '{}' inside ExtraFieldsCodec. (Skipping): {}", field.getKey(), result.error().get());
@@ -40,11 +40,11 @@ public class ExtraFieldsCodec extends MapCodec<Map<String, Object>> {
     }
 
     @Override
-    public <T> RecordBuilder<T> encode(Map<String, Object> input, DynamicOps<T> ops, RecordBuilder<T> prefix) {
+    public <T> RecordBuilder<T> encode(Map<String, ?> input, DynamicOps<T> ops, RecordBuilder<T> prefix) {
         final RecordBuilder<T> builder = ops.mapBuilder();
 
-        for (Map.Entry<String, ExtraFieldType<Object>> field : fields.entrySet()) {
-            DataResult<T> result = field.getValue().codec().encodeStart(ops, input.get(field.getKey()));
+        for (Map.Entry<String, ExtraFieldType<?>> field : fields.entrySet()) {
+            DataResult<T> result = field.getValue().objectCodec().encodeStart(ops, input.get(field.getKey()));
             result.error().ifPresent(e -> EnchantmentConfigUtil.LOGGER.error("Failed to encode extra field '{}' inside ExtraFieldsCodec. (Skipping): {}", field.getKey(), e));
             builder.add(field.getKey(), result);
         }

@@ -1,7 +1,7 @@
 package dev.greenhouseteam.enchantmentconfig.api.config;
 
+import com.google.common.collect.ImmutableMap;
 import dev.greenhouseteam.enchantmentconfig.api.config.configuration.EnchantmentConfiguration;
-import dev.greenhouseteam.enchantmentconfig.api.config.field.GlobalEnchantmentFields;
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
 import dev.greenhouseteam.enchantmentconfig.api.util.MergeUtil;
 
@@ -20,12 +20,14 @@ public class ConfiguredEnchantment<C extends EnchantmentConfiguration, T extends
                                  T type,
                                  C configuration,
                                  GlobalEnchantmentFields globalFields,
-                                 Map<String, Object> extraFields) {
+                                 Map<String, ?> extraFields) {
         this.priority = priority;
         this.type = type;
         this.configuration = configuration;
         this.globalFields = globalFields;
-        this.extraFields = extraFields;
+        ImmutableMap.Builder<String, Object> remappedExtraFields = ImmutableMap.builder();
+        extraFields.forEach(remappedExtraFields::put);
+        this.extraFields = remappedExtraFields.build();
     }
 
     public int getPriority() {

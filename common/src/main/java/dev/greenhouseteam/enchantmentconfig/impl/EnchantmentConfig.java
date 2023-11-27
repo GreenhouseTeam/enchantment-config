@@ -23,4 +23,8 @@ public class EnchantmentConfig {
         }
     }
 
+    protected static void clearServer() {
+        EnchantmentConfig.server = null;
+    }
+
 }

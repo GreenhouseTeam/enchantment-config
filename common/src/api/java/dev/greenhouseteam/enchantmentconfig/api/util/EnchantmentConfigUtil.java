@@ -28,6 +28,9 @@ public class EnchantmentConfigUtil {
     }
 
     private static boolean checkCompatibility(EnchantmentType<?> enchantment, EnchantmentType<?> other) {
+        if (enchantment.getEnchantment() == null || other.getEnchantment() == null)
+            return false;
+
         return IEnchantmentConfigGetter.INSTANCE.getConfig(enchantment).getGlobalFields().incompatibilities().isPresent() ? IEnchantmentConfigGetter.INSTANCE.getConfig(enchantment).getGlobalFields().incompatibilities().get().stream().anyMatch(holders -> holders.contains(BuiltInRegistries.ENCHANTMENT.getHolderOrThrow(other.getEnchantment()))) : Objects.requireNonNull(BuiltInRegistries.ENCHANTMENT.get(enchantment.getEnchantment())).isCompatibleWith(Objects.requireNonNull(BuiltInRegistries.ENCHANTMENT.get(other.getEnchantment())));
     }
 

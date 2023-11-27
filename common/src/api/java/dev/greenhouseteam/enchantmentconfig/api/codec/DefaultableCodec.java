@@ -6,7 +6,6 @@ import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.MapLike;
 import com.mojang.serialization.RecordBuilder;
 import com.mojang.serialization.codecs.OptionalFieldCodec;
-import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
 import dev.greenhouseteam.enchantmentconfig.mixin.api.accessor.OptionalFieldCodecAccessor;
 
 import java.util.Locale;
@@ -27,7 +26,7 @@ public class DefaultableCodec<A> extends OptionalFieldCodec<A> {
         }
         final DataResult<A> parsed = ((OptionalFieldCodecAccessor)this).enchantmentconfig$getElementCodec().parse(ops, value);
         if (parsed.error().isPresent()) {
-            EnchantmentConfigUtil.LOGGER.error("Failed to parse field '{}'. You may use '{}' (case-insensitive) to get the default value. {}", ((OptionalFieldCodecAccessor)this).enchantmentconfig$getName(), DEFAULT_KEY, parsed.error().get().message());
+            return DataResult.error(() -> "Failed to parse field '" + ((OptionalFieldCodecAccessor)this).enchantmentconfig$getName() + "'. You may use '" + DEFAULT_KEY + "' (case-insensitive) to get the default value." + parsed.error().get().message());
         }
         return parsed.map(Optional::of);
     }

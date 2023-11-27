@@ -9,7 +9,6 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.Lifecycle;
 import com.mojang.serialization.RecordBuilder;
-import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

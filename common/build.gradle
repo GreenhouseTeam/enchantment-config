@@ -7,6 +7,18 @@ plugins {
 base {
     archivesName = "${archives_base_name}-common"
 }
+sourceSets {
+    api {
+        java
+        resources
+        compileClasspath += sourceSets.main.compileClasspath
+    }
+    main {
+        compileClasspath += sourceSets.api.output
+        runtimeClasspath += sourceSets.api.output
+    }
+}
+
 minecraft {
     version(minecraft_version)
     if(file("src/main/resources/${mod_id}.accesswidener").exists()){
@@ -28,6 +40,7 @@ tasks.register('apiJar', Jar) {
     archiveClassifier = "api"
     include "dev/greenhouseteam/enchantmentconfig/api/**"
     include "dev/greenhouseteam/enchantmentconfig/mixin/api/**"
+    include "dev/greenhouseteam/enchantmentconfig/services/**"
     include "enchantmentconfigapi.mixins.json"
     include "pack.mcmeta"
     filesMatching(['pack.mcmeta', '*.mixins.json']) {
