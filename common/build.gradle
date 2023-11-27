@@ -19,6 +19,10 @@ sourceSets {
     }
 }
 
+configurations {
+    api
+}
+
 minecraft {
     version(minecraft_version)
     if(file("src/main/resources/${mod_id}.accesswidener").exists()){
@@ -38,14 +42,17 @@ dependencies {
 
 tasks.register('apiJar', Jar) {
     archiveClassifier = "api"
-    include "dev/greenhouseteam/enchantmentconfig/api/**"
-    include "dev/greenhouseteam/enchantmentconfig/mixin/api/**"
-    include "dev/greenhouseteam/enchantmentconfig/services/**"
-    include "enchantmentconfigapi.mixins.json"
-    include "pack.mcmeta"
+    dependsOn(compileApiJava)
+    dependsOn(processApiResources)
+    from sourceSets.api.output.classesDirs
+    from sourceSets.api.output.resourcesDir
     filesMatching(['pack.mcmeta', '*.mixins.json']) {
         expand project.properties
     }
+}
+
+artifacts {
+    api apiJar
 }
 
 build.dependsOn apiJar

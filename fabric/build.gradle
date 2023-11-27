@@ -16,10 +16,12 @@ dependencies {
 
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
 
+    implementation project(path: ':common', configuration: 'api')
     implementation project(":common")
     include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:${mixin_extras_version}")))
 
     compileOnly group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
+    testCompileOnly group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
     annotationProcessor group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
 }
 
