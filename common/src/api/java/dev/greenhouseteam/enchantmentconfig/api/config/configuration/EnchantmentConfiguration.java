@@ -10,18 +10,16 @@ public interface EnchantmentConfiguration {
      * @param priority              The priority of the current merge.
      * @param oldPriority           The value at which the priority must be higher than to
      *                              have the current value be merged.
-     * @param globalPriority        The value at which the priority must be lower than to
-     *                              have the global value be merged if it is present.
      *
      * @return                      The merged enchantment configuration.
      */
-    EnchantmentConfiguration merge(EnchantmentConfiguration oldConfiguration, int priority, int oldPriority, int globalPriority);
+    EnchantmentConfiguration merge(EnchantmentConfiguration oldConfiguration, int priority, int oldPriority);
 
-    default EnchantmentConfiguration mergeInternal(EnchantmentConfiguration oldConfiguration, int priority, int oldPriority, int globalPriority) {
+    default EnchantmentConfiguration mergeInternal(EnchantmentConfiguration oldConfiguration, int priority, int oldPriority) {
         if (!isSameType(oldConfiguration)) {
             throw new ClassCastException("Could not merge enchantment configurations of different types.");
         }
-        return this.merge(oldConfiguration, priority, oldPriority, globalPriority);
+        return this.merge(oldConfiguration, priority, oldPriority);
     }
 
     default boolean isSameType(EnchantmentConfiguration oldConfiguration) {

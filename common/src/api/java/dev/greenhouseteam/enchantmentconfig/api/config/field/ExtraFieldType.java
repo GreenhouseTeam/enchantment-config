@@ -46,15 +46,13 @@ public record ExtraFieldType<T>(Codec<T> codec) {
      *
      * @param currentConfiguration
      * @param oldConfiguration
-     * @param globalConfiguration
      * @param priority
      * @param oldPriority
-     * @param globalPriority
      *
      * @return                                  A merged field of this type.
      * @throws UnsupportedOperationException    If not overridden.
      */
-    public T merge(T currentConfiguration, T oldConfiguration, Optional<T> globalConfiguration, int priority, int oldPriority, int globalPriority) {
+    public T merge(T currentConfiguration, T oldConfiguration, int priority, int oldPriority) {
         throw new UnsupportedOperationException("ExtraFieldType#merge should be overridden.");
     }
 
