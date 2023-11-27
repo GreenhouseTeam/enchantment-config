@@ -5,8 +5,6 @@ import dev.greenhouseteam.enchantmentconfig.api.config.configuration.Enchantment
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
 import dev.greenhouseteam.enchantmentconfig.platform.Services;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.item.enchantment.Enchantment;
 import org.jetbrains.annotations.Nullable;
 
 public interface IEnchantmentConfigGetter {

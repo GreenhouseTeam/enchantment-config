@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public record ItemAndTagMix(Optional<Holder<Item>> item, Optional<CompoundTag> tag) {
 
-    public static Codec<ItemAndTagMix> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+    public static final Codec<ItemAndTagMix> CODEC = RecordCodecBuilder.create(inst -> inst.group(
             ExtraCodecs.strictOptionalField(BuiltInRegistries.ITEM.holderByNameCodec(), "item").forGetter(ItemAndTagMix::item),
             ExtraCodecs.strictOptionalField(CompoundTag.CODEC, "tag").forGetter(ItemAndTagMix::tag)
     ).apply(inst, ItemAndTagMix::new));

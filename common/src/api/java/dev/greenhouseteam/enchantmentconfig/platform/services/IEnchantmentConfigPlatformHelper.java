@@ -2,10 +2,12 @@ package dev.greenhouseteam.enchantmentconfig.platform.services;
 
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
 import dev.greenhouseteam.enchantmentconfig.platform.Services;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
 
-public interface IPlatformHelper {
-    IPlatformHelper INSTANCE = Services.load(IPlatformHelper.class);
+public interface IEnchantmentConfigPlatformHelper {
+    IEnchantmentConfigPlatformHelper INSTANCE = Services.load(IEnchantmentConfigPlatformHelper.class);
 
     /**
      * Gets the name of the current platform
@@ -44,4 +46,6 @@ public interface IPlatformHelper {
      * @return The enchantment type registry.
      */
     Registry<EnchantmentType<?>> getEnchantmentTypeRegistry();
+
+    <T extends EnchantmentType<?>> Holder<T> registerEnchantmentType(ResourceLocation typeId, T enchantmentType);
 }
