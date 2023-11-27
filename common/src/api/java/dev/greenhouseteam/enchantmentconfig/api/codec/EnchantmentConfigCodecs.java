@@ -21,7 +21,7 @@ public class EnchantmentConfigCodecs {
      * An integer codec that will error upon fail.
      * Prefer using this over {@link Codec#INT}
      */
-    public static PrimitiveCodec<Integer> INT = new PrimitiveCodec<>() {
+    public static final PrimitiveCodec<Integer> INT = new PrimitiveCodec<>() {
         @Override
         public <T> DataResult<Integer> read(DynamicOps<T> ops, T input) {
             DataResult<Integer> decoded = Codec.INT.parse(ops, input);
@@ -46,7 +46,7 @@ public class EnchantmentConfigCodecs {
      * A float codec that will error upon fail.
      * Prefer using this over {@link Codec#FLOAT}
      */
-    public static PrimitiveCodec<Float> FLOAT = new PrimitiveCodec<>() {
+    public static final PrimitiveCodec<Float> FLOAT = new PrimitiveCodec<>() {
         @Override
         public <T> DataResult<Float> read(DynamicOps<T> ops, T input) {
             DataResult<Float> decoded = Codec.FLOAT.parse(ops, input);
@@ -71,7 +71,7 @@ public class EnchantmentConfigCodecs {
      * A boolean codec that will error upon fail.
      * Prefer using this over {@link Codec#BOOL}
      */
-    public static PrimitiveCodec<Boolean> BOOLEAN = new PrimitiveCodec<>() {
+    public static final PrimitiveCodec<Boolean> BOOLEAN = new PrimitiveCodec<>() {
         @Override
         public <T> DataResult<Boolean> read(DynamicOps<T> ops, T input) {
             DataResult<Boolean> decoded = Codec.BOOL.parse(ops, input);
@@ -96,7 +96,7 @@ public class EnchantmentConfigCodecs {
      * A string codec that will error upon fail.
      * Prefer using this over {@link Codec#STRING}
      */
-    public static PrimitiveCodec<String> STRING = new PrimitiveCodec<>() {
+    public static final PrimitiveCodec<String> STRING = new PrimitiveCodec<>() {
         @Override
         public <T> DataResult<String> read(DynamicOps<T> ops, T input) {
             DataResult<String> decoded = Codec.STRING.parse(ops, input);
