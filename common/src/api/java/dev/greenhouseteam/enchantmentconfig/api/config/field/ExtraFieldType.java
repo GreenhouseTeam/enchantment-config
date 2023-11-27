@@ -19,12 +19,6 @@ import java.util.Optional;
  */
 public record ExtraFieldType<T>(Codec<T> codec) {
 
-    @ApiStatus.Internal
-    @SuppressWarnings("unchecked")
-    public Codec<Object> objectCodec() {
-        return this.codec().xmap(t -> t, object -> (T)object);
-    }
-
     @Override
     public boolean equals(Object other) {
         if (other == this)
@@ -44,6 +38,7 @@ public record ExtraFieldType<T>(Codec<T> codec) {
     // TODO: Document this.
     /**
      *
+     *
      * @param currentConfiguration
      * @param oldConfiguration
      * @param priority
@@ -55,5 +50,12 @@ public record ExtraFieldType<T>(Codec<T> codec) {
     public T merge(T currentConfiguration, T oldConfiguration, int priority, int oldPriority) {
         throw new UnsupportedOperationException("ExtraFieldType#merge should be overridden.");
     }
+
+    @ApiStatus.Internal
+    @SuppressWarnings("unchecked")
+    public Codec<Object> objectCodec() {
+        return this.codec().xmap(t -> t, object -> (T)object);
+    }
+
 
 }

@@ -11,8 +11,16 @@ import java.util.Optional;
 
 public class MergeUtil {
 
+    public static <T> T mergePrimitive(T currentValue, T oldValue, int priority, int oldPriority) {
+        return mergePrimitive(currentValue, oldValue, Optional.empty(), priority, oldPriority, Integer.MIN_VALUE);
+    }
+
     public static <T> T mergePrimitive(T currentValue, T oldValue, Optional<T> globalValue, int priority, int oldPriority, int globalPriority) {
         return globalValue.isPresent() && globalPriority > priority ? globalValue.get() : oldPriority > priority ? oldValue : currentValue;
+    }
+
+    public static <T> Optional<T> mergePrimitive(Optional<T> currentValue, Optional<T> oldValue, int priority, int oldPriority) {
+        return mergePrimitiveOptional(currentValue, oldValue, Optional.empty(), priority, oldPriority, Integer.MIN_VALUE);
     }
 
     /**
@@ -35,6 +43,10 @@ public class MergeUtil {
      */
     public static <T> Optional<T> mergePrimitiveOptional(Optional<T> currentValue, Optional<T> oldValue, Optional<T> globalValue, int priority, int oldPriority, int globalPriority) {
         return globalValue.isPresent() && globalPriority > priority ? globalValue : oldValue.isPresent() && oldPriority > priority ? oldValue : currentValue;
+    }
+
+    public static <T> List<T> mergeList(List<T> currentList, List<T> oldList, int priority, int oldPriority) {
+        return mergeList(currentList, oldList, Optional.empty(), priority, oldPriority, Integer.MIN_VALUE);
     }
 
     /**
@@ -70,6 +82,10 @@ public class MergeUtil {
     }
 
 
+    public static <T> Optional<List<T>> mergeOptionalList(Optional<List<T>> currentList, Optional<List<T>> oldList, int priority, int oldPriority) {
+        return mergeOptionalList(currentList, oldList, Optional.empty(), priority, oldPriority, Integer.MIN_VALUE);
+    }
+
     /**
      * Creates a merged optional list of values present inside an optional current map,
      * old map, and global map.
@@ -104,6 +120,10 @@ public class MergeUtil {
         return Optional.of(ImmutableList.copyOf(list));
     }
 
+    public static <K, V> Map<K, V> mergeMap(Map<K, V> currentMap, Map<K, V> oldMap, int priority, int oldPriority) {
+        return mergeMap(currentMap, oldMap, Optional.empty(), priority, oldPriority, Integer.MIN_VALUE);
+    }
+
     /**
      * Creates a map out of values present inside a current map,
      * old map, and global map.
@@ -135,6 +155,10 @@ public class MergeUtil {
                 map.put(key, value);
         }));
         return ImmutableMap.copyOf(map);
+    }
+
+    public static <K, V> Optional<Map<K, V>> mergeOptionalMap(Optional<Map<K, V>> currentMap, Optional<Map<K, V>> oldMap, int priority, int oldPriority) {
+        return mergeOptionalMap(currentMap, oldMap, Optional.empty(), priority, oldPriority, Integer.MIN_VALUE);
     }
 
     /**

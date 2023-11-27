@@ -1,5 +1,7 @@
 package dev.greenhouseteam.enchantmentconfig.api.config.configuration;
 
+import org.jetbrains.annotations.ApiStatus;
+
 public interface EnchantmentConfiguration {
 
     /**
@@ -15,6 +17,7 @@ public interface EnchantmentConfiguration {
      */
     EnchantmentConfiguration merge(EnchantmentConfiguration oldConfiguration, int priority, int oldPriority);
 
+    @ApiStatus.Internal
     default EnchantmentConfiguration mergeInternal(EnchantmentConfiguration oldConfiguration, int priority, int oldPriority) {
         if (!isSameType(oldConfiguration)) {
             throw new ClassCastException("Could not merge enchantment configurations of different types.");
@@ -22,6 +25,7 @@ public interface EnchantmentConfiguration {
         return this.merge(oldConfiguration, priority, oldPriority);
     }
 
+    @ApiStatus.Internal
     default boolean isSameType(EnchantmentConfiguration oldConfiguration) {
         return oldConfiguration.getClass().isAssignableFrom(this.getClass());
     }

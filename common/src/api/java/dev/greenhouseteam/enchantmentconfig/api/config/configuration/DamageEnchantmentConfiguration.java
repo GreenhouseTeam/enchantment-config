@@ -28,8 +28,8 @@ public record DamageEnchantmentConfiguration(Optional<List<HolderSet<EntityType<
     public DamageEnchantmentConfiguration merge(EnchantmentConfiguration oldConfiguration, int priority, int oldPriority) {
         DamageEnchantmentConfiguration castedOld = (DamageEnchantmentConfiguration) oldConfiguration;
 
-        Optional<List<HolderSet<EntityType<?>>>> affectedEntities = MergeUtil.mergeOptionalList(this.affectedEntities(), castedOld.affectedEntities(), Optional.empty(), priority, oldPriority, 0);
-        Map<Integer, Float> damage = MergeUtil.mergeMap(this.damage(), castedOld.damage(), Optional.empty(), priority, oldPriority, 0);
+        Optional<List<HolderSet<EntityType<?>>>> affectedEntities = MergeUtil.mergeOptionalList(this.affectedEntities(), castedOld.affectedEntities(), priority, oldPriority);
+        Map<Integer, Float> damage = MergeUtil.mergeMap(this.damage(), castedOld.damage(), priority, oldPriority);
 
         return new DamageEnchantmentConfiguration(affectedEntities, damage);
     }
