@@ -16,7 +16,7 @@ license="${mod_license}"
 [[dependencies.${mod_id}]]
     modId="forge"
     mandatory=true
-    versionRange="${neo_version_range}"
+    versionRange="${neo_loader_version_range}"
     ordering="NONE"
     side="BOTH"
 [[dependencies.${mod_id}]]

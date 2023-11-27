@@ -1,4 +1,3 @@
-import net.fabricmc.loom.task.AbstractRemapJarTask
 import net.fabricmc.loom.task.RemapJarTask
 
 plugins {
@@ -18,7 +17,7 @@ dependencies {
     mappings loom.officialMojangMappings()
 }
 
-// Shoutouts to Witixin. https://gist.github.com/Witixin1512/bbb8484523ea6a0e8440f17621f89f95
+// Credits to Witixin. https://gist.github.com/Witixin1512/bbb8484523ea6a0e8440f17621f89f95
 tasks.register("remapApiJar", RemapJarTask,  task -> {
     final AbstractArchiveTask jarTask = project(":common").getTasks().named("apiJar", AbstractArchiveTask.class).get();
     task.dependsOn(jarTask)
