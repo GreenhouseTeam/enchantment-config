@@ -31,15 +31,9 @@ tasks.register("remapApiJar", RemapJarTask,  task -> {
     remapperIsolation = true
 })
 
-build.dependsOn remapApiJar
-
-tasks.withType(Jar).configureEach {
-    it.enabled = false
-}
-
-tasks.withType(AbstractRemapJarTask).configureEach {
-    if (it.name == "remapApiJar") return
-    it.enabled = false
+tasks.named('build').configure {
+    dependsOn.clear()
+    dependsOn('remapApiJar')
 }
 
 publishing {
