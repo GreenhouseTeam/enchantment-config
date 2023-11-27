@@ -15,7 +15,7 @@ import java.util.Optional;
 
 public record DamageEnchantmentConfiguration(Optional<List<HolderSet<EntityType<?>>>> affectedEntities,
                                              Map<Integer, Float> damage) implements EnchantmentConfiguration {
-    public static Codec<DamageEnchantmentConfiguration> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+    public static final Codec<DamageEnchantmentConfiguration> CODEC = RecordCodecBuilder.create(inst -> inst.group(
             EnchantmentConfigCodecs.defaultableCodec("affected_entities", Codec.list(EnchantmentConfigCodecs.tagOrElementCodec(Registries.ENTITY_TYPE))).forGetter(DamageEnchantmentConfiguration::affectedEntities),
             EnchantmentConfigCodecs.rangeAllowedIntegerCodec("level", "damage", EnchantmentConfigCodecs.FLOAT).fieldOf("damage").forGetter(DamageEnchantmentConfiguration::damage)
     ).apply(inst, DamageEnchantmentConfiguration::new));
@@ -25,12 +25,11 @@ public record DamageEnchantmentConfiguration(Optional<List<HolderSet<EntityType<
     }
 
     @Override
-    public DamageEnchantmentConfiguration merge(EnchantmentConfiguration oldConfiguration, Optional<EnchantmentConfiguration> globalConfiguration, int priority, int oldPriority, int globalPriority) {
+    public DamageEnchantmentConfiguration merge(EnchantmentConfiguration oldConfiguration, int priority, int oldPriority, int globalPriority) {
         DamageEnchantmentConfiguration castedOld = (DamageEnchantmentConfiguration) oldConfiguration;
-        Optional<DamageEnchantmentConfiguration> castedGlobal = globalConfiguration.map(c-> (DamageEnchantmentConfiguration)c);
 
-        Optional<List<HolderSet<EntityType<?>>>> affectedEntities = MergeUtil.mergeOptionalList(this.affectedEntities(), castedOld.affectedEntities(), castedGlobal.flatMap(DamageEnchantmentConfiguration::affectedEntities), priority, oldPriority, globalPriority);
-        Map<Integer, Float> damage = MergeUtil.mergeMap(this.damage(), castedOld.damage(), castedGlobal.map(DamageEnchantmentConfiguration::damage), priority, oldPriority, globalPriority);
+        Optional<List<HolderSet<EntityType<?>>>> affectedEntities = MergeUtil.mergeOptionalList(this.affectedEntities(), castedOld.affectedEntities(), Optional.empty(), priority, oldPriority, globalPriority);
+        Map<Integer, Float> damage = MergeUtil.mergeMap(this.damage(), castedOld.damage(), Optional.empty(), priority, oldPriority, globalPriority);
 
         return new DamageEnchantmentConfiguration(affectedEntities, damage);
     }

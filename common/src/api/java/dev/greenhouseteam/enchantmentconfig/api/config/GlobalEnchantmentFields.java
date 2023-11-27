@@ -46,7 +46,7 @@ public record GlobalEnchantmentFields(Optional<Integer> maxLevel,
                                       Optional<Boolean> tradeable,
                                       Optional<Boolean> treasure) {
 
-    public static MapCodec<GlobalEnchantmentFields> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
+    public static final MapCodec<GlobalEnchantmentFields> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
             EnchantmentConfigCodecs.defaultableCodec("max_level", EnchantmentConfigCodecs.INT).forGetter(GlobalEnchantmentFields::maxLevel),
             ExtraCodecs.strictOptionalField(EnchantmentConfigCodecs.mapCollectionCodec("base_value", "new_value", EnchantmentConfigCodecs.INT, EnchantmentConfigCodecs.INT), "effectiveness_overrides", Map.of()).forGetter(GlobalEnchantmentFields::effectivenessOverrides),
             EnchantmentConfigCodecs.defaultableCodec("incompatibilities", Codec.list(EnchantmentConfigCodecs.tagOrElementCodec(Registries.ENCHANTMENT))).forGetter(GlobalEnchantmentFields::incompatibilities),
