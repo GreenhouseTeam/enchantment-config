@@ -10,7 +10,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
  * enchantments. As vanilla does not register their enchantments
  * using resource keys.
  */
-public class VanillaEnchantmentResourcekeys {
+public class VanillaEnchantmentResourceKeys {
     /**
      * Gets the {@link ResourceKey} for a specified enchantment.
      *
