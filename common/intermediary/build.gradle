@@ -18,13 +18,26 @@ dependencies {
 }
 
 // Credits to Witixin. https://gist.github.com/Witixin1512/bbb8484523ea6a0e8440f17621f89f95
+tasks.register("remapCommonJar", RemapJarTask,  task -> {
+    final AbstractArchiveTask jarTask = project(":common").getTasks().named("jar", AbstractArchiveTask.class).get();
+    task.dependsOn(jarTask)
+
+    task.getInputFile().convention(jarTask.getArchiveFile())
+    task.archiveFileName.set(archiveFileName.get().replace(".jar", "-intermediary.jar"))
+    task.targetNamespace.set("intermediary")
+
+    remapperIsolation = true
+})
+
+// Credits to Witixin. https://gist.github.com/Witixin1512/bbb8484523ea6a0e8440f17621f89f95
 tasks.register("remapApiJar", RemapJarTask,  task -> {
     final AbstractArchiveTask jarTask = project(":common").getTasks().named("apiJar", AbstractArchiveTask.class).get();
     task.dependsOn(jarTask)
 
+    task.archiveClassifier = 'api'
+
     task.getInputFile().convention(jarTask.getArchiveFile())
-    task.dependsOn(project(":common").getTasks().named("apiJar"))
-    task.archiveFileName.set(archiveFileName.get().replace(".jar", "-api.jar"))
+    task.archiveFileName.set(archiveFileName.get().replace(".jar", "-intermediary.jar"))
     task.targetNamespace.set("intermediary")
 
     remapperIsolation = true
@@ -32,6 +45,7 @@ tasks.register("remapApiJar", RemapJarTask,  task -> {
 
 tasks.named('build').configure {
     dependsOn.clear()
+    dependsOn('remapCommonJar')
     dependsOn('remapApiJar')
 }
 
@@ -39,15 +53,30 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             artifactId base.archivesName.get()
+            artifact(remapCommonJar) {
+                builtBy remapCommonJar
+                classifier 'intermediary'
+            }
             artifact(remapApiJar) {
                 builtBy remapApiJar
-                classifier 'api'
+                classifier 'api-intermediary'
             }
         }
     }
     repositories {
         maven {
             url "file://" + System.getenv("local_maven")
+        }
+        maven {
+            name = "merchantpug"
+            url = "https://maven.merchantpug.net/releases"
+            credentials {
+                username System.getenv('MAVEN_USERNAME')
+                password System.getenv('MAVEN_PASSWORD')
+            }
+            authentication {
+                create("basic", BasicAuthentication)
+            }
         }
     }
 }

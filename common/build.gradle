@@ -62,11 +62,26 @@ publishing {
         mavenJava(MavenPublication) {
             artifactId base.archivesName.get()
             from components.java
+            artifact(apiJar) {
+                builtBy apiJar
+                classifier 'api'
+            }
         }
     }
     repositories {
         maven {
             url "file://" + System.getenv("local_maven")
+        }
+        maven {
+            name = "merchantpug"
+            url = "https://maven.merchantpug.net/releases"
+            credentials {
+                username System.getenv('MAVEN_USERNAME')
+                password System.getenv('MAVEN_PASSWORD')
+            }
+            authentication {
+                create("basic", BasicAuthentication)
+            }
         }
     }
 }

@@ -8,9 +8,11 @@ base {
     archivesName = "${archives_base_name}-fabric"
 }
 dependencies {
+
     minecraft "com.mojang:minecraft:${minecraft_version}"
     mappings loom.officialMojangMappings()
 
+    implementation 'com.google.code.gson:gson:2.10.1'
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
 
@@ -18,7 +20,6 @@ dependencies {
 
     implementation project(path: ':common', configuration: 'api')
     implementation project(":common")
-    include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:${mixin_extras_version}")))
 
     compileOnly group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
     testCompileOnly group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
@@ -31,6 +32,7 @@ loom {
     }
     mixin {
         defaultRefmapName.set("${mod_id}.refmap.json")
+        useLegacyMixinAp = false
     }
     runs {
         client {
@@ -73,6 +75,17 @@ publishing {
     repositories {
         maven {
             url "file://" + System.getenv("local_maven")
+        }
+        maven {
+            name = "merchantpug"
+            url = "https://maven.merchantpug.net/releases"
+            credentials {
+                username System.getenv('MAVEN_USERNAME')
+                password System.getenv('MAVEN_PASSWORD')
+            }
+            authentication {
+                create("basic", BasicAuthentication)
+            }
         }
     }
 }

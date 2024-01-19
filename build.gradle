@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.4-SNAPSHOT' apply(false)
+    id 'fabric-loom' version '1.5-SNAPSHOT' apply(false)
     id "org.jetbrains.gradle.plugin.idea-ext" version "1.1.7"
 }
 
@@ -61,9 +61,26 @@ subprojects {
     }
 
     processResources {
-        filesMatching(['pack.mcmeta', 'fabric.mod.json', 'mods.toml', '*.mixins.json']) {
-            expand project.properties
+        def expandProps = [
+                "version": version,
+                "group": project.group, //Else we target the task's group.
+                "minecraft_version": minecraft_version,
+                "minecraft_version_range": minecraft_version_range,
+                "fabric_version": fabric_version,
+                "fabric_loader_version": fabric_loader_version,
+                "mod_name": mod_name,
+                "mod_author": mod_author,
+                "mod_id": mod_id,
+                "description": project.description,
+                "neoforge_version": neo_version,
+                "neoforge_loader_version_range": neo_loader_version_range,
+                "pack_format_number": pack_format_number
+        ]
+
+        filesMatching(['pack.mcmeta', 'fabric.mod.json', 'META-INF/mods.toml', '*.mixins.json']) {
+            expand expandProps
         }
+        inputs.properties(expandProps)
     }
 
     // Disables Gradle's custom module metadata from being published to maven. The
