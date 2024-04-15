@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.5-SNAPSHOT' apply(false)
+    id 'fabric-loom' version '1.6-SNAPSHOT' apply(false)
     id "org.jetbrains.gradle.plugin.idea-ext" version "1.1.7"
 }
 
@@ -57,7 +57,7 @@ subprojects {
     tasks.withType(JavaCompile).configureEach {
     
         it.options.encoding = 'UTF-8'
-        it.options.getRelease().set(17)
+        it.options.getRelease().set(21)
     }
 
     processResources {
@@ -70,6 +70,7 @@ subprojects {
                 "fabric_loader_version": fabric_loader_version,
                 "mod_name": mod_name,
                 "mod_author": mod_author,
+                "mod_credits": mod_credits,
                 "mod_id": mod_id,
                 "description": project.description,
                 "neoforge_version": neo_version,
@@ -87,7 +88,6 @@ subprojects {
     // metadata includes mapped dependencies which are not reasonably consumable by
     // other mod developers.
     tasks.withType(GenerateModuleMetadata).configureEach {
-
         enabled = false
     }
 }

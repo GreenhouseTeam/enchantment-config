@@ -46,7 +46,8 @@ public class ExtraFieldsCodec extends MapCodec<Map<String, ?>> {
         for (Map.Entry<String, ExtraFieldType<?>> field : fields.entrySet()) {
             DataResult<T> result = field.getValue().objectCodec().encodeStart(ops, input.get(field.getKey()));
             result.error().ifPresent(e -> EnchantmentConfigUtil.LOGGER.error("Failed to encode extra field '{}' inside ExtraFieldsCodec. (Skipping): {}", field.getKey(), e));
-            builder.add(field.getKey(), result);
+            if (result.isSuccess())
+                builder.add(field.getKey(), result);
         }
 
         return builder;

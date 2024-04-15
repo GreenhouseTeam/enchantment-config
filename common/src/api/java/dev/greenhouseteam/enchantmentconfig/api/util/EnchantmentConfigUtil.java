@@ -1,5 +1,6 @@
 package dev.greenhouseteam.enchantmentconfig.api.util;
 
+import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigGetter;
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -16,11 +17,11 @@ public class EnchantmentConfigUtil {
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_NAME);
 
     public static boolean hasEffectivenessOverride(EnchantmentType<?> enchantment, int level) {
-        return IEnchantmentConfigGetter.INSTANCE.getConfig(enchantment).getGlobalFields().effectivenessOverrides().containsKey(level);
+        return EnchantmentConfigGetter.INSTANCE.getConfig(enchantment).getGlobalFields().effectivenessOverrides().containsKey(level);
     }
 
     public static int getEffectivenessOverride(EnchantmentType<?> enchantment, int level) {
-        return IEnchantmentConfigGetter.INSTANCE.getConfig(enchantment).getGlobalFields().effectivenessOverrides().getOrDefault(level, level);
+        return EnchantmentConfigGetter.INSTANCE.getConfig(enchantment).getGlobalFields().effectivenessOverrides().getOrDefault(level, level);
     }
 
     public static boolean isCompatible(EnchantmentType<?> enchantment, EnchantmentType<?> other) {
@@ -31,7 +32,7 @@ public class EnchantmentConfigUtil {
         if (enchantment.getEnchantment() == null || other.getEnchantment() == null)
             return false;
 
-        return IEnchantmentConfigGetter.INSTANCE.getConfig(enchantment).getGlobalFields().incompatibilities().isPresent() ? IEnchantmentConfigGetter.INSTANCE.getConfig(enchantment).getGlobalFields().incompatibilities().get().stream().anyMatch(holders -> holders.contains(BuiltInRegistries.ENCHANTMENT.getHolderOrThrow(other.getEnchantment()))) : Objects.requireNonNull(BuiltInRegistries.ENCHANTMENT.get(enchantment.getEnchantment())).isCompatibleWith(Objects.requireNonNull(BuiltInRegistries.ENCHANTMENT.get(other.getEnchantment())));
+        return EnchantmentConfigGetter.INSTANCE.getConfig(enchantment).getGlobalFields().incompatibilities().isPresent() ? EnchantmentConfigGetter.INSTANCE.getConfig(enchantment).getGlobalFields().incompatibilities().get().stream().anyMatch(holders -> holders.contains(BuiltInRegistries.ENCHANTMENT.getHolderOrThrow(other.getEnchantment()))) : Objects.requireNonNull(BuiltInRegistries.ENCHANTMENT.get(enchantment.getEnchantment())).isCompatibleWith(Objects.requireNonNull(BuiltInRegistries.ENCHANTMENT.get(other.getEnchantment())));
     }
 
     public static float getFloatFromLevel(int level, float original, Map<Integer, Float> levelToValueMap) {

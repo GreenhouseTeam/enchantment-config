@@ -48,9 +48,6 @@ dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
     implementation project(path: ':common', configuration: 'api')
     compileOnly project(":common")
-
-    compileOnly group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
-    annotationProcessor group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
 }
 
 // NeoGradle compiles the game, but we don't want to add our common code to the game's code

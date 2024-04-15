@@ -31,11 +31,10 @@ minecraft {
 }
 
 dependencies {
+    apiCompileOnly project(path: ':common')
+
     compileOnly group:'org.spongepowered', name:'mixin', version:'0.8.5'
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
-
-    compileOnly group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
-    annotationProcessor group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
 
     annotationProcessor "io.github.llamalad7:mixinextras-common:${mixin_extras_version}"
 }
@@ -55,7 +54,7 @@ artifacts {
     api apiJar
 }
 
-build.dependsOn apiJar
+assemble.dependsOn apiJar
 
 publishing {
     publications {

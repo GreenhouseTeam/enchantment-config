@@ -2,36 +2,32 @@ package dev.greenhouseteam.enchantmentconfig.api.config;
 
 import com.google.common.collect.ImmutableMap;
 import dev.greenhouseteam.enchantmentconfig.api.config.configuration.EnchantmentConfiguration;
+import dev.greenhouseteam.enchantmentconfig.api.config.configuration.GlobalEnchantmentFields;
+import dev.greenhouseteam.enchantmentconfig.api.config.field.ExtraFieldType;
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
 import dev.greenhouseteam.enchantmentconfig.api.util.MergeUtil;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 public class ConfiguredEnchantment<C extends EnchantmentConfiguration, T extends EnchantmentType<C>> {
 
-    private final int priority;
     private final T type;
     private final C configuration;
     private final GlobalEnchantmentFields globalFields;
     private final Map<String, Object> extraFields;
 
-    public ConfiguredEnchantment(int priority,
-                                 T type,
+    public ConfiguredEnchantment(T type,
                                  C configuration,
                                  GlobalEnchantmentFields globalFields,
                                  Map<String, ?> extraFields) {
-        this.priority = priority;
         this.type = type;
         this.configuration = configuration;
         this.globalFields = globalFields;
         ImmutableMap.Builder<String, Object> remappedExtraFields = ImmutableMap.builder();
         extraFields.forEach(remappedExtraFields::put);
         this.extraFields = remappedExtraFields.build();
-    }
-
-    public int getPriority() {
-        return this.priority;
     }
 
     public T getType() {
@@ -72,16 +68,19 @@ public class ConfiguredEnchantment<C extends EnchantmentConfiguration, T extends
         return (F) object;
     }
 
-    public ConfiguredEnchantment<C, T> merge(ConfiguredEnchantment<C, T> oldConfigured, Optional<ConfiguredEnchantment<C, T>> globalConfigured, int priority, int oldPriority, int globalPriority) {
-        int newPriority = Math.max(priority, oldPriority);
+    public ConfiguredEnchantment<C, T> merge(ConfiguredEnchantment<C, T> oldConfigured, Optional<ConfiguredEnchantment<C, T>> globalConfigured) {
+        C configuration = (C) this.getConfiguration().mergeInternal(oldConfigured.getConfiguration());
 
-        C configuration = (C) this.getConfiguration().mergeInternal(oldConfigured.getConfiguration(), priority, oldPriority);
+        GlobalEnchantmentFields globalFields = this.getGlobalFields().merge(oldConfigured.getGlobalFields(), globalConfigured.map(ConfiguredEnchantment::getGlobalFields));
 
-        GlobalEnchantmentFields globalFields = this.getGlobalFields().merge(oldConfigured.getGlobalFields(), globalConfigured.map(ConfiguredEnchantment::getGlobalFields), priority, oldPriority, globalPriority);
+        Map<String, Object> extraFields = new HashMap<>();
+        for (String key : getExtraFields().keySet()) {
+            ExtraFieldType<Object> extraType = (ExtraFieldType<Object>) type.getExtraFieldTypes().get(key);
+            Object merged = extraType.merge(getExtraFields().get(key), oldConfigured.getExtraFields().get(key));
+            extraFields.put(key, merged);
+        }
 
-        Map<String, Object> extraFields = MergeUtil.mergeMap(this.getExtraFields(), oldConfigured.getExtraFields(), priority, oldPriority);
-
-        return new ConfiguredEnchantment<>(newPriority, this.getType(), configuration, globalFields, extraFields);
+        return new ConfiguredEnchantment<>(this.getType(), configuration, globalFields, extraFields);
     }
 
 }

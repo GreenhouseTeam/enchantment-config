@@ -20,10 +20,6 @@ dependencies {
 
     implementation project(path: ':common', configuration: 'api')
     implementation project(":common")
-
-    compileOnly group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
-    testCompileOnly group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
-    annotationProcessor group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
 }
 
 loom {

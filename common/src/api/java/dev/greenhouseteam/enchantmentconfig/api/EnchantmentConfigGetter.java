@@ -1,14 +1,14 @@
-package dev.greenhouseteam.enchantmentconfig.api.util;
+package dev.greenhouseteam.enchantmentconfig.api;
 
 import dev.greenhouseteam.enchantmentconfig.api.config.ConfiguredEnchantment;
 import dev.greenhouseteam.enchantmentconfig.api.config.configuration.EnchantmentConfiguration;
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
-import dev.greenhouseteam.enchantmentconfig.platform.Services;
+import dev.greenhouseteam.enchantmentconfig.impl.EnchantmentConfigGetterImpl;
 import net.minecraft.core.RegistryAccess;
 import org.jetbrains.annotations.Nullable;
 
-public interface IEnchantmentConfigGetter {
-    IEnchantmentConfigGetter INSTANCE = Services.load(IEnchantmentConfigGetter.class);
+public interface EnchantmentConfigGetter {
+    EnchantmentConfigGetter INSTANCE = new EnchantmentConfigGetterImpl();
 
     <C extends EnchantmentConfiguration, T extends EnchantmentType<C>> ConfiguredEnchantment<C, T> getConfig(T type);
 

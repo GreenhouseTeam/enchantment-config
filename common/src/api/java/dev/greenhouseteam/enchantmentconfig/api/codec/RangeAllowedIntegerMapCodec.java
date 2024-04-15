@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class RangeAllowedIntegerMapCodec<V> extends MapCollectionCodec<Integer, V> {
 
     public RangeAllowedIntegerMapCodec(String keyName, String elementName, Codec<V> elementCodec) {
-        super(keyName, elementName, EnchantmentConfigCodecs.INT, elementCodec);
+        super(keyName, elementName, Codec.INT, elementCodec);
     }
 
     @Override
