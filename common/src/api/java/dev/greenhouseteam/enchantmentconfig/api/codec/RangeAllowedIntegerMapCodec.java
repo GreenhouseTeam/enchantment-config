@@ -46,17 +46,17 @@ public class RangeAllowedIntegerMapCodec<V> extends MapCollectionCodec<Integer, 
                     final DataResult<T> valueResult = ops.get(val, valueName);
 
                     if (minResult.isSuccess() || maxResult.isSuccess() || valueResult.isSuccess()) {
-                        if (minResult.result().isEmpty()) {
+                        if (minResult.isError()) {
                             failed.add(val);
                             errorMessage.add("Failed to find 'min' field");
                         }
 
-                        if (maxResult.result().isEmpty()) {
+                        if (maxResult.isError()) {
                             failed.add(val);
                             errorMessage.add("Failed to find 'max' field");
                         }
 
-                        if (valueResult.result().isEmpty()) {
+                        if (valueResult.isError()) {
                             failed.add(val);
                             errorMessage.add("Failed to find '" + valueName + "' field");
                         }
