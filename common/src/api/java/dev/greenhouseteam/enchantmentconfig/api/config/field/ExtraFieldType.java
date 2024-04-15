@@ -1,7 +1,6 @@
 package dev.greenhouseteam.enchantmentconfig.api.config.field;
 
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DynamicOps;
 import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigAssigner;
 import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigGetter;
 import net.minecraft.resources.ResourceKey;
@@ -11,13 +10,13 @@ import java.util.Objects;
 
 /**
  * A class that specifies the type of extra field and its related codec.
- * Used in {@link EnchantmentConfigAssigner#addExtraField(ResourceKey, String, ExtraFieldType)}.
+ * Used in {@link EnchantmentConfigAssigner#addExtraField(ResourceKey, ExtraFieldType)}.
  * Developers are able to get their extra fields from {@link EnchantmentConfigGetter#}
  *
  * @param codec The codec for this extra field type, used for serializing and deserializing.
  * @param <T>   The type of this extra field.
  */
-public record ExtraFieldType<T>(Codec<T> codec) {
+public record ExtraFieldType<T>(String key, Codec<T> codec) {
 
     @Override
     public boolean equals(Object other) {

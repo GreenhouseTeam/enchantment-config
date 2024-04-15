@@ -45,22 +45,18 @@ public class ConfiguredEnchantment<C extends EnchantmentConfiguration, T extends
     /**
      * Retrieves an extra field of this enchantment.
      *
-     * @param key                   The JSON key of the field.
-     * @param castClass             The class of the field.
+     * @param type                  The ExtraFieldType to get.
      *
      * @return                      Returns the field of the specified name
      *
      * @param <F>                   The type of the castClass field.
      * @throws  ClassCastException  If the value cannot be cast to the class cast field.
      */
-    public <F> F getExtraField(String key, Class<F> castClass) {
-        if (!extraFields.containsKey(key))
+    public <F> F getExtraField(ExtraFieldType<F> type) {
+        if (!extraFields.containsKey(type.key()))
             return null;
 
-        Object object = extraFields.get(key);
-        if (!object.getClass().isAssignableFrom(castClass)) {
-            throw new ClassCastException("Attempted to cast incorrect field type to extra field object '" + key + "'.");
-        }
+        Object object = extraFields.get(type.key());
         return (F) object;
     }
 

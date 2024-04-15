@@ -19,11 +19,13 @@
     "environment": "*",
     "entrypoints": {
         "main": [
-          "dev.greenhouseteam.enchantmentconfig.impl.EnchantmentConfigFabric"
+            "dev.greenhouseteam.enchantmentconfig.impl.EnchantmentConfigFabric"
+        ],
+        "enchantmentconfig": [
+            "dev.greenhouseteam.enchantmentconfig.impl.vanilla.VanillaEnchantmentConfigEntry"
         ]
     },
     "mixins": [
-        "enchantmentconfigapi.mixins.json",
         "enchantmentconfig.mixins.json",
         "enchantmentconfig.fabric.mixins.json"
     ],

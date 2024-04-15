@@ -1,15 +1,12 @@
 package dev.greenhouseteam.enchantmentconfig.platform;
 
-import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
-import dev.greenhouseteam.enchantmentconfig.impl.EnchantmentConfigRegistries;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 
-public class EnchantmentConfigPlatformHelperFabric implements EnchantmentConfigPlatformHelper {
+public class EnchantmentConfigPlatformHelperFabric implements EnchantmentConfigPlatformHelperMain {
 
     @Override
     public Platform getPlatform() {

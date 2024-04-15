@@ -2,14 +2,18 @@ package dev.greenhouseteam.enchantmentconfig.api.util;
 
 import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigGetter;
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
+import dev.greenhouseteam.enchantmentconfig.platform.EnchantmentConfigPlatformHelper;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.enchantment.Enchantment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 public class EnchantmentConfigUtil {
     public static final String MOD_ID = "enchantmentconfig";
@@ -24,15 +28,18 @@ public class EnchantmentConfigUtil {
         return EnchantmentConfigGetter.INSTANCE.getConfig(enchantment).getGlobalFields().effectivenessOverrides().getOrDefault(level, level);
     }
 
-    public static boolean isCompatible(EnchantmentType<?> enchantment, EnchantmentType<?> other) {
-        return checkCompatibility(enchantment, other) && checkCompatibility(other, enchantment);
+    public static Optional<Boolean> isCompatible(Enchantment enchantment, Enchantment other) {
+        Optional<Boolean> optional = checkCompatibility(enchantment, other);
+        Optional<Boolean> otherOptional = checkCompatibility(other, enchantment);
+        return optional.isPresent() && otherOptional.isPresent() ? Optional.of(optional.get() && otherOptional.get()) : optional.isPresent() ? optional : otherOptional;
     }
 
-    private static boolean checkCompatibility(EnchantmentType<?> enchantment, EnchantmentType<?> other) {
-        if (enchantment.getEnchantment() == null || other.getEnchantment() == null)
-            return false;
+    private static Optional<Boolean> checkCompatibility(Enchantment enchantment, Enchantment other) {
+        EnchantmentType<?> type = EnchantmentConfigGetter.INSTANCE.getConfig(enchantment, true).getType();
+        if (type.getEnchantment() == null)
+            return Optional.empty();
 
-        return EnchantmentConfigGetter.INSTANCE.getConfig(enchantment).getGlobalFields().incompatibilities().isPresent() ? EnchantmentConfigGetter.INSTANCE.getConfig(enchantment).getGlobalFields().incompatibilities().get().stream().anyMatch(holders -> holders.contains(BuiltInRegistries.ENCHANTMENT.getHolderOrThrow(other.getEnchantment()))) : Objects.requireNonNull(BuiltInRegistries.ENCHANTMENT.get(enchantment.getEnchantment())).isCompatibleWith(Objects.requireNonNull(BuiltInRegistries.ENCHANTMENT.get(other.getEnchantment())));
+        return EnchantmentConfigGetter.INSTANCE.getConfig(type).getGlobalFields().incompatibilities().isPresent() ? Optional.of(EnchantmentConfigGetter.INSTANCE.getConfig(type).getGlobalFields().incompatibilities().get().stream().anyMatch(holders -> holders.contains(other.builtInRegistryHolder()))) : Optional.empty();
     }
 
     public static float getFloatFromLevel(int level, float original, Map<Integer, Float> levelToValueMap) {
@@ -75,4 +82,13 @@ public class EnchantmentConfigUtil {
         return new ResourceLocation(MOD_ID, path);
     }
 
+    private static EnchantmentConfigPlatformHelper helper;
+
+    public static void init(EnchantmentConfigPlatformHelper helper) {
+        EnchantmentConfigUtil.helper = helper;
+    }
+
+    public static EnchantmentConfigPlatformHelper getHelper() {
+        return helper;
+    }
 }

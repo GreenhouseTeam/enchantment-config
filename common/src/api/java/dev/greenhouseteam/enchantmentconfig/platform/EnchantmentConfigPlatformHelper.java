@@ -1,5 +1,6 @@
 package dev.greenhouseteam.enchantmentconfig.platform;
 
+import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigGetter;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 
@@ -32,4 +33,7 @@ public interface EnchantmentConfigPlatformHelper {
      * @return The enchantment type registry.
      */
     <T> Registry<T> createRegistry(ResourceKey<Registry<T>> key);
+
+    EnchantmentConfigGetter createGetter();
+
 }

@@ -14,20 +14,20 @@ import java.util.Map;
 public class EnchantmentConfigAssignerImpl implements EnchantmentConfigAssigner {
     private static final Map<ResourceKey<EnchantmentType<?>>, EnchantmentType<?>> ENCHANTMENT_TYPE_MAP = new HashMap<>();
 
-    public <T extends EnchantmentType<C>, C extends EnchantmentConfiguration> T registerEnchantmentType(T enchantmentType) {
+    public <T extends EnchantmentType<C>, C extends EnchantmentConfiguration> void registerEnchantmentType(T enchantmentType) {
         ENCHANTMENT_TYPE_MAP.put(ResourceKey.create(EnchantmentConfigRegistryKeys.ENCHANTMENT_TYPE_KEY, enchantmentType.getPath()), enchantmentType);
-        return enchantmentType;
     }
 
     @Override
-    public void addExtraField(ResourceKey<EnchantmentType<?>> enchantmentType, String path, ExtraFieldType<?> extraFieldType) {
-        if (!EnchantmentConfigRegistries.ENCHANTMENT_TYPE_REGISTRY.containsKey(enchantmentType)) {
-            throw new NullPointerException("Tried adding field to EnchantmentType '" + enchantmentType.location() + "', which could not be found in the enchantment type registry.");
+    public void addExtraField(ResourceKey<EnchantmentType<?>> enchantmentType, ExtraFieldType<?> extraFieldType) {
+        if (!EnchantmentConfigRegistries.ENCHANTMENT_TYPE.containsKey(enchantmentType)) {
+            throw new NullPointerException("Tried adding field to EnchantmentType '" + enchantmentType.location() + "', which could not be found in the enchantment type registry. You may have also added a field too late.");
         }
-        ENCHANTMENT_TYPE_MAP.get(enchantmentType).addExtraFieldType(path, extraFieldType);
+        ENCHANTMENT_TYPE_MAP.get(enchantmentType).addExtraFieldType(extraFieldType.key(), extraFieldType);
     }
 
-    public static void registerTypes(RegistrationCallback<EnchantmentType<?>> callback) {
-        ENCHANTMENT_TYPE_MAP.forEach((key, type) -> callback.register(EnchantmentConfigRegistries.ENCHANTMENT_TYPE_REGISTRY, key.location(), type));
+    protected void registerTypes(RegistrationCallback<EnchantmentType<?>> callback) {
+        ENCHANTMENT_TYPE_MAP.forEach((key, type) -> callback.register(EnchantmentConfigRegistries.ENCHANTMENT_TYPE, key.location(), type));
+        ENCHANTMENT_TYPE_MAP.clear();
     }
 }
