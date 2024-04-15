@@ -1,6 +1,7 @@
 package dev.greenhouseteam.enchantmentconfig.api.config.configuration;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.greenhouseteam.enchantmentconfig.api.codec.EnchantmentConfigCodecs;
 import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
@@ -17,7 +18,7 @@ import java.util.Optional;
 
 public record DamageEnchantmentConfiguration(Optional<List<HolderSet<EntityType<?>>>> affectedEntities,
                                              Map<Integer, Float> damage) implements EnchantmentConfiguration {
-    public static final Codec<DamageEnchantmentConfiguration> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+    public static final MapCodec<DamageEnchantmentConfiguration> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
             EnchantmentConfigCodecs.defaultableCodec("affected_entities", Codec.list(RegistryCodecs.homogeneousList(Registries.ENTITY_TYPE, BuiltInRegistries.ENTITY_TYPE.byNameCodec()))).forGetter(DamageEnchantmentConfiguration::affectedEntities),
             EnchantmentConfigCodecs.rangeAllowedIntegerCodec("level", "damage", Codec.FLOAT).fieldOf("damage").forGetter(DamageEnchantmentConfiguration::damage)
     ).apply(inst, DamageEnchantmentConfiguration::new));
