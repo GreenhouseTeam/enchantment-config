@@ -12,6 +12,7 @@ import dev.greenhouseteam.enchantmentconfig.api.config.configuration.GlobalEncha
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.enchantment.Enchantment;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -73,6 +74,7 @@ public class EnchantmentType<T extends EnchantmentConfiguration> {
         this.extraFieldTypes.put(path, extraFieldType);
     }
 
+    @ApiStatus.Internal
     public Codec<ConfiguredEnchantment<T, EnchantmentType<T>>> codec() {
         return RecordCodecBuilder.create(inst -> inst.group(
                 codec.forGetter(ConfiguredEnchantment::getConfiguration),

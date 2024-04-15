@@ -23,6 +23,7 @@ public class EnchantmentConfigFabric implements ModInitializer {
         EnchantmentConfigAssignerImpl assigner = new EnchantmentConfigAssignerImpl();
         FabricLoader.getInstance().getEntrypoints("enchantmentconfig", EnchantmentConfigPlugin.class).forEach(entryPoint -> entryPoint.register(assigner));
         assigner.registerTypes(Registry::register);
+        assigner.registerCodecs(Registry::register);
 
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new EnchantmentConfigLoaderFabric());
     }

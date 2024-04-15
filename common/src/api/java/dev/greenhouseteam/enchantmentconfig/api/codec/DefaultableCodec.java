@@ -15,7 +15,7 @@ public class DefaultableCodec<A> extends OptionalFieldCodec<A> {
     private final String capturedName;
     private final Codec<A> capturedCodec;
 
-    public DefaultableCodec(final String name, final Codec<A> elementCodec) {
+    protected DefaultableCodec(final String name, final Codec<A> elementCodec) {
         super(name, elementCodec, false);
         this.capturedName = name;
         this.capturedCodec = elementCodec;

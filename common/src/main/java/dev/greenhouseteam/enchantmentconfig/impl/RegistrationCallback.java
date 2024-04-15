@@ -1,4 +1,4 @@
-package dev.greenhouseteam.enchantmentconfig.impl.util;
+package dev.greenhouseteam.enchantmentconfig.impl;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;

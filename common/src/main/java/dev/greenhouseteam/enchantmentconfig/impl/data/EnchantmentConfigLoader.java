@@ -11,7 +11,7 @@ import dev.greenhouseteam.enchantmentconfig.api.config.ConfiguredEnchantment;
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
 import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
 import dev.greenhouseteam.enchantmentconfig.impl.EnchantmentConfigGetterImpl;
-import dev.greenhouseteam.enchantmentconfig.impl.registries.EnchantmentConfigRegistries;
+import dev.greenhouseteam.enchantmentconfig.api.registries.EnchantmentConfigRegistries;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;

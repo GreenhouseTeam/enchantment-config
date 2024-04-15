@@ -9,10 +9,12 @@ import com.mojang.serialization.MapLike;
 import com.mojang.serialization.RecordBuilder;
 import dev.greenhouseteam.enchantmentconfig.api.config.field.ExtraFieldType;
 import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Map;
 import java.util.stream.Stream;
 
+@ApiStatus.Internal
 public class ExtraFieldsCodec extends MapCodec<Map<String, ?>> {
     private final Map<String, ExtraFieldType<?>> fields;
 

@@ -23,7 +23,7 @@ public class MapCollectionCodec<K, V> implements Codec<Map<K, V>> {
     protected final Codec<K> keyCodec;
     protected final Codec<V> valueCodec;
 
-    public MapCollectionCodec(String keyName, String valueName, Codec<K> keyCodec, Codec<V> valueCodec) {
+    protected MapCollectionCodec(String keyName, String valueName, Codec<K> keyCodec, Codec<V> valueCodec) {
         this.keyName = keyName;
         this.valueName = valueName;
         this.keyCodec = keyCodec;
