@@ -5,7 +5,6 @@ import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigGetter;
 import dev.greenhouseteam.enchantmentconfig.api.config.ConfiguredEnchantment;
 import dev.greenhouseteam.enchantmentconfig.api.config.configuration.EnchantmentConfiguration;
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
-import net.minecraft.core.RegistryAccess;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;

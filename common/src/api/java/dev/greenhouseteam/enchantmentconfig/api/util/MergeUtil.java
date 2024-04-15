@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public class MergeUtil {
 
-    public static <T> T mergePrimitive(T currentValue, T oldValue, int priority, int oldPriority) {
+    public static <T> T mergePrimitive(T currentValue, T oldValue) {
         return mergePrimitive(currentValue, oldValue, Optional.empty());
     }
 

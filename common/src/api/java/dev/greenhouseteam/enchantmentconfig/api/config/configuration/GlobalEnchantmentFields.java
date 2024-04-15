@@ -68,16 +68,16 @@ public record GlobalEnchantmentFields(Optional<Integer> maxLevel,
      * @return                      A merged EnchantmentConfiguration.
      */
     public GlobalEnchantmentFields merge(GlobalEnchantmentFields oldConfiguration, Optional<GlobalEnchantmentFields> globalConfiguration) {
-        Optional<Integer> maxLevel = MergeUtil.mergePrimitiveOptional(this.maxLevel(), oldConfiguration.maxLevel(), globalConfiguration.flatMap(GlobalEnchantmentFields::maxLevel));
+        Optional<Integer> maxLevel = MergeUtil.mergePrimitiveOptional(maxLevel(), oldConfiguration.maxLevel(), globalConfiguration.flatMap(GlobalEnchantmentFields::maxLevel));
 
-        Map<Integer, Integer> effectivenessOverrides = MergeUtil.mergeMap(this.effectivenessOverrides(), oldConfiguration.effectivenessOverrides(), globalConfiguration.map(GlobalEnchantmentFields::effectivenessOverrides));
+        Map<Integer, Integer> effectivenessOverrides = MergeUtil.mergeMap(effectivenessOverrides(), oldConfiguration.effectivenessOverrides(), globalConfiguration.map(GlobalEnchantmentFields::effectivenessOverrides));
 
-        Optional<List<HolderSet<Enchantment>>> incompatibilities = MergeUtil.mergeOptionalList(this.incompatibilities(), oldConfiguration.incompatibilities(), globalConfiguration.flatMap(GlobalEnchantmentFields::incompatibilities));
+        Optional<List<HolderSet<Enchantment>>> incompatibilities = MergeUtil.mergeOptionalList(incompatibilities(), oldConfiguration.incompatibilities(), globalConfiguration.flatMap(GlobalEnchantmentFields::incompatibilities));
 
-        Map<ItemAndTagMix, Integer> enchantingTableWeight = MergeUtil.mergeMap(this.enchantingTableWeight(), oldConfiguration.enchantingTableWeight(), globalConfiguration.map(GlobalEnchantmentFields::enchantingTableWeight));
+        Map<ItemAndTagMix, Integer> enchantingTableWeight = MergeUtil.mergeMap(enchantingTableWeight(), oldConfiguration.enchantingTableWeight(), globalConfiguration.map(GlobalEnchantmentFields::enchantingTableWeight));
 
-        Optional<Boolean> tradeable = MergeUtil.mergePrimitiveOptional(this.tradeable(), oldConfiguration.tradeable(), globalConfiguration.flatMap(GlobalEnchantmentFields::tradeable));
-        Optional<Boolean> treasure = MergeUtil.mergePrimitiveOptional(this.treasure(), oldConfiguration.treasure(), globalConfiguration.flatMap(GlobalEnchantmentFields::treasure));
+        Optional<Boolean> tradeable = MergeUtil.mergePrimitiveOptional(tradeable(), oldConfiguration.tradeable(), globalConfiguration.flatMap(GlobalEnchantmentFields::tradeable));
+        Optional<Boolean> treasure = MergeUtil.mergePrimitiveOptional(treasure(), oldConfiguration.treasure(), globalConfiguration.flatMap(GlobalEnchantmentFields::treasure));
 
         return new GlobalEnchantmentFields(maxLevel, effectivenessOverrides, incompatibilities, enchantingTableWeight, tradeable, treasure);
     }

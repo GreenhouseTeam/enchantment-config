@@ -4,7 +4,6 @@ import dev.greenhouseteam.enchantmentconfig.api.config.ConfiguredEnchantment;
 import dev.greenhouseteam.enchantmentconfig.api.config.configuration.EnchantmentConfiguration;
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
 import dev.greenhouseteam.enchantmentconfig.impl.EnchantmentConfigGetterImpl;
-import net.minecraft.core.RegistryAccess;
 import org.jetbrains.annotations.Nullable;
 
 public interface EnchantmentConfigGetter {
@@ -31,6 +30,4 @@ public interface EnchantmentConfigGetter {
      */
     @Nullable
     <T> T getExtraField(EnchantmentType<?> key, String path, Class<T> castClass);
-
-    RegistryAccess getRegistryAccess();
 }

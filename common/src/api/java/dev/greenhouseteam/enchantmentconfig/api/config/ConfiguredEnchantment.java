@@ -1,11 +1,9 @@
 package dev.greenhouseteam.enchantmentconfig.api.config;
 
-import com.google.common.collect.ImmutableMap;
 import dev.greenhouseteam.enchantmentconfig.api.config.configuration.EnchantmentConfiguration;
 import dev.greenhouseteam.enchantmentconfig.api.config.configuration.GlobalEnchantmentFields;
 import dev.greenhouseteam.enchantmentconfig.api.config.field.ExtraFieldType;
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
-import dev.greenhouseteam.enchantmentconfig.api.util.MergeUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,25 +23,23 @@ public class ConfiguredEnchantment<C extends EnchantmentConfiguration, T extends
         this.type = type;
         this.configuration = configuration;
         this.globalFields = globalFields;
-        ImmutableMap.Builder<String, Object> remappedExtraFields = ImmutableMap.builder();
-        extraFields.forEach(remappedExtraFields::put);
-        this.extraFields = remappedExtraFields.build();
+        this.extraFields = (Map<String, Object>) extraFields;
     }
 
     public T getType() {
-        return this.type;
+        return type;
     }
 
     public C getConfiguration() {
-        return this.configuration;
+        return configuration;
     }
 
     public GlobalEnchantmentFields getGlobalFields() {
-        return this.globalFields;
+        return globalFields;
     }
 
     public Map<String, Object> getExtraFields() {
-        return this.extraFields;
+        return extraFields;
     }
 
     /**
@@ -58,10 +54,10 @@ public class ConfiguredEnchantment<C extends EnchantmentConfiguration, T extends
      * @throws  ClassCastException  If the value cannot be cast to the class cast field.
      */
     public <F> F getExtraField(String key, Class<F> castClass) {
-        if (!this.extraFields.containsKey(key))
+        if (!extraFields.containsKey(key))
             return null;
 
-        Object object = this.extraFields.get(key);
+        Object object = extraFields.get(key);
         if (!object.getClass().isAssignableFrom(castClass)) {
             throw new ClassCastException("Attempted to cast incorrect field type to extra field object '" + key + "'.");
         }
@@ -69,9 +65,9 @@ public class ConfiguredEnchantment<C extends EnchantmentConfiguration, T extends
     }
 
     public ConfiguredEnchantment<C, T> merge(ConfiguredEnchantment<C, T> oldConfigured, Optional<ConfiguredEnchantment<C, T>> globalConfigured) {
-        C configuration = (C) this.getConfiguration().mergeInternal(oldConfigured.getConfiguration());
+        C configuration = (C) getConfiguration().mergeInternal(oldConfigured.getConfiguration());
 
-        GlobalEnchantmentFields globalFields = this.getGlobalFields().merge(oldConfigured.getGlobalFields(), globalConfigured.map(ConfiguredEnchantment::getGlobalFields));
+        GlobalEnchantmentFields globalFields = getGlobalFields().merge(oldConfigured.getGlobalFields(), globalConfigured.map(ConfiguredEnchantment::getGlobalFields));
 
         Map<String, Object> extraFields = new HashMap<>();
         for (String key : getExtraFields().keySet()) {
@@ -80,7 +76,7 @@ public class ConfiguredEnchantment<C extends EnchantmentConfiguration, T extends
             extraFields.put(key, merged);
         }
 
-        return new ConfiguredEnchantment<>(this.getType(), configuration, globalFields, extraFields);
+        return new ConfiguredEnchantment<>(getType(), configuration, globalFields, extraFields);
     }
 
 }
