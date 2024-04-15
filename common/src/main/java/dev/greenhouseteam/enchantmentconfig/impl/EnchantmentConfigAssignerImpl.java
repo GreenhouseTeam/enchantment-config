@@ -1,10 +1,11 @@
 package dev.greenhouseteam.enchantmentconfig.impl;
 
 import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigAssigner;
-import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigRegistryKeys;
+import dev.greenhouseteam.enchantmentconfig.api.registries.EnchantmentConfigRegistryKeys;
 import dev.greenhouseteam.enchantmentconfig.api.config.configuration.EnchantmentConfiguration;
 import dev.greenhouseteam.enchantmentconfig.api.config.field.ExtraFieldType;
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
+import dev.greenhouseteam.enchantmentconfig.impl.registries.EnchantmentConfigRegistries;
 import dev.greenhouseteam.enchantmentconfig.impl.util.RegistrationCallback;
 import net.minecraft.resources.ResourceKey;
 

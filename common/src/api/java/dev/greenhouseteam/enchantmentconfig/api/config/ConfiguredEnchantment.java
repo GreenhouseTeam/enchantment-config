@@ -4,13 +4,13 @@ import dev.greenhouseteam.enchantmentconfig.api.config.configuration.Enchantment
 import dev.greenhouseteam.enchantmentconfig.api.config.configuration.GlobalEnchantmentFields;
 import dev.greenhouseteam.enchantmentconfig.api.config.field.ExtraFieldType;
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 public class ConfiguredEnchantment<C extends EnchantmentConfiguration, T extends EnchantmentType<C>> {
-
     private final T type;
     private final C configuration;
     private final GlobalEnchantmentFields globalFields;
@@ -60,7 +60,11 @@ public class ConfiguredEnchantment<C extends EnchantmentConfiguration, T extends
         return (F) object;
     }
 
-    public ConfiguredEnchantment<C, T> merge(ConfiguredEnchantment<C, T> oldConfigured, Optional<ConfiguredEnchantment<C, T>> globalConfigured) {
+    @ApiStatus.Internal
+    public ConfiguredEnchantment<C, T> merge(ConfiguredEnchantment<?, ?> oldConfigured, Optional<ConfiguredEnchantment<?, ?>> globalConfigured) {
+        if (!getConfiguration().isSameType(oldConfigured.getConfiguration()))
+            throw new RuntimeException("Attempted to merge config with an old config that is not of the same type.");
+
         C configuration = (C) getConfiguration().mergeInternal(oldConfigured.getConfiguration());
 
         GlobalEnchantmentFields globalFields = getGlobalFields().merge(oldConfigured.getGlobalFields(), globalConfigured.map(ConfiguredEnchantment::getGlobalFields));

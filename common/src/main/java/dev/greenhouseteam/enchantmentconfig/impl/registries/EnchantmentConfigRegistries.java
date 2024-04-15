@@ -1,6 +1,6 @@
-package dev.greenhouseteam.enchantmentconfig.impl;
+package dev.greenhouseteam.enchantmentconfig.impl.registries;
 
-import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigRegistryKeys;
+import dev.greenhouseteam.enchantmentconfig.api.registries.EnchantmentConfigRegistryKeys;
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
 import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
 import net.minecraft.core.Registry;

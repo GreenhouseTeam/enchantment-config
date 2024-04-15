@@ -1,6 +1,7 @@
 package dev.greenhouseteam.enchantmentconfig.api.util;
 
 import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigGetter;
+import dev.greenhouseteam.enchantmentconfig.api.config.ConfiguredEnchantment;
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
 import dev.greenhouseteam.enchantmentconfig.platform.EnchantmentConfigPlatformHelper;
 import net.minecraft.core.Holder;
@@ -35,11 +36,11 @@ public class EnchantmentConfigUtil {
     }
 
     private static Optional<Boolean> checkCompatibility(Enchantment enchantment, Enchantment other) {
-        EnchantmentType<?> type = EnchantmentConfigGetter.INSTANCE.getConfig(enchantment, true).getType();
-        if (type.getEnchantment() == null)
+        ConfiguredEnchantment<?, ?> type = EnchantmentConfigGetter.INSTANCE.getConfig(enchantment, true);
+        if (type == null)
             return Optional.empty();
 
-        return EnchantmentConfigGetter.INSTANCE.getConfig(type).getGlobalFields().incompatibilities().isPresent() ? Optional.of(EnchantmentConfigGetter.INSTANCE.getConfig(type).getGlobalFields().incompatibilities().get().stream().anyMatch(holders -> holders.contains(other.builtInRegistryHolder()))) : Optional.empty();
+        return EnchantmentConfigGetter.INSTANCE.getConfig(type.getType()).getGlobalFields().incompatibilities().isPresent() ? Optional.of(EnchantmentConfigGetter.INSTANCE.getConfig(type.getType()).getGlobalFields().incompatibilities().get().stream().noneMatch(holders -> holders.contains(other.builtInRegistryHolder()))) : Optional.empty();
     }
 
     public static float getFloatFromLevel(int level, float original, Map<Integer, Float> levelToValueMap) {
@@ -52,18 +53,8 @@ public class EnchantmentConfigUtil {
                 return levelToValueMap.get(key) * ((float)level / key);
             }
 
-            int upperBound = levelToValueMap.keySet().stream().filter(i -> i > level).min((o1, o2) -> {
-                Integer i1 = Mth.abs(o1 - level);
-                Integer i2 = Mth.abs(o2 - level);
-
-                return i1.compareTo(i2);
-            }).orElseThrow();
-            int lowerBound = levelToValueMap.keySet().stream().filter(i -> i < level).max((o1, o2) -> {
-                Integer i1 = Mth.abs(o1 - level);
-                Integer i2 = Mth.abs(o2 - level);
-
-                return i1.compareTo(i2);
-            }).orElseThrow();
+            int upperBound = levelToValueMap.keySet().stream().filter(i -> i > level).min(Integer::compareTo).orElseThrow();
+            int lowerBound = levelToValueMap.keySet().stream().filter(i -> i < level).max(Integer::compareTo).orElseThrow();
 
             float upperDamage = levelToValueMap.get(upperBound);
             float lowerDamage = levelToValueMap.get(lowerBound);

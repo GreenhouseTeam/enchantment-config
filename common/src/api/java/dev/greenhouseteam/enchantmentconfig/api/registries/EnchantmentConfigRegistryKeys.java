@@ -1,4 +1,4 @@
-package dev.greenhouseteam.enchantmentconfig.api;
+package dev.greenhouseteam.enchantmentconfig.api.registries;
 
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
 import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;

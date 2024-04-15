@@ -6,6 +6,7 @@ import dev.greenhouseteam.enchantmentconfig.api.config.ConfiguredEnchantment;
 import dev.greenhouseteam.enchantmentconfig.api.config.configuration.EnchantmentConfiguration;
 import dev.greenhouseteam.enchantmentconfig.api.config.field.ExtraFieldType;
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
+import dev.greenhouseteam.enchantmentconfig.impl.registries.EnchantmentConfigRegistries;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -15,6 +16,10 @@ import java.util.Map;
 
 public class EnchantmentConfigGetterImpl implements EnchantmentConfigGetter {
     private static final Map<EnchantmentType<?>, ConfiguredEnchantment<?, ?>> ENTRIES = Maps.newHashMap();
+
+    public void register(ConfiguredEnchantment<?, ?> configuredEnchantment) {
+        ENTRIES.put(configuredEnchantment.getType(), configuredEnchantment);
+    }
 
     @Override
     @SuppressWarnings("unchecked")

@@ -25,7 +25,8 @@ public class DamageEnchantmentMixin {
         if (configured == null)
             return original;
 
-        if (configured.getConfiguration() instanceof DamageEnchantmentConfiguration damageConfig && (damageConfig.affectedEntities().isEmpty() && (targets.isEmpty() || targetType != null && targetType.is(targets.get())) || targetType != null && damageConfig.affectedEntities().get().stream().anyMatch(targetType::is)))
+        // TODO: Set up removals within config format.
+        if (configured.getConfiguration() instanceof DamageEnchantmentConfiguration damageConfig && (damageConfig.affectedEntities().isEmpty() && (targets.isEmpty() || targetType != null && targetType.is(targets.get())) || targetType != null && damageConfig.affectedEntities().isPresent() && damageConfig.affectedEntities().get().stream().anyMatch(targetType::is)))
             return damageConfig.getBonusDamageAmount(level, original);
 
         return original;

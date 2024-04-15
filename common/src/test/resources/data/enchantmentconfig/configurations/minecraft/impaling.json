@@ -1,0 +1,17 @@
+{
+  "max_level": 10,
+  "incompatibilities": [
+    "minecraft:riptide"
+  ],
+  "damage": [
+    {
+      "level": 1,
+      "damage": 20.0
+    },
+    {
+      "min": 5,
+      "max": 10,
+      "damage": 100.0
+    }
+  ]
+}

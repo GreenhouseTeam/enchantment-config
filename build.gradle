@@ -54,25 +54,31 @@ subprojects {
         it.options.getRelease().set(21)
     }
 
-    processResources {
-        def expandProps = [
-                "version": version,
-                "group": project.group, //Else we target the task's group.
-                "minecraft_version": minecraft_version,
-                "minecraft_version_range": minecraft_version_range,
-                "fabric_version": fabric_version,
-                "fabric_loader_version": fabric_loader_version,
-                "mod_name": mod_name,
-                "mod_author": mod_author,
-                "mod_credits": mod_credits,
-                "mod_id": mod_id,
-                "mod_description": mod_description,
-                "mod_license": mod_license,
-                "neoforge_version": neo_version,
-                "neoforge_loader_version_range": neo_loader_version_range,
-                "pack_format_number": pack_format_number
-        ]
+    def expandProps = [
+            "version": version,
+            "group": project.group, //Else we target the task's group.
+            "minecraft_version": minecraft_version,
+            "minecraft_version_range": minecraft_version_range,
+            "fabric_version": fabric_version,
+            "fabric_loader_version": fabric_loader_version,
+            "mod_name": mod_name,
+            "mod_author": mod_author,
+            "mod_credits": mod_credits,
+            "mod_id": mod_id,
+            "mod_description": mod_description,
+            "mod_license": mod_license,
+            "neoforge_version": neo_version,
+            "neoforge_loader_version_range": neo_loader_version_range
+    ]
 
+    processResources {
+        filesMatching(['pack.mcmeta', 'fabric.mod.json', 'META-INF/mods.toml', '*.mixins.json']) {
+            expand expandProps
+        }
+        inputs.properties(expandProps)
+    }
+
+    processTestResources {
         filesMatching(['pack.mcmeta', 'fabric.mod.json', 'META-INF/mods.toml', '*.mixins.json']) {
             expand expandProps
         }

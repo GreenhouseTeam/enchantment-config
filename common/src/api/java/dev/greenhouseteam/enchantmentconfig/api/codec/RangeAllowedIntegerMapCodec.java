@@ -45,7 +45,7 @@ public class RangeAllowedIntegerMapCodec<V> extends MapCollectionCodec<Integer, 
                     final DataResult<T> maxResult = ops.get(val, "max");
                     final DataResult<T> valueResult = ops.get(val, valueName);
 
-                    if (minResult.isSuccess() || maxResult.isSuccess() || valueResult.isSuccess()) {
+                    if (minResult.isSuccess() || maxResult.isSuccess()) {
                         if (minResult.isError()) {
                             failed.add(val);
                             errorMessage.add("Failed to find 'min' field");
@@ -60,7 +60,40 @@ public class RangeAllowedIntegerMapCodec<V> extends MapCollectionCodec<Integer, 
                             failed.add(val);
                             errorMessage.add("Failed to find '" + valueName + "' field");
                         }
-                    } else return;
+                    } else {
+                        final DataResult<T> keyResult = ops.get(val, keyName);
+
+                        if (keyResult.result().isEmpty()) {
+                            failed.add(val);
+                            errorMessage.add("Failed to find '" + keyName + "' field");
+                        }
+
+                        if (valueResult.result().isEmpty()) {
+                            failed.add(val);
+                            errorMessage.add("Failed to find '" + valueName + "' field");
+                        }
+
+                        final DataResult<Integer> k = keyCodec.parse(ops, keyResult.result().get());
+                        final DataResult<V> v = valueCodec.parse(ops, valueResult.result().get());
+
+                        k.error().ifPresent(e -> {
+                            failed.add(val);
+                            errorMessage.add("Failed to decode '" + keyName + "' object");
+                        });
+                        v.error().ifPresent(e -> {
+                            failed.add(val);
+                            errorMessage.add("Failed to decode '" + valueName + "' object");
+                        });
+
+                        final DataResult<Pair<Integer, V>> readEntry = k.apply2stable(Pair::new, v);
+
+                        result.setPlain(result.getPlain().apply2stable((u, e) -> {
+                            read.put(e.getFirst(), e.getSecond());
+                            return u;
+                        }, readEntry));
+
+                        return;
+                    }
 
                     final DataResult<Integer> min = keyCodec.parse(ops, minResult.result().get());
                     final DataResult<Integer> max = keyCodec.parse(ops, maxResult.result().get());
@@ -69,7 +102,7 @@ public class RangeAllowedIntegerMapCodec<V> extends MapCollectionCodec<Integer, 
 
                     min.error().ifPresent(e -> {
                         failed.add(val);
-                        errorMessage.add("Failed to decode 'min integer");
+                        errorMessage.add("Failed to decode 'min' integer");
                     });
                     max.error().ifPresent(e -> {
                         failed.add(val);
@@ -109,7 +142,7 @@ public class RangeAllowedIntegerMapCodec<V> extends MapCollectionCodec<Integer, 
                     retValue.setPartial(pair).mapError(s -> stringBuilder.toString());
                 }
                 return retValue;
-            }).result().orElse(super.decode(ops, input));
+            }).result().get();
         } else {
             pairParsed = parsed.map(v -> {
                 ImmutableMap.Builder<Integer, V> map = new ImmutableMap.Builder<>();
