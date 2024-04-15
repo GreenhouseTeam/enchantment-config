@@ -1,9 +1,9 @@
 package dev.greenhouseteam.enchantmentconfig.api.util;
 
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.Enchantments;
 
 /**
  * This is a helper class for storing the resource keys of vanilla's
@@ -14,52 +14,50 @@ public class VanillaEnchantmentResourceKeys {
     /**
      * Gets the {@link ResourceKey} for a specified enchantment.
      *
-     * @param enchantment The enchantment to get the key for.
-     * @return            The enchantment's key, or null
-     *                    if the enchantment is not present in the
-     *                    enchantment registry.
+     * @param path The path of the enchantment to create a key for.
+     * @return The resource key for the specified enchantment.
      */
-    public static ResourceKey<Enchantment> getResourceKey(Enchantment enchantment) {
-        return BuiltInRegistries.ENCHANTMENT.getResourceKey(enchantment).orElse(null);
+    public static ResourceKey<Enchantment> getResourceKey(String path) {
+        return ResourceKey.create(Registries.ENCHANTMENT, new ResourceLocation(path));
     }
 
-    public static final ResourceKey<Enchantment> AQUA_AFFINITY = getResourceKey(Enchantments.AQUA_AFFINITY);
-    public static final ResourceKey<Enchantment> CHANNELING = getResourceKey(Enchantments.CHANNELING);
-    public static final ResourceKey<Enchantment> LOYALTY = getResourceKey(Enchantments.LOYALTY);
-    public static final ResourceKey<Enchantment> RIPTIDE = getResourceKey(Enchantments.RIPTIDE);
-    public static final ResourceKey<Enchantment> DEPTH_STRIDER = getResourceKey(Enchantments.DEPTH_STRIDER);
-    public static final ResourceKey<Enchantment> EFFICIENCY = getResourceKey(Enchantments.EFFICIENCY);
-    public static final ResourceKey<Enchantment> FIRE_ASPECT = getResourceKey(Enchantments.FIRE_ASPECT);
-    public static final ResourceKey<Enchantment> FLAME = getResourceKey(Enchantments.FLAME);
-    public static final ResourceKey<Enchantment> FORTUNE = getResourceKey(Enchantments.FORTUNE);
-    public static final ResourceKey<Enchantment> FROST_WALKER = getResourceKey(Enchantments.FROST_WALKER);
-    public static final ResourceKey<Enchantment> IMPALING = getResourceKey(Enchantments.IMPALING);
-    public static final ResourceKey<Enchantment> INFINITY = getResourceKey(Enchantments.INFINITY);
-    public static final ResourceKey<Enchantment> KNOCKBACK = getResourceKey(Enchantments.KNOCKBACK);
-    public static final ResourceKey<Enchantment> LOOTING = getResourceKey(Enchantments.LOOTING);
-    public static final ResourceKey<Enchantment> LUCK_OF_THE_SEA = getResourceKey(Enchantments.LUCK_OF_THE_SEA);
-    public static final ResourceKey<Enchantment> LURE = getResourceKey(Enchantments.LURE);
-    public static final ResourceKey<Enchantment> MENDING = getResourceKey(Enchantments.MENDING);
-    public static final ResourceKey<Enchantment> MULTISHOT = getResourceKey(Enchantments.MULTISHOT);
-    public static final ResourceKey<Enchantment> POWER = getResourceKey(Enchantments.POWER);
-    public static final ResourceKey<Enchantment> PUNCH = getResourceKey(Enchantments.PUNCH);
-    public static final ResourceKey<Enchantment> PROTECTION = getResourceKey(Enchantments.PROTECTION);
-    public static final ResourceKey<Enchantment> BLAST_PROTECTION = getResourceKey(Enchantments.BLAST_PROTECTION);
-    public static final ResourceKey<Enchantment> FIRE_PROTECTION = getResourceKey(Enchantments.FIRE_PROTECTION);
-    public static final ResourceKey<Enchantment> FEATHER_FALLING = getResourceKey(Enchantments.FEATHER_FALLING);
-    public static final ResourceKey<Enchantment> PROJECTILE_PROTECTION = getResourceKey(Enchantments.PROJECTILE_PROTECTION);
-    public static final ResourceKey<Enchantment> PIERCING = getResourceKey(Enchantments.PIERCING);
-    public static final ResourceKey<Enchantment> QUICK_CHARGE = getResourceKey(Enchantments.QUICK_CHARGE);
-    public static final ResourceKey<Enchantment> RESPIRATION = getResourceKey(Enchantments.RESPIRATION);
-    public static final ResourceKey<Enchantment> SOUL_SPEED = getResourceKey(Enchantments.SOUL_SPEED);
-    public static final ResourceKey<Enchantment> SWIFT_SNEAK = getResourceKey(Enchantments.SWIFT_SNEAK);
-    public static final ResourceKey<Enchantment> SHARPNESS = getResourceKey(Enchantments.SHARPNESS);
-    public static final ResourceKey<Enchantment> SMITE = getResourceKey(Enchantments.SMITE);
-    public static final ResourceKey<Enchantment> BANE_OF_ARTHROPODS = getResourceKey(Enchantments.BANE_OF_ARTHROPODS);
-    public static final ResourceKey<Enchantment> SWEEPING_EDGE = getResourceKey(Enchantments.SWEEPING_EDGE);
-    public static final ResourceKey<Enchantment> SILK_TOUCH = getResourceKey(Enchantments.SILK_TOUCH);
-    public static final ResourceKey<Enchantment> THORNS = getResourceKey(Enchantments.THORNS);
-    public static final ResourceKey<Enchantment> UNBREAKING = getResourceKey(Enchantments.UNBREAKING);
-    public static final ResourceKey<Enchantment> CURSE_OF_BINDING = getResourceKey(Enchantments.BINDING_CURSE);
-    public static final ResourceKey<Enchantment> CURSE_OF_VANISHING = getResourceKey(Enchantments.VANISHING_CURSE);
+    public static final ResourceKey<Enchantment> AQUA_AFFINITY = getResourceKey("aqua_affinity");
+    public static final ResourceKey<Enchantment> CHANNELING = getResourceKey("channeling");
+    public static final ResourceKey<Enchantment> LOYALTY = getResourceKey("loyalty");
+    public static final ResourceKey<Enchantment> RIPTIDE = getResourceKey("riptide");
+    public static final ResourceKey<Enchantment> DEPTH_STRIDER = getResourceKey("depth_strider");
+    public static final ResourceKey<Enchantment> EFFICIENCY = getResourceKey("efficiency");
+    public static final ResourceKey<Enchantment> FIRE_ASPECT = getResourceKey("fire_aspect");
+    public static final ResourceKey<Enchantment> FLAME = getResourceKey("flame");
+    public static final ResourceKey<Enchantment> FORTUNE = getResourceKey("fortune");
+    public static final ResourceKey<Enchantment> FROST_WALKER = getResourceKey("frost_walker");
+    public static final ResourceKey<Enchantment> IMPALING = getResourceKey("impaling");
+    public static final ResourceKey<Enchantment> INFINITY = getResourceKey("infinity");
+    public static final ResourceKey<Enchantment> KNOCKBACK = getResourceKey("knockback");
+    public static final ResourceKey<Enchantment> LOOTING = getResourceKey("looting");
+    public static final ResourceKey<Enchantment> LUCK_OF_THE_SEA = getResourceKey("luck_of_the_sea");
+    public static final ResourceKey<Enchantment> LURE = getResourceKey("lure");
+    public static final ResourceKey<Enchantment> MENDING = getResourceKey("mending");
+    public static final ResourceKey<Enchantment> MULTISHOT = getResourceKey("multishot");
+    public static final ResourceKey<Enchantment> POWER = getResourceKey("power");
+    public static final ResourceKey<Enchantment> PUNCH = getResourceKey("punch");
+    public static final ResourceKey<Enchantment> PROTECTION = getResourceKey("protection");
+    public static final ResourceKey<Enchantment> BLAST_PROTECTION = getResourceKey("blast_protection");
+    public static final ResourceKey<Enchantment> FIRE_PROTECTION = getResourceKey("fire_protection");
+    public static final ResourceKey<Enchantment> FEATHER_FALLING = getResourceKey("feather_falling");
+    public static final ResourceKey<Enchantment> PROJECTILE_PROTECTION = getResourceKey("projectile_protection");
+    public static final ResourceKey<Enchantment> PIERCING = getResourceKey("piercing");
+    public static final ResourceKey<Enchantment> QUICK_CHARGE = getResourceKey("quick_charge");
+    public static final ResourceKey<Enchantment> RESPIRATION = getResourceKey("respiration");
+    public static final ResourceKey<Enchantment> SOUL_SPEED = getResourceKey("soul_speed");
+    public static final ResourceKey<Enchantment> SWIFT_SNEAK = getResourceKey("swift_sneak");
+    public static final ResourceKey<Enchantment> SHARPNESS = getResourceKey("sharpness");
+    public static final ResourceKey<Enchantment> BANE_OF_ARTHROPODS = getResourceKey("bane_of_arthropods");
+    public static final ResourceKey<Enchantment> SMITE = getResourceKey("smite");
+    public static final ResourceKey<Enchantment> SWEEPING_EDGE = getResourceKey("sweeping_edge");
+    public static final ResourceKey<Enchantment> SILK_TOUCH = getResourceKey("silk_touch");
+    public static final ResourceKey<Enchantment> THORNS = getResourceKey("thorns");
+    public static final ResourceKey<Enchantment> UNBREAKING = getResourceKey("unbreaking");
+    public static final ResourceKey<Enchantment> CURSE_OF_BINDING = getResourceKey("binding_curse");
+    public static final ResourceKey<Enchantment> CURSE_OF_VANISHING = getResourceKey("vanishing_curse");
 }
