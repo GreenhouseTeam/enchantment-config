@@ -3,7 +3,10 @@ package dev.greenhouseteam.enchantmentconfig.impl.data;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
 import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigGetter;
@@ -67,24 +70,27 @@ public class EnchantmentConfigLoader extends SimplePreparableReloadListener<Map<
     @Override
     protected void apply(Map<ResourceLocation, List<JsonElement>> map, ResourceManager manager, ProfilerFiller filler) {
         DynamicOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, EnchantmentConfigUtil.getHelper().getRegistries());
-        ResourceLocation globalKey = EnchantmentConfigUtil.asResource("global");
-        ConfiguredEnchantment<?, ?> globalConfigured = handleJson(globalKey, ops, map.getOrDefault(globalKey, List.of()), Optional.empty());
-        for (Map.Entry<ResourceLocation, List<JsonElement>> entry : map.entrySet().stream().filter(entry -> !entry.getKey().equals(globalKey)).toList()) {
+        ConfiguredEnchantment<?, ?> globalConfigured = handleJson(EnchantmentConfigGetter.GLOBAL_KEY, ops, map.getOrDefault(EnchantmentConfigGetter.GLOBAL_KEY, List.of()), Optional.empty());
+        for (Map.Entry<ResourceLocation, List<JsonElement>> entry : map.entrySet().stream().filter(entry -> !entry.getKey().equals(EnchantmentConfigGetter.GLOBAL_KEY)).toList()) {
             handleJson(entry.getKey(), ops, entry.getValue(), Optional.ofNullable(globalConfigured));
+        }
+        for (EnchantmentType<?> type : EnchantmentConfigRegistries.ENCHANTMENT_TYPE.stream().filter(type -> !map.containsKey(type.getPath())).toList()) {
+            handleJson(type.getPath(), ops, new ArrayList<>(), Optional.ofNullable(globalConfigured));
         }
     }
 
     private ConfiguredEnchantment<?, ?> handleJson(ResourceLocation key, DynamicOps<JsonElement> ops, List<JsonElement> elements, Optional<ConfiguredEnchantment<?, ?>> global) {
-        ConfiguredEnchantment<?, ?> currentConfigured = null;
+        Optional<ConfiguredEnchantment<?, ?>> currentConfigured = Optional.empty();
+        if (elements.isEmpty() && global.isPresent())
+            elements.add(new JsonObject());
         for (JsonElement json : elements) {
             ConfiguredEnchantment<?, ?> configured = EnchantmentConfigRegistries.ENCHANTMENT_TYPE.get(key).codec().decode(ops, json).getOrThrow().getFirst();
-            if (currentConfigured != null) {
+            if (currentConfigured.isPresent() || global.isPresent()) {
                 configured = configured.merge(currentConfigured, global);
             }
-            currentConfigured = configured;
+            currentConfigured = Optional.of(configured);
         }
-        if (currentConfigured != null)
-            ((EnchantmentConfigGetterImpl)EnchantmentConfigGetter.INSTANCE).register(currentConfigured);
-        return currentConfigured;
+        currentConfigured.ifPresent(configuredEnchantment -> ((EnchantmentConfigGetterImpl) EnchantmentConfigGetter.INSTANCE).register(configuredEnchantment));
+        return currentConfigured.orElse(null);
     }
 }

@@ -39,7 +39,7 @@ public class MergeUtil {
         return currentValue.isPresent() ? currentValue : oldValue.isPresent() ? oldValue : globalValue;
     }
 
-    public static <T> List<T> mergeList(List<T> currentList, List<T> oldList) {
+    public static <T> List<T> mergeList(List<T> currentList, Optional<List<T>> oldList) {
         return mergeList(currentList, oldList, Optional.empty());
     }
 
@@ -56,10 +56,10 @@ public class MergeUtil {
      *
      * @param <T>               The type parameter of the list objects.
      */
-    public static <T> List<T> mergeList(List<T> currentList, List<T> oldList, Optional<List<T>> globalList) {
+    public static <T> List<T> mergeList(List<T> currentList, Optional<List<T>> oldList, Optional<List<T>> globalList) {
         List<T> list = Lists.newArrayList();
         globalList.ifPresent(list::addAll);
-        list.addAll(oldList);
+        oldList.ifPresent(list::addAll);
         list.addAll(currentList);
         return ImmutableList.copyOf(list);
     }
@@ -92,7 +92,7 @@ public class MergeUtil {
         return Optional.of(ImmutableList.copyOf(list));
     }
 
-    public static <K, V> Map<K, V> mergeMap(Map<K, V> currentMap, Map<K, V> oldMap) {
+    public static <K, V> Map<K, V> mergeMap(Map<K, V> currentMap, Optional<Map<K, V>> oldMap) {
         return mergeMap(currentMap, oldMap, Optional.empty());
     }
 
@@ -110,10 +110,10 @@ public class MergeUtil {
      * @param <K>               The key type parameter of the map.
      * @param <V>               The value type parameter of the map.
      */
-    public static <K, V> Map<K, V> mergeMap(Map<K, V> currentMap, Map<K, V> oldMap, Optional<Map<K, V>> globalMap) {
+    public static <K, V> Map<K, V> mergeMap(Map<K, V> currentMap, Optional<Map<K, V>> oldMap, Optional<Map<K, V>> globalMap) {
         Map<K, V> map = Maps.newHashMap();
         globalMap.ifPresent(map::putAll);
-        map.putAll(oldMap);
+        oldMap.ifPresent(map::putAll);
         map.putAll(currentMap);
         return ImmutableMap.copyOf(map);
     }

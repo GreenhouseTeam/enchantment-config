@@ -2,6 +2,8 @@ package dev.greenhouseteam.enchantmentconfig.api.config.configuration;
 
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.Optional;
+
 public interface EnchantmentConfiguration {
 
     /**
@@ -10,11 +12,11 @@ public interface EnchantmentConfiguration {
      * @param oldConfiguration      The old configuration values to merge into this config.
      * @return                      The merged enchantment configuration.
      */
-    EnchantmentConfiguration merge(EnchantmentConfiguration oldConfiguration);
+    EnchantmentConfiguration merge(Optional<EnchantmentConfiguration> oldConfiguration);
 
     @ApiStatus.Internal
-    default EnchantmentConfiguration mergeInternal(EnchantmentConfiguration oldConfiguration) {
-        if (!isSameType(oldConfiguration)) {
+    default EnchantmentConfiguration mergeInternal(Optional<EnchantmentConfiguration> oldConfiguration) {
+        if (oldConfiguration.isPresent() && !isSameType(oldConfiguration.get())) {
             throw new ClassCastException("Could not merge enchantment configurations of different types.");
         }
         return this.merge(oldConfiguration);

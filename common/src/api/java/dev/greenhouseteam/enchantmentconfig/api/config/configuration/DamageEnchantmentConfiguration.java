@@ -28,11 +28,10 @@ public record DamageEnchantmentConfiguration(Optional<List<HolderSet<EntityType<
     }
 
     @Override
-    public DamageEnchantmentConfiguration merge(EnchantmentConfiguration oldConfiguration) {
-        DamageEnchantmentConfiguration castedOld = (DamageEnchantmentConfiguration) oldConfiguration;
+    public DamageEnchantmentConfiguration merge(Optional<EnchantmentConfiguration> oldConfiguration) {
 
-        Optional<List<HolderSet<EntityType<?>>>> affectedEntities = MergeUtil.mergeOptionalList(this.affectedEntities(), castedOld.affectedEntities());
-        Map<Integer, Float> damage = MergeUtil.mergeMap(this.damage(), castedOld.damage());
+        Optional<List<HolderSet<EntityType<?>>>> affectedEntities = MergeUtil.mergeOptionalList(this.affectedEntities(), oldConfiguration.flatMap(config -> ((DamageEnchantmentConfiguration)config).affectedEntities()));
+        Map<Integer, Float> damage = MergeUtil.mergeMap(this.damage(), oldConfiguration.map(config -> ((DamageEnchantmentConfiguration)config).damage()));
 
         return new DamageEnchantmentConfiguration(affectedEntities, damage);
     }

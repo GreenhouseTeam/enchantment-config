@@ -61,18 +61,18 @@ public class ConfiguredEnchantment<C extends EnchantmentConfiguration, T extends
     }
 
     @ApiStatus.Internal
-    public ConfiguredEnchantment<C, T> merge(ConfiguredEnchantment<?, ?> oldConfigured, Optional<ConfiguredEnchantment<?, ?>> globalConfigured) {
-        if (!getConfiguration().isSameType(oldConfigured.getConfiguration()))
+    public ConfiguredEnchantment<C, T> merge(Optional<ConfiguredEnchantment<?, ?>> oldConfigured, Optional<ConfiguredEnchantment<?, ?>> globalConfigured) {
+        if (oldConfigured.isPresent() && !getConfiguration().isSameType(oldConfigured.get().getConfiguration()))
             throw new RuntimeException("Attempted to merge config with an old config that is not of the same type.");
 
-        C configuration = (C) getConfiguration().mergeInternal(oldConfigured.getConfiguration());
+        C configuration = (C) getConfiguration().mergeInternal(oldConfigured.map(ConfiguredEnchantment::getConfiguration));
 
-        GlobalEnchantmentFields globalFields = getGlobalFields().merge(oldConfigured.getGlobalFields(), globalConfigured.map(ConfiguredEnchantment::getGlobalFields));
+        GlobalEnchantmentFields globalFields = getGlobalFields().merge(oldConfigured.map(ConfiguredEnchantment::getGlobalFields), globalConfigured.map(ConfiguredEnchantment::getGlobalFields));
 
         Map<String, Object> extraFields = new HashMap<>();
         for (String key : getExtraFields().keySet()) {
             ExtraFieldType<Object> extraType = (ExtraFieldType<Object>) type.getExtraFieldTypes().get(key);
-            Object merged = extraType.merge(getExtraFields().get(key), oldConfigured.getExtraFields().get(key));
+            Object merged = extraType.merge(getExtraFields().get(key), oldConfigured.map(config -> config.getExtraFields().get(key)));
             extraFields.put(key, merged);
         }
 

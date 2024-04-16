@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceKey;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * A class that specifies the type of extra field and its related codec.
@@ -44,7 +45,7 @@ public record ExtraFieldType<T>(String key, Codec<T> codec) {
      * @return                                  A merged field of this type.
      * @throws UnsupportedOperationException    If not overridden.
      */
-    public T merge(T currentConfiguration, T oldConfiguration) {
+    public T merge(T currentConfiguration, Optional<T> oldConfiguration) {
         throw new UnsupportedOperationException("ExtraFieldType#merge should be overridden.");
     }
 

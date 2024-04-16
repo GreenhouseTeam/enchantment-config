@@ -7,6 +7,7 @@ import dev.greenhouseteam.enchantmentconfig.api.config.configuration.Enchantment
 import dev.greenhouseteam.enchantmentconfig.api.config.field.ExtraFieldType;
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
 import dev.greenhouseteam.enchantmentconfig.api.registries.EnchantmentConfigRegistries;
+import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -31,6 +32,15 @@ public class EnchantmentConfigGetterImpl implements EnchantmentConfigGetter {
     }
 
     @Override
+    public <C extends EnchantmentConfiguration, T extends EnchantmentType<C>> ConfiguredEnchantment<C, T> getConfig(ResourceLocation resourceLocation, boolean nullSafe) {
+        var optional = EnchantmentConfigRegistries.ENCHANTMENT_TYPE.getOptional(resourceLocation);
+        if (optional.isEmpty() && !nullSafe)
+            throw new NullPointerException("ConfiguredEnchantment for EnchantmentType '" + resourceLocation + "' does not exist at this time or at all.");
+
+        return (ConfiguredEnchantment<C, T>) optional.map(ENTRIES::get).orElse(null);
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public <C extends EnchantmentConfiguration, T extends EnchantmentType<C>> ConfiguredEnchantment<C, T> getConfig(Enchantment enchantment, boolean nullSafe) {
         ResourceLocation enchantmentKey = BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
@@ -38,7 +48,7 @@ public class EnchantmentConfigGetterImpl implements EnchantmentConfigGetter {
 
         if (!ENTRIES.containsKey(type))
             if (!nullSafe) {
-                throw new NullPointerException("ConfiguredEnchantment for EnchantmentType '" + type.getPath() + "' does not exist at this time or at all.");
+                throw new NullPointerException("ConfiguredEnchantment for EnchantmentType '" + enchantmentKey + "' does not exist at this time or at all.");
             } else
                 return null;
 
