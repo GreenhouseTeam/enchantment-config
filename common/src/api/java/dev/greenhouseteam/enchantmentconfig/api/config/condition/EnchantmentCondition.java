@@ -56,7 +56,7 @@ public interface EnchantmentCondition {
 
         public static final MapCodec<Variable<Object>> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
                 VariableAndCompareTo.Codec.INSTANCE.forGetter(Variable::variableAndCompareTo),
-                Comparison.CODEC.fieldOf("comparison").forGetter(Variable::comparison)
+                Comparison.CODEC.optionalFieldOf("comparison", Comparison.EQUAL).forGetter(Variable::comparison)
         ).apply(inst, Variable::new));
 
         public boolean compare(EnchantmentType<?> type) {
