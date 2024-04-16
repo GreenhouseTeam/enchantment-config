@@ -19,10 +19,10 @@ public record MaxLevelVariable(boolean unmodified, float percentage) implements 
     ).apply(inst, MaxLevelVariable::new));
 
     @Override
-    public Number getValue(Enchantment enchantment, ItemStack stack, Number original) {
+    public Integer getValue(Enchantment enchantment, ItemStack stack, Number original) {
         if (unmodified())
-            return ((EnchantmentAccessor)enchantment).getDefinition().maxLevel() * percentage();
-        return enchantment.getMaxLevel() * percentage();
+            return (int) (((EnchantmentAccessor)enchantment).getDefinition().maxLevel() * percentage());
+        return (int) (enchantment.getMaxLevel() * percentage());
     }
 
     @Override

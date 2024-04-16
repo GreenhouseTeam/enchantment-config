@@ -36,21 +36,21 @@ public class EnchantmentConfigUtil {
     public static int getOverrideLevel(int level, Enchantment enchantment, ItemStack stack, Map<Integer, Field<Integer>> levelToValueMap) {
         if (!levelToValueMap.isEmpty()) {
             if (levelToValueMap.containsKey(level))
-                return levelToValueMap.get(level).get(enchantment, stack, level);
+                return levelToValueMap.get(level).getInt(enchantment, stack, level);
 
             if (levelToValueMap.keySet().stream().allMatch(i -> i > level))
                 return level;
 
             if (levelToValueMap.keySet().stream().allMatch(i -> i < level)) {
                 int value = levelToValueMap.keySet().stream().filter(i -> i < level).max(Integer::compareTo).orElseThrow();
-                return levelToValueMap.getOrDefault(value, new Field<>(level)).get(enchantment, stack, level);
+                return levelToValueMap.getOrDefault(value, new Field<>(level)).getInt(enchantment, stack, level);
             }
 
             int upperBound = levelToValueMap.keySet().stream().filter(i -> i > level).min(Integer::compareTo).orElseThrow();
             int lowerBound = levelToValueMap.keySet().stream().filter(i -> i < level).max(Integer::compareTo).orElseThrow();
 
-            int upperLevel = levelToValueMap.getOrDefault(upperBound, new Field<>(level)).get(enchantment, stack, level);
-            int lowerLevel = levelToValueMap.getOrDefault(lowerBound, new Field<>(level)).get(enchantment, stack, level);
+            int upperLevel = levelToValueMap.getOrDefault(upperBound, new Field<>(level)).getInt(enchantment, stack, level);
+            int lowerLevel = levelToValueMap.getOrDefault(lowerBound, new Field<>(level)).getInt(enchantment, stack, level);
 
             if (lowerLevel == upperLevel) {
                 return lowerLevel;
