@@ -4,8 +4,10 @@ import dev.greenhouseteam.enchantmentconfig.api.config.variable.EnchantmentVaria
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 
+import java.util.function.Supplier;
+
 public class Field<T> {
-    private static final UnsupportedOperationException NOT_A_NUMBER_EXCEPTION = new UnsupportedOperationException("Field is not a number.");
+    private static final Supplier<UnsupportedOperationException> NOT_A_NUMBER_EXCEPTION = () -> new UnsupportedOperationException("Field is not a number.");
 
     private final EnchantmentVariable<T> variable;
     private final T value;
@@ -32,7 +34,7 @@ public class Field<T> {
                 return number.intValue();
         else if (variable.getInnerClass().isAssignableFrom(Number.class))
             return ((Number)variable.getValue(enchantment, stack, (T) original)).intValue();
-        throw NOT_A_NUMBER_EXCEPTION;
+        throw NOT_A_NUMBER_EXCEPTION.get();
     }
 
     public float getFloat(Enchantment enchantment, ItemStack stack, Float original) {
@@ -41,7 +43,7 @@ public class Field<T> {
                 return number.floatValue();
             else if (variable.getInnerClass().isAssignableFrom(Number.class))
                 return ((Number)variable.getValue(enchantment, stack, (T) original)).floatValue();
-        throw NOT_A_NUMBER_EXCEPTION;
+        throw NOT_A_NUMBER_EXCEPTION.get();
     }
 
     public double getDouble(Enchantment enchantment, ItemStack stack, Float original) {
@@ -50,7 +52,7 @@ public class Field<T> {
                 return number.doubleValue();
             else if (variable.getInnerClass().isAssignableFrom(Number.class))
                 return ((Number)variable.getValue(enchantment, stack, (T) original)).doubleValue();
-        throw NOT_A_NUMBER_EXCEPTION;
+        throw NOT_A_NUMBER_EXCEPTION.get();
     }
 
     public float getLong(Enchantment enchantment, ItemStack stack, Float original) {
@@ -59,7 +61,7 @@ public class Field<T> {
                 return number.longValue();
             else if (variable.getInnerClass().isAssignableFrom(Number.class))
                 return ((Number)variable.getValue(enchantment, stack, (T) original)).longValue();
-        throw NOT_A_NUMBER_EXCEPTION;
+        throw NOT_A_NUMBER_EXCEPTION.get();
     }
 
     public EnchantmentVariable<T> getInnerVariable() {
