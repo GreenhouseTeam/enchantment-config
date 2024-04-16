@@ -19,7 +19,7 @@ public class EnchantmentMixin {
     private int enchantmentconfig$modifyMaxLevel(int original) {
         ConfiguredEnchantment<?, ?> configured = EnchantmentConfigGetter.INSTANCE.getConfig((Enchantment)(Object)this, true);
         if (configured == null)
-            configured = EnchantmentConfigGetter.INSTANCE.getConfig(EnchantmentConfigGetter.GLOBAL_KEY, false);
+            return original;
 
         return configured.getGlobalFields().maxLevel().orElse(original);
     }

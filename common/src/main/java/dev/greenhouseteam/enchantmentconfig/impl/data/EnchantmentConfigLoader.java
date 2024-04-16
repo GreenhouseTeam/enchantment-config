@@ -3,10 +3,8 @@ package dev.greenhouseteam.enchantmentconfig.impl.data;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.google.gson.JsonPrimitive;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
 import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigGetter;
@@ -15,7 +13,9 @@ import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
 import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
 import dev.greenhouseteam.enchantmentconfig.impl.EnchantmentConfigGetterImpl;
 import dev.greenhouseteam.enchantmentconfig.api.registries.EnchantmentConfigRegistries;
+import dev.greenhouseteam.enchantmentconfig.api.config.condition.EnchantmentCondition;
 import net.minecraft.resources.RegistryOps;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -33,6 +33,7 @@ import java.util.Optional;
 
 public class EnchantmentConfigLoader extends SimplePreparableReloadListener<Map<ResourceLocation, List<JsonElement>>> {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private static boolean hasLoggedError = false;
 
     protected EnchantmentConfigLoader() {
     }
@@ -41,9 +42,13 @@ public class EnchantmentConfigLoader extends SimplePreparableReloadListener<Map<
     protected Map<ResourceLocation, List<JsonElement>> prepare(ResourceManager manager, ProfilerFiller filler) {
         Map<ResourceLocation, List<JsonElement>> map = new HashMap<>();
 
-        for(Map.Entry<ResourceLocation, List<Resource>> entry : manager.listResourceStacks("configurations", key -> {
+        for(Map.Entry<ResourceLocation, List<Resource>> entry : manager.listResourceStacks("enchantmentconfig/configurations", key -> {
+            if (!key.getPath().endsWith(".json"))
+                return false;
+            if (isGlobal(configResource(key)))
+                return true;
             Optional<EnchantmentType<?>> enchantmentType = EnchantmentConfigRegistries.ENCHANTMENT_TYPE.getOptional(configResource(key));
-            return key.getNamespace().equals(EnchantmentConfigUtil.MOD_ID) && enchantmentType.isPresent() && key.getPath().endsWith(".json");
+            return enchantmentType.isPresent();
         }).entrySet()) {
             ResourceLocation key = entry.getKey();
             ResourceLocation fileToId = configResource(key);
@@ -61,33 +66,59 @@ public class EnchantmentConfigLoader extends SimplePreparableReloadListener<Map<
         return map;
     }
 
+    private boolean isGlobal(ResourceLocation key) {
+        return key.getNamespace().equals(EnchantmentConfigUtil.MOD_ID) && key.getPath().startsWith("global/");
+    }
+
     private ResourceLocation configResource(ResourceLocation key) {
-        String namespace = key.getPath().split("/")[1];
-        String path = key.getPath().split("/")[2];
+        String namespace = key.getPath().split("/", 4)[2];
+        String path = key.getPath().split("/", 4)[3];
         return new ResourceLocation(namespace, path.substring(0, path.length() - 5));
     }
 
     @Override
     protected void apply(Map<ResourceLocation, List<JsonElement>> map, ResourceManager manager, ProfilerFiller filler) {
+        ((EnchantmentConfigGetterImpl) EnchantmentConfigGetter.INSTANCE).clear();
+
         DynamicOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, EnchantmentConfigUtil.getHelper().getRegistries());
-        ConfiguredEnchantment<?, ?> globalConfigured = handleJson(EnchantmentConfigGetter.GLOBAL_KEY, ops, map.getOrDefault(EnchantmentConfigGetter.GLOBAL_KEY, List.of()), Optional.empty());
-        for (Map.Entry<ResourceLocation, List<JsonElement>> entry : map.entrySet().stream().filter(entry -> !entry.getKey().equals(EnchantmentConfigGetter.GLOBAL_KEY)).toList()) {
-            handleJson(entry.getKey(), ops, entry.getValue(), Optional.ofNullable(globalConfigured));
+        Map<ResourceLocation, ConfiguredEnchantment<?, ?>> globalConfigured = new HashMap<>();
+        for (Map.Entry<ResourceLocation, List<JsonElement>> entry : map.entrySet().stream().filter(entry -> isGlobal(entry.getKey())).toList()) {
+            for (Map.Entry<ResourceKey<EnchantmentType<?>>, EnchantmentType<?>> type : EnchantmentConfigRegistries.ENCHANTMENT_TYPE.entrySet()) {
+                var configured = handleJson(type.getKey().location(), ops, entry.getValue(), Optional.empty(), true);
+                if (configured != null)
+                    globalConfigured.put(type.getKey().location(), configured);
+            }
+            hasLoggedError = false;
         }
-        for (EnchantmentType<?> type : EnchantmentConfigRegistries.ENCHANTMENT_TYPE.stream().filter(type -> !map.containsKey(type.getPath())).toList()) {
-            handleJson(type.getPath(), ops, new ArrayList<>(), Optional.ofNullable(globalConfigured));
+        for (Map.Entry<ResourceLocation, List<JsonElement>> entry : map.entrySet().stream().filter(entry -> !isGlobal(entry.getKey())).toList()) {
+            handleJson(entry.getKey(), ops, entry.getValue(), Optional.ofNullable(globalConfigured.getOrDefault(entry.getKey(), null)), false);
+            hasLoggedError = false;
         }
     }
 
-    private ConfiguredEnchantment<?, ?> handleJson(ResourceLocation key, DynamicOps<JsonElement> ops, List<JsonElement> elements, Optional<ConfiguredEnchantment<?, ?>> global) {
+    private ConfiguredEnchantment<?, ?> handleJson(ResourceLocation key, DynamicOps<JsonElement> ops, List<JsonElement> elements, Optional<ConfiguredEnchantment<?, ?>> global, boolean globalContext) {
         Optional<ConfiguredEnchantment<?, ?>> currentConfigured = Optional.empty();
         if (elements.isEmpty() && global.isPresent())
             elements.add(new JsonObject());
         for (JsonElement json : elements) {
             ConfiguredEnchantment<?, ?> configured = EnchantmentConfigRegistries.ENCHANTMENT_TYPE.get(key).codec().decode(ops, json).getOrThrow().getFirst();
-            if (currentConfigured.isPresent() || global.isPresent()) {
-                configured = configured.merge(currentConfigured, global);
+            if (((JsonObject)json).has("condition")) {
+                EnchantmentCondition condition = EnchantmentCondition.CODEC.decode(JsonOps.INSTANCE, ((JsonObject)json).get("condition")).getOrThrow().getFirst();
+                try {
+                    if (!condition.compare(configured.getType()))
+                        continue;
+                } catch (UnsupportedOperationException ex) {
+                    if (globalContext) {
+                        if (!hasLoggedError)
+                            EnchantmentConfigUtil.LOGGER.error("Failed to compare variable based condition: " + ex.getMessage());
+                        hasLoggedError = true;
+                    }
+                    continue;
+                }
             }
+            if (currentConfigured.isPresent() || global.isPresent())
+                configured = configured.merge(currentConfigured, global);
+
             currentConfigured = Optional.of(configured);
         }
         currentConfigured.ifPresent(configuredEnchantment -> ((EnchantmentConfigGetterImpl) EnchantmentConfigGetter.INSTANCE).register(configuredEnchantment));

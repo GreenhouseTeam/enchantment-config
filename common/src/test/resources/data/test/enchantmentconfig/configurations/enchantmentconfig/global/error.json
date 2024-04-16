@@ -1,0 +1,10 @@
+{
+  "condition": {
+    "type": "enchantmentconfig:variable",
+    "variable": {
+      "type": "enchantmentconfig:enchantment_id"
+    },
+    "compare_to": "minecraft:riptide",
+    "comparison": ">"
+  }
+}

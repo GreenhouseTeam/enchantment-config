@@ -21,7 +21,7 @@ public class EnchantmentHelperMixin {
     private static int enchantmentconfig$getEnchantmentLevelOverrides(int original, Enchantment enchantment, ItemStack stack) {
         ConfiguredEnchantment<?, ?> configured = EnchantmentConfigGetter.INSTANCE.getConfig(enchantment, true);
         if (configured == null)
-            configured = EnchantmentConfigGetter.INSTANCE.getConfig(EnchantmentConfigGetter.GLOBAL_KEY, false);
+            return original;
 
         if (!configured.getGlobalFields().effectivenessOverrides().isEmpty())
             return EnchantmentConfigUtil.getOverrideLevel(original, enchantment, stack, configured.getGlobalFields().effectivenessOverrides());
@@ -33,7 +33,7 @@ public class EnchantmentHelperMixin {
     private static int enchantmentconfig$overrideIterations(int original, @Local(argsOnly = true) ItemStack stack, @Local Entry<Holder<Enchantment>> entry) {
         ConfiguredEnchantment<?, ?> configured = EnchantmentConfigGetter.INSTANCE.getConfig(entry.getKey().value(), true);
         if (configured == null)
-            configured = EnchantmentConfigGetter.INSTANCE.getConfig(EnchantmentConfigGetter.GLOBAL_KEY, false);
+            return original;
 
         if (!configured.getGlobalFields().effectivenessOverrides().isEmpty())
             return EnchantmentConfigUtil.getOverrideLevel(original, entry.getKey().value(), stack, configured.getGlobalFields().effectivenessOverrides());

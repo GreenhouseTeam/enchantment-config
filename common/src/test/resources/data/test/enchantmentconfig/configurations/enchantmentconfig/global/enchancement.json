@@ -1,0 +1,20 @@
+{
+  "max_level": 1,
+  "effectiveness_overrides": [
+    {
+      "base_value": 1,
+      "new_value": {
+        "type": "enchantmentconfig:max_level",
+        "unmodified": true
+      }
+    }
+  ],
+  "condition": {
+    "type": "enchantmentconfig:variable",
+    "variable": {
+      "type": "enchantmentconfig:enchantment_id"
+    },
+    "compare_to": "minecraft:riptide",
+    "comparison": "=="
+  }
+}

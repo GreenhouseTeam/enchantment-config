@@ -1,0 +1,28 @@
+{
+  "max_level": 3,
+  "effectiveness_overrides": [
+    {
+      "base_value": 2,
+      "new_value": {
+        "type": "enchantmentconfig:max_level",
+        "unmodified": true,
+        "percentage": 0.6
+      }
+    },
+    {
+      "base_value": 3,
+      "new_value": {
+        "type": "enchantmentconfig:max_level",
+        "unmodified": true
+      }
+    }
+  ],
+  "condition": {
+    "type": "enchantmentconfig:variable",
+    "variable": {
+      "type": "enchantmentconfig:max_level"
+    },
+    "compare_to": 3,
+    "comparison": ">="
+  }
+}

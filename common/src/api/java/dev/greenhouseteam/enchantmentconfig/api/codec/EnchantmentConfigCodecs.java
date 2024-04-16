@@ -27,8 +27,8 @@ public class EnchantmentConfigCodecs {
         return new RangeAllowedIntegerMapCodec<>(keyName, valueName, valueCodec);
     }
 
-    public static <T> VariableFieldCodec<T> variableFieldCodec(Codec<T> codec, Class<T> castClass) {
-        return new VariableFieldCodec<>(codec, castClass);
+    public static <T> FieldCodec<T> fieldCodec(Codec<T> codec, Class<T> castClass) {
+        return new FieldCodec<>(codec, castClass);
     }
 
 }

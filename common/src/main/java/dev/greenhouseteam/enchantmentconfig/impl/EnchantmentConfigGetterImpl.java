@@ -7,7 +7,6 @@ import dev.greenhouseteam.enchantmentconfig.api.config.configuration.Enchantment
 import dev.greenhouseteam.enchantmentconfig.api.config.field.ExtraFieldType;
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
 import dev.greenhouseteam.enchantmentconfig.api.registries.EnchantmentConfigRegistries;
-import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -20,6 +19,10 @@ public class EnchantmentConfigGetterImpl implements EnchantmentConfigGetter {
 
     public void register(ConfiguredEnchantment<?, ?> configuredEnchantment) {
         ENTRIES.put(configuredEnchantment.getType(), configuredEnchantment);
+    }
+
+    public void clear() {
+        ENTRIES.clear();
     }
 
     @Override

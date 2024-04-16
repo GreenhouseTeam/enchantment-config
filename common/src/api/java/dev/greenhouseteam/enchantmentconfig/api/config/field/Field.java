@@ -4,24 +4,24 @@ import dev.greenhouseteam.enchantmentconfig.api.config.variable.EnchantmentVaria
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 
-public class VariableField<T> {
+public class Field<T> {
     private final EnchantmentVariable<T> variable;
     private final T value;
 
-    public VariableField(EnchantmentVariable<T> variable) {
+    public Field(EnchantmentVariable<T> variable) {
         this.variable = variable;
         this.value = null;
     }
 
-    public VariableField(T value) {
+    public Field(T value) {
         this.variable = null;
         this.value = value;
     }
 
-    public T get(Enchantment enchantment, ItemStack stack) {
+    public T get(Enchantment enchantment, ItemStack stack, T original) {
         if (variable == null)
             return value;
-        return variable.getValue(enchantment, stack);
+        return variable.getValue(enchantment, stack, original);
     }
 
     public EnchantmentVariable<T> getInnerVariable() {
