@@ -35,7 +35,7 @@ public class VariableFieldCodec<A> implements Codec<VariableField<A>> {
                     if (!pair.getFirst().getInnerClass().isAssignableFrom(castClass))
                         return DataResult.<Pair<VariableField<A>, T>>error(() -> "Could not cast variable '" + EnchantmentConfigRegistries.ENCHANTMENT_VARIABLE_CODEC.getKey(pair.getFirst().codec()) + "' to '" + castClass.getName() + "'. Expected " + pair.getFirst().getInnerClass().getName() + ".");
                     return DataResult.success(Pair.of(new VariableField<>(pair.getFirst()), pair.getSecond()));
-                }).orElse(DataResult.<Pair<VariableField<A>, T>>error(() -> "Failed to decode VariableFieldCodec for unknown reasons."));
+                }).or(() -> DataResult.<Pair<VariableField<A>, T>>error(() -> "Failed to decode VariableFieldCodec for unknown reasons.").error()).orElseThrow();
         }
         var valueResult = elementCodec.decode(ops, input).map(pair -> DataResult.success(Pair.of(new VariableField<>(pair.getFirst()), pair.getSecond())));
         if (valueResult.isSuccess())
