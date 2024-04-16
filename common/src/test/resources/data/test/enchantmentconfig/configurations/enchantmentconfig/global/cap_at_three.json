@@ -23,6 +23,6 @@
       "type": "enchantmentconfig:max_level"
     },
     "compare_to": 3,
-    "comparison": ">="
+    "comparison": ">"
   }
 }
