@@ -29,37 +29,37 @@ public class Field<T> {
     }
 
     public int getInt(Enchantment enchantment, ItemStack stack, Integer original) {
-        if (variable == null)
+        if (variable == null) {
             if (value instanceof Number number)
                 return number.intValue();
-        else if (variable.getInnerClass().isAssignableFrom(Number.class))
+        } else if (variable.getInnerClass().equals(Number.class) || variable.getInnerClass().isAssignableFrom(Number.class))
             return ((Number)variable.getValue(enchantment, stack, (T) original)).intValue();
         throw NOT_A_NUMBER_EXCEPTION.get();
     }
 
     public float getFloat(Enchantment enchantment, ItemStack stack, Float original) {
-        if (variable == null)
+        if (variable == null) {
             if (value instanceof Number number)
                 return number.floatValue();
-            else if (variable.getInnerClass().isAssignableFrom(Number.class))
-                return ((Number)variable.getValue(enchantment, stack, (T) original)).floatValue();
+        } else if (variable.getInnerClass().equals(Number.class) || variable.getInnerClass().isAssignableFrom(Number.class))
+            return ((Number)variable.getValue(enchantment, stack, (T) original)).floatValue();
         throw NOT_A_NUMBER_EXCEPTION.get();
     }
 
     public double getDouble(Enchantment enchantment, ItemStack stack, Float original) {
-        if (variable == null)
+        if (variable == null) {
             if (value instanceof Number number)
                 return number.doubleValue();
-            else if (variable.getInnerClass().isAssignableFrom(Number.class))
+        } else if (variable.getInnerClass().equals(Number.class) || variable.getInnerClass().isAssignableFrom(Number.class))
                 return ((Number)variable.getValue(enchantment, stack, (T) original)).doubleValue();
         throw NOT_A_NUMBER_EXCEPTION.get();
     }
 
     public float getLong(Enchantment enchantment, ItemStack stack, Float original) {
-        if (variable == null)
+        if (variable == null) {
             if (value instanceof Number number)
                 return number.longValue();
-            else if (variable.getInnerClass().isAssignableFrom(Number.class))
+        } else if (variable.getInnerClass().equals(Number.class) || variable.getInnerClass().isAssignableFrom(Number.class))
                 return ((Number)variable.getValue(enchantment, stack, (T) original)).longValue();
         throw NOT_A_NUMBER_EXCEPTION.get();
     }
