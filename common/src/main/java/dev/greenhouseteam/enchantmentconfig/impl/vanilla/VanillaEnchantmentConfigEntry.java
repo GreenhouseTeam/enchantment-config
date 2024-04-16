@@ -14,6 +14,7 @@ import dev.greenhouseteam.enchantmentconfig.impl.variable.MaxLevelVariable;
 public class VanillaEnchantmentConfigEntry implements EnchantmentConfigPlugin {
     public static final EnchantmentType<NoneEnchantmentConfiguration> GLOBAL = new EnchantmentType<>(NoneEnchantmentConfiguration.CODEC, EnchantmentConfigGetter.GLOBAL_KEY);
 
+    public static final EnchantmentType<NoneEnchantmentConfiguration> LOYALTY = new EnchantmentType<>(NoneEnchantmentConfiguration.CODEC, VanillaEnchantmentResourceKeys.LOYALTY);
     public static final EnchantmentType<DamageEnchantmentConfiguration> IMPALING = new EnchantmentType<>(DamageEnchantmentConfiguration.CODEC, VanillaEnchantmentResourceKeys.IMPALING);
     public static final EnchantmentType<DamageEnchantmentConfiguration> SHARPNESS = new EnchantmentType<>(DamageEnchantmentConfiguration.CODEC, VanillaEnchantmentResourceKeys.SHARPNESS);
     public static final EnchantmentType<DamageEnchantmentConfiguration> BANE_OF_ARTHROPODS = new EnchantmentType<>(DamageEnchantmentConfiguration.CODEC, VanillaEnchantmentResourceKeys.BANE_OF_ARTHROPODS);
@@ -23,6 +24,7 @@ public class VanillaEnchantmentConfigEntry implements EnchantmentConfigPlugin {
     public void register(EnchantmentConfigAssigner assigner) {
         assigner.registerEnchantmentType(GLOBAL);
 
+        assigner.registerEnchantmentType(LOYALTY);
         assigner.registerEnchantmentType(IMPALING);
         assigner.registerEnchantmentType(SHARPNESS);
         assigner.registerEnchantmentType(BANE_OF_ARTHROPODS);

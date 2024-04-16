@@ -1,0 +1,12 @@
+{
+  "max_level": 1,
+  "effectiveness_overrides": [
+    {
+      "base_value": 0,
+      "new_value": {
+        "type": "enchantmentconfig:max_level",
+        "unmodified": true
+      }
+    }
+  ]
+}
