@@ -26,7 +26,7 @@ public record MaxLevelVariable(boolean unmodified, float percentage) implements 
     }
 
     @Override
-    public MapCodec<? extends EnchantmentVariable<?>> codec() {
+    public MapCodec<MaxLevelVariable> codec() {
         return CODEC;
     }
 }

@@ -22,7 +22,7 @@ public class OriginalVariable implements EnchantmentVariable<Object> {
     }
 
     @Override
-    public MapCodec<? extends EnchantmentVariable<?>> codec() {
+    public MapCodec<OriginalVariable> codec() {
         return CODEC;
     }
 

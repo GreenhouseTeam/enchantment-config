@@ -12,6 +12,10 @@ public interface EnchantmentVariable<T> {
 
     T getValue(Enchantment enchantment, ItemStack stack, T original);
 
+    default T getDefaultComparisonValue() {
+        return null;
+    }
+
     Class<T> getInnerClass();
 
     MapCodec<? extends EnchantmentVariable<?>> codec();

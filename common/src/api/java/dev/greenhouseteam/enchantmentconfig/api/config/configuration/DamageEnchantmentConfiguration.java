@@ -19,7 +19,7 @@ import java.util.Optional;
 public record DamageEnchantmentConfiguration(Optional<List<HolderSet<EntityType<?>>>> affectedEntities,
                                              Map<Integer, Float> damage) implements EnchantmentConfiguration {
     public static final MapCodec<DamageEnchantmentConfiguration> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
-            EnchantmentConfigCodecs.defaultableCodec("affected_entities", Codec.list(RegistryCodecs.homogeneousList(Registries.ENTITY_TYPE, BuiltInRegistries.ENTITY_TYPE.byNameCodec()))).forGetter(DamageEnchantmentConfiguration::affectedEntities),
+            EnchantmentConfigCodecs.defaultableCodec("affected_entities", Codec.list(RegistryCodecs.homogeneousList(Registries.ENTITY_TYPE))).forGetter(DamageEnchantmentConfiguration::affectedEntities),
             EnchantmentConfigCodecs.rangeAllowedIntegerCodec("level", "damage", Codec.FLOAT).optionalFieldOf("damage", Map.of()).forGetter(DamageEnchantmentConfiguration::damage)
     ).apply(inst, DamageEnchantmentConfiguration::new));
 

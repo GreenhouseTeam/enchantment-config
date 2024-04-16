@@ -1,5 +1,5 @@
 {
-  "max_level": 1,
+  "max_level": 0,
   "effectiveness_overrides": [
     {
       "base_value": 0,

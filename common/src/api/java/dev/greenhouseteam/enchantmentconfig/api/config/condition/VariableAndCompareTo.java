@@ -26,7 +26,10 @@ public record VariableAndCompareTo<T>(EnchantmentVariable<T> variable, Field<T> 
             EnchantmentVariable<Object> variable = (EnchantmentVariable<Object>) variableResult.result().get().getFirst();
             T compareToField = input.get("compare_to");
             if (compareToField == null)
-                return DataResult.error(() -> "Could not find 'compare_to' field.");
+                if (variable.getDefaultComparisonValue() == null)
+                    return DataResult.error(() -> "Could not find 'compare_to' field.");
+                else
+                    DataResult.success(new VariableAndCompareTo<>(variable, new Field<>(variable.getDefaultComparisonValue())));
             var compareToResult = EnchantmentConfigCodecs.fieldCodec(variable.getComparisonValueCodec(), variable.getInnerClass()).decode(ops, compareToField);
             if (compareToResult.isError())
                 return DataResult.error(() -> "Could not decode compare to value. " + compareToResult.error().get().message());

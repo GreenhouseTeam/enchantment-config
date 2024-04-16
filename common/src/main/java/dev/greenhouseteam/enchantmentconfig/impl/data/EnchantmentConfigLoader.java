@@ -103,7 +103,7 @@ public class EnchantmentConfigLoader extends SimplePreparableReloadListener<Map<
         for (JsonElement json : elements) {
             ConfiguredEnchantment<?, ?> configured = EnchantmentConfigRegistries.ENCHANTMENT_TYPE.get(key).codec().decode(ops, json).getOrThrow().getFirst();
             if (((JsonObject)json).has("condition")) {
-                EnchantmentCondition condition = EnchantmentCondition.CODEC.decode(JsonOps.INSTANCE, ((JsonObject)json).get("condition")).getOrThrow().getFirst();
+                EnchantmentCondition condition = EnchantmentCondition.CODEC.decode(ops, ((JsonObject)json).get("condition")).getOrThrow().getFirst();
                 try {
                     if (!condition.compare(configured.getType()))
                         continue;

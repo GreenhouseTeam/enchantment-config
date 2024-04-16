@@ -51,7 +51,7 @@ public record GlobalEnchantmentFields(Optional<Integer> maxLevel,
     public static final MapCodec<GlobalEnchantmentFields> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
             EnchantmentConfigCodecs.defaultableCodec("max_level", Codec.INT).forGetter(GlobalEnchantmentFields::maxLevel),
             EnchantmentConfigCodecs.rangeAllowedIntegerCodec("base_value", "new_value", EnchantmentConfigCodecs.fieldCodec(Codec.INT, Integer.class)).optionalFieldOf("effectiveness_overrides", Map.of()).forGetter(GlobalEnchantmentFields::effectivenessOverrides),
-            EnchantmentConfigCodecs.defaultableCodec("incompatibilities", Codec.list(RegistryCodecs.homogeneousList(Registries.ENCHANTMENT, BuiltInRegistries.ENCHANTMENT.byNameCodec()))).forGetter(GlobalEnchantmentFields::incompatibilities),
+            EnchantmentConfigCodecs.defaultableCodec("incompatibilities", Codec.list(RegistryCodecs.homogeneousList(Registries.ENCHANTMENT))).forGetter(GlobalEnchantmentFields::incompatibilities),
             EnchantmentConfigCodecs.mapCollectionCodec("stack", "weight", ItemAndTagMix.CODEC, Codec.INT).optionalFieldOf("enchanting_table_weight", Map.of()).forGetter(GlobalEnchantmentFields::enchantingTableWeight),
             // TODO: Expand on tradeable field by utilising predicates and other stuff.
             EnchantmentConfigCodecs.defaultableCodec("tradeable", Codec.BOOL).forGetter(GlobalEnchantmentFields::tradeable),

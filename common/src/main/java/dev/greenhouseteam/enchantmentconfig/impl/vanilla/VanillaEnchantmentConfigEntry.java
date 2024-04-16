@@ -7,8 +7,8 @@ import dev.greenhouseteam.enchantmentconfig.api.config.configuration.DamageEncha
 import dev.greenhouseteam.enchantmentconfig.api.config.configuration.NoneEnchantmentConfiguration;
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
 import dev.greenhouseteam.enchantmentconfig.api.util.VanillaEnchantmentResourceKeys;
+import dev.greenhouseteam.enchantmentconfig.impl.variable.IsVariable;
 import dev.greenhouseteam.enchantmentconfig.impl.variable.MaxLevelVariable;
-import dev.greenhouseteam.enchantmentconfig.impl.variable.EnchantmentIdVariable;
 import dev.greenhouseteam.enchantmentconfig.impl.variable.OriginalVariable;
 
 @EnchantmentConfigEntrypoint
@@ -27,8 +27,8 @@ public class VanillaEnchantmentConfigEntry implements EnchantmentConfigPlugin {
         assigner.registerEnchantmentType(BANE_OF_ARTHROPODS);
         assigner.registerEnchantmentType(SMITE);
 
+        assigner.registerVariableCodec(IsVariable.ID, IsVariable.CODEC);
         assigner.registerVariableCodec(MaxLevelVariable.ID, MaxLevelVariable.CODEC);
-        assigner.registerVariableCodec(EnchantmentIdVariable.ID, EnchantmentIdVariable.CODEC);
         assigner.registerVariableCodec(OriginalVariable.ID, OriginalVariable.CODEC);
     }
 }
