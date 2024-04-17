@@ -3,15 +3,16 @@ package dev.greenhouseteam.enchantmentconfig.impl.variable;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import dev.greenhouseteam.enchantmentconfig.api.config.variable.EnchantmentVariable;
-import dev.greenhouseteam.enchantmentconfig.api.config.variable.IntVariable;
+import dev.greenhouseteam.enchantmentconfig.api.config.variable.Variable;
+import dev.greenhouseteam.enchantmentconfig.api.config.variable.VariableTypes;
+import dev.greenhouseteam.enchantmentconfig.api.config.variable.type.VariableType;
 import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
 import dev.greenhouseteam.enchantmentconfig.mixin.EnchantmentAccessor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 
-public record MaxLevelVariable(boolean unmodified, float percentage) implements IntVariable {
+public record MaxLevelVariable(boolean unmodified, float percentage) implements Variable<Integer> {
     public static final ResourceLocation ID = EnchantmentConfigUtil.asResource("max_level");
     public static final MapCodec<MaxLevelVariable> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
             Codec.BOOL.optionalFieldOf("unmodified", false).forGetter(MaxLevelVariable::unmodified),
@@ -19,14 +20,24 @@ public record MaxLevelVariable(boolean unmodified, float percentage) implements 
     ).apply(inst, MaxLevelVariable::new));
 
     @Override
-    public Integer getValue(Enchantment enchantment, ItemStack stack, Number original) {
+    public Integer getValue(Enchantment enchantment, ItemStack stack, Integer original) {
         if (unmodified())
             return (int) (((EnchantmentAccessor)enchantment).getDefinition().maxLevel() * percentage());
         return (int) (enchantment.getMaxLevel() * percentage());
     }
 
     @Override
-    public MapCodec<MaxLevelVariable> codec() {
+    public MapCodec<MaxLevelVariable> codec(VariableType<Object> variableType) {
         return CODEC;
+    }
+
+    @Override
+    public VariableType<Integer> variableType() {
+        return VariableTypes.INT;
+    }
+
+    @Override
+    public ResourceLocation id() {
+        return ID;
     }
 }

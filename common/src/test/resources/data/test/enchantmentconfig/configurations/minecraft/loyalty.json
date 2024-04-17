@@ -4,8 +4,14 @@
     {
       "base_value": 0,
       "new_value": {
-        "type": "enchantmentconfig:max_level",
-        "unmodified": true
+        "type": "enchantmentconfig:item_predicate",
+        "value": {
+          "type": "enchantmentconfig:max_level",
+          "unmodified": true
+        },
+        "predicate": {
+          "items": "#c:tools/spears"
+        }
       }
     }
   ]

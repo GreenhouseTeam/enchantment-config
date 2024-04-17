@@ -1,32 +1,36 @@
 package dev.greenhouseteam.enchantmentconfig.impl.variable;
 
 import com.mojang.serialization.MapCodec;
-import dev.greenhouseteam.enchantmentconfig.api.config.variable.EnchantmentVariable;
+import dev.greenhouseteam.enchantmentconfig.api.config.variable.Variable;
+import dev.greenhouseteam.enchantmentconfig.api.config.variable.type.VariableType;
 import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 
-public class OriginalVariable implements EnchantmentVariable<Object> {
+public record OriginalVariable<T>(VariableType<T> variableType) implements Variable<T> {
     public static final ResourceLocation ID = EnchantmentConfigUtil.asResource("original");
-    public static final MapCodec<OriginalVariable> CODEC = MapCodec.unit(OriginalVariable::new);
+
+    public static MapCodec<OriginalVariable<Object>> staticCodec(VariableType<Object> variableType) {
+        return MapCodec.unit(new OriginalVariable<>(variableType));
+    }
 
     @Override
-    public Object getValue(Enchantment enchantment, ItemStack stack, Object original) {
+    public T getValue(Enchantment enchantment, ItemStack stack, T original) {
         return original;
     }
 
     @Override
-    public Class<Object> getInnerClass() {
-        return Object.class;
-    }
-
-    @Override
-    public MapCodec<OriginalVariable> codec() {
-        return CODEC;
+    public MapCodec<OriginalVariable<Object>> codec(VariableType<Object> variableType) {
+        return staticCodec(variableType);
     }
 
     public boolean isComparable() {
         return false;
+    }
+
+    @Override
+    public ResourceLocation id() {
+        return ID;
     }
 }

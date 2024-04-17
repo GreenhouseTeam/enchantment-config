@@ -2,18 +2,22 @@ package dev.greenhouseteam.enchantmentconfig.impl.data;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
+import com.mojang.serialization.MapLike;
 import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigGetter;
+import dev.greenhouseteam.enchantmentconfig.api.codec.VariableTypeCodec;
 import dev.greenhouseteam.enchantmentconfig.api.config.ConfiguredEnchantment;
+import dev.greenhouseteam.enchantmentconfig.api.config.condition.Condition;
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
+import dev.greenhouseteam.enchantmentconfig.api.config.variable.type.VariableType;
 import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
 import dev.greenhouseteam.enchantmentconfig.impl.EnchantmentConfigGetterImpl;
 import dev.greenhouseteam.enchantmentconfig.api.registries.EnchantmentConfigRegistries;
-import dev.greenhouseteam.enchantmentconfig.api.config.condition.EnchantmentCondition;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -105,10 +109,25 @@ public class EnchantmentConfigLoader extends SimplePreparableReloadListener<Map<
             for (JsonElement json : elements) {
                 try {
                     ConfiguredEnchantment<?, ?> configured = EnchantmentConfigRegistries.ENCHANTMENT_TYPE.get(key).codec().decode(ops, json).getOrThrow().getFirst();
-                    if (((JsonObject) json).has("condition")) {
-                        EnchantmentCondition condition = EnchantmentCondition.CODEC.decode(ops, ((JsonObject) json).get("condition")).getOrThrow(s -> new IllegalStateException("Failed to decode enchantment condition: " + s)).getFirst();
+                    JsonElement conditionsJson = ((JsonObject) json).get("conditions");
+                    if (((JsonObject) json).has("conditions")) {
+                        List<Condition> conditions = new ArrayList<>();
+                        if (conditionsJson.isJsonArray()) {
+                            JsonArray array = conditionsJson.getAsJsonArray();
+                            for (int i = 0; i < array.size(); ++i) {
+                                JsonElement element = array.get(i);
+                                if (!(element.isJsonObject()))
+                                    throw new IllegalStateException("JSON in 'conditions' array at index [" + i + "] is not an object.");
+                                JsonObject object = element.getAsJsonObject();
+                                conditions.add(Condition.CODEC.decode(ops, object).getOrThrow(s -> new IllegalStateException("Failed to decode enchantment condition: " + s)).getFirst());
+                            }
+                        } else {
+                            JsonObject object = conditionsJson.getAsJsonObject();
+                            conditions.add(Condition.CODEC.decode(ops, object).getOrThrow(s -> new IllegalStateException("Failed to decode enchantment condition: " + s)).getFirst());
+                        }
                         try {
-                            if (!condition.compare(configured.getType()))
+                            ConfiguredEnchantment<?, ?> finalConfigured = configured;
+                            if (!conditions.stream().allMatch(c -> c.compare(finalConfigured.getType())))
                                 continue;
                         } catch (UnsupportedOperationException ex) {
                             throw new IllegalStateException("Failed to compare variable based condition: " + ex.getMessage());

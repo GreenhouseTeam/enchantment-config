@@ -20,6 +20,7 @@ public class EnchantmentConfigFabric implements ModInitializer {
     public void onInitialize() {
         EnchantmentConfigUtil.init(new EnchantmentConfigPlatformHelperFabric());
         EnchantmentConfig.registerConditionCodecs(Registry::register);
+        EnchantmentConfig.registerVariableTypes(Registry::register);
 
         EnchantmentConfigAssignerImpl assigner = new EnchantmentConfigAssignerImpl();
         FabricLoader.getInstance().getEntrypoints("enchantmentconfig", EnchantmentConfigPlugin.class).forEach(entryPoint -> entryPoint.register(assigner));

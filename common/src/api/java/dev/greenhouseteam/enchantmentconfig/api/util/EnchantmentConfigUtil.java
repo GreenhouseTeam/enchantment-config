@@ -43,14 +43,14 @@ public class EnchantmentConfigUtil {
 
             if (levelToValueMap.keySet().stream().allMatch(i -> i < level)) {
                 int value = levelToValueMap.keySet().stream().filter(i -> i < level).max(Integer::compareTo).orElseThrow();
-                return levelToValueMap.getOrDefault(value, new Field<>(level)).getInt(enchantment, stack, level);
+                return levelToValueMap.containsKey(value) ? levelToValueMap.get(value).getInt(enchantment, stack, level) : level;
             }
 
             int upperBound = levelToValueMap.keySet().stream().filter(i -> i > level).min(Integer::compareTo).orElseThrow();
             int lowerBound = levelToValueMap.keySet().stream().filter(i -> i < level).max(Integer::compareTo).orElseThrow();
 
-            int upperLevel = levelToValueMap.getOrDefault(upperBound, new Field<>(level)).getInt(enchantment, stack, level);
-            int lowerLevel = levelToValueMap.getOrDefault(lowerBound, new Field<>(level)).getInt(enchantment, stack, level);
+            int upperLevel = levelToValueMap.containsKey(upperBound) ? levelToValueMap.get(upperBound).getInt(enchantment, stack, level) : level;
+            int lowerLevel = levelToValueMap.containsKey(lowerBound) ? levelToValueMap.get(lowerBound).getInt(enchantment, stack, level) : level;
 
             if (lowerLevel == upperLevel) {
                 return lowerLevel;

@@ -17,12 +17,14 @@
       }
     }
   ],
-  "condition": {
-    "type": "enchantmentconfig:variable",
-    "variable": {
-      "type": "enchantmentconfig:max_level"
-    },
-    "compare_to": 3,
-    "comparison": ">"
-  }
+  "conditions": [
+    {
+      "type": "enchantmentconfig:variable",
+      "value": {
+        "type": "enchantmentconfig:max_level"
+      },
+      "compare_to": 3,
+      "comparison": ">"
+    }
+  ]
 }

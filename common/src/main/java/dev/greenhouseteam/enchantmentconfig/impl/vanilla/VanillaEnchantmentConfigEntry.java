@@ -6,8 +6,10 @@ import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigPlugin;
 import dev.greenhouseteam.enchantmentconfig.api.config.configuration.DamageEnchantmentConfiguration;
 import dev.greenhouseteam.enchantmentconfig.api.config.configuration.NoneEnchantmentConfiguration;
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
+import dev.greenhouseteam.enchantmentconfig.api.config.variable.VariableTypes;
 import dev.greenhouseteam.enchantmentconfig.api.util.VanillaEnchantmentResourceKeys;
-import dev.greenhouseteam.enchantmentconfig.impl.variable.IsVariable;
+import dev.greenhouseteam.enchantmentconfig.impl.variable.ItemPredicateVariable;
+import dev.greenhouseteam.enchantmentconfig.impl.variable.MatchesVariable;
 import dev.greenhouseteam.enchantmentconfig.impl.variable.MaxLevelVariable;
 import dev.greenhouseteam.enchantmentconfig.impl.variable.OriginalVariable;
 
@@ -27,8 +29,9 @@ public class VanillaEnchantmentConfigEntry implements EnchantmentConfigPlugin {
         assigner.registerEnchantmentType(BANE_OF_ARTHROPODS);
         assigner.registerEnchantmentType(SMITE);
 
-        assigner.registerVariableCodec(IsVariable.ID, IsVariable.CODEC);
-        assigner.registerVariableCodec(MaxLevelVariable.ID, MaxLevelVariable.CODEC);
-        assigner.registerVariableCodec(OriginalVariable.ID, OriginalVariable.CODEC);
+        assigner.registerVariableCodec(ItemPredicateVariable.ID, ItemPredicateVariable::staticCodec);
+        assigner.registerVariableCodec(MatchesVariable.ID, VariableTypes.BOOLEAN, MatchesVariable.CODEC);
+        assigner.registerVariableCodec(MaxLevelVariable.ID, VariableTypes.INT, MaxLevelVariable.CODEC);
+        assigner.registerVariableCodec(OriginalVariable.ID, OriginalVariable::staticCodec);
     }
 }

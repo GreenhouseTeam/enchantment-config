@@ -4,6 +4,7 @@ import dev.greenhouseteam.enchantmentconfig.api.config.ConfiguredEnchantment;
 import dev.greenhouseteam.enchantmentconfig.api.config.configuration.EnchantmentConfiguration;
 import dev.greenhouseteam.enchantmentconfig.api.config.field.ExtraFieldType;
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
+import dev.greenhouseteam.enchantmentconfig.api.config.variable.type.VariableType;
 import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -11,7 +12,6 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import org.jetbrains.annotations.Nullable;
 
 public interface EnchantmentConfigGetter {
-    ResourceLocation GLOBAL_KEY = EnchantmentConfigUtil.asResource("global");
     EnchantmentConfigGetter INSTANCE = EnchantmentConfigUtil.getHelper().createGetter();
 
     <C extends EnchantmentConfiguration, T extends EnchantmentType<C>> ConfiguredEnchantment<C, T> getConfig(T type);
@@ -20,6 +20,7 @@ public interface EnchantmentConfigGetter {
     }
     <C extends EnchantmentConfiguration, T extends EnchantmentType<C>> ConfiguredEnchantment<C, T> getConfig(ResourceLocation resourceLocation, boolean nullSafe);
     <C extends EnchantmentConfiguration, T extends EnchantmentType<C>> ConfiguredEnchantment<C, T> getConfig(Enchantment enchantment, boolean nullSafe);
+
 
 
     /**

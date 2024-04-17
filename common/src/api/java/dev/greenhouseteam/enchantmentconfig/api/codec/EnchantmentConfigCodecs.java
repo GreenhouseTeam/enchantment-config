@@ -2,6 +2,7 @@ package dev.greenhouseteam.enchantmentconfig.api.codec;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
+import dev.greenhouseteam.enchantmentconfig.api.config.variable.type.VariableType;
 
 import java.util.Optional;
 
@@ -27,8 +28,8 @@ public class EnchantmentConfigCodecs {
         return new RangeAllowedIntegerMapCodec<>(keyName, valueName, valueCodec);
     }
 
-    public static <T> FieldCodec<T> fieldCodec(Codec<T> codec, Class<T> castClass) {
-        return new FieldCodec<>(codec, castClass);
+    public static <T> FieldCodec<T> fieldCodec(VariableType<T> type) {
+        return new FieldCodec<>(type.getValueCodec(), type);
     }
 
 }

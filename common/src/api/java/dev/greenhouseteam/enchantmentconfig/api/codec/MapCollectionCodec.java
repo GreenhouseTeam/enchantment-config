@@ -9,6 +9,7 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.Lifecycle;
 import com.mojang.serialization.RecordBuilder;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
+@ApiStatus.Internal
 public class MapCollectionCodec<K, V> implements Codec<Map<K, V>> {
     protected final String keyName;
     protected final String valueName;

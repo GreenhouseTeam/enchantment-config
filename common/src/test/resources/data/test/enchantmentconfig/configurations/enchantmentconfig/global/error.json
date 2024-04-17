@@ -1,11 +1,13 @@
 {
-  "condition": {
-    "type": "enchantmentconfig:variable",
-    "variable": {
-      "type": "enchantmentconfig:is",
-      "enchantments": "#test:enchancements"
-    },
-    "compare_to": false,
-    "comparison": ">"
-  }
+  "conditions": [
+    {
+      "type": "enchantmentconfig:variable",
+      "value": {
+        "type": "enchantmentconfig:matches",
+        "enchantments": "#test:enchancements"
+      },
+      "compare_to": false,
+      "comparison": ">"
+    }
+  ]
 }

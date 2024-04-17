@@ -6,10 +6,10 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.greenhouseteam.enchantmentconfig.api.codec.EnchantmentConfigCodecs;
 import dev.greenhouseteam.enchantmentconfig.api.config.field.Field;
 import dev.greenhouseteam.enchantmentconfig.api.config.field.ItemAndTagMix;
+import dev.greenhouseteam.enchantmentconfig.api.config.variable.VariableTypes;
 import dev.greenhouseteam.enchantmentconfig.api.util.MergeUtil;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.enchantment.Enchantment;
 
@@ -50,7 +50,7 @@ public record GlobalEnchantmentFields(Optional<Integer> maxLevel,
 
     public static final MapCodec<GlobalEnchantmentFields> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
             EnchantmentConfigCodecs.defaultableCodec("max_level", Codec.INT).forGetter(GlobalEnchantmentFields::maxLevel),
-            EnchantmentConfigCodecs.rangeAllowedIntegerCodec("base_value", "new_value", EnchantmentConfigCodecs.fieldCodec(Codec.INT, Integer.class)).optionalFieldOf("effectiveness_overrides", Map.of()).forGetter(GlobalEnchantmentFields::effectivenessOverrides),
+            EnchantmentConfigCodecs.rangeAllowedIntegerCodec("base_value", "new_value", EnchantmentConfigCodecs.fieldCodec(VariableTypes.INT)).optionalFieldOf("effectiveness_overrides",Map.of()).forGetter(GlobalEnchantmentFields::effectivenessOverrides),
             EnchantmentConfigCodecs.defaultableCodec("incompatibilities", Codec.list(RegistryCodecs.homogeneousList(Registries.ENCHANTMENT))).forGetter(GlobalEnchantmentFields::incompatibilities),
             EnchantmentConfigCodecs.mapCollectionCodec("stack", "weight", ItemAndTagMix.CODEC, Codec.INT).optionalFieldOf("enchanting_table_weight", Map.of()).forGetter(GlobalEnchantmentFields::enchantingTableWeight),
             // TODO: Expand on tradeable field by utilising predicates and other stuff.

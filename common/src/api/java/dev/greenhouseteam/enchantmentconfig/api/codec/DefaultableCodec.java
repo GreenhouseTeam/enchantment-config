@@ -6,10 +6,12 @@ import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.MapLike;
 import com.mojang.serialization.RecordBuilder;
 import com.mojang.serialization.codecs.OptionalFieldCodec;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Locale;
 import java.util.Optional;
 
+@ApiStatus.Internal
 public class DefaultableCodec<A> extends OptionalFieldCodec<A> {
     private static final String DEFAULT_KEY = "default";
     private final String capturedName;
