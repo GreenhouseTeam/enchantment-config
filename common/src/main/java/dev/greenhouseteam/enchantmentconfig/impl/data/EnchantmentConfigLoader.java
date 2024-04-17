@@ -80,7 +80,7 @@ public class EnchantmentConfigLoader extends SimplePreparableReloadListener<Map<
     protected void apply(Map<ResourceLocation, List<JsonElement>> map, ResourceManager manager, ProfilerFiller filler) {
         ((EnchantmentConfigGetterImpl) EnchantmentConfigGetter.INSTANCE).clear();
 
-        DynamicOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, EnchantmentConfigUtil.getHelper().getRegistries());
+        DynamicOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, EnchantmentConfigUtil.getHelper().getRegistryLookup());
         Map<ResourceLocation, ConfiguredEnchantment<?, ?>> globalConfigured = new HashMap<>();
         for (Map.Entry<ResourceLocation, List<JsonElement>> entry : map.entrySet().stream().filter(entry -> isGlobal(entry.getKey())).toList()) {
             for (Map.Entry<ResourceKey<EnchantmentType<?>>, EnchantmentType<?>> type : EnchantmentConfigRegistries.ENCHANTMENT_TYPE.entrySet()) {
@@ -110,7 +110,7 @@ public class EnchantmentConfigLoader extends SimplePreparableReloadListener<Map<
                 } catch (UnsupportedOperationException ex) {
                     if (globalContext) {
                         if (!hasLoggedError)
-                            EnchantmentConfigUtil.LOGGER.error("Failed to compare variable based condition: " + ex.getMessage());
+                            EnchantmentConfigUtil.LOGGER.error("Failed to decode enchantment configuration '" + key + "'. Failed to compare variable based condition: " + ex.getMessage());
                         hasLoggedError = true;
                     }
                     continue;

@@ -4,8 +4,8 @@ import dev.greenhouseteam.enchantmentconfig.impl.EnchantmentConfigFabric;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 
 public class EnchantmentConfigPlatformHelperFabric implements EnchantmentConfigPlatformHelperMain {
@@ -33,7 +33,7 @@ public class EnchantmentConfigPlatformHelperFabric implements EnchantmentConfigP
     }
 
     @Override
-    public RegistryAccess getRegistries() {
-        return EnchantmentConfigFabric.getRegistries();
+    public HolderLookup.Provider getRegistryLookup() {
+        return EnchantmentConfigFabric.getRegistryLookup();
     }
 }

@@ -17,7 +17,7 @@ public class EnchantmentConfigLoaderFabric extends EnchantmentConfigLoader imple
     @Override
     protected void apply(Map<ResourceLocation, List<JsonElement>> map, ResourceManager manager, ProfilerFiller filler) {
         super.apply(map, manager, filler);
-        EnchantmentConfigFabric.setRegistries(null);
+        EnchantmentConfigFabric.setRegistryLookup(null);
     }
 
     @Override

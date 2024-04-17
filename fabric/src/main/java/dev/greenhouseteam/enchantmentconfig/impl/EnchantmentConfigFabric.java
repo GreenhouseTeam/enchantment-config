@@ -7,14 +7,14 @@ import dev.greenhouseteam.enchantmentconfig.platform.EnchantmentConfigPlatformHe
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.packs.PackType;
 
 import javax.annotation.Nullable;
 
 public class EnchantmentConfigFabric implements ModInitializer {
-    private static RegistryAccess registries;
+    private static HolderLookup.Provider registries;
 
     @Override
     public void onInitialize() {
@@ -31,11 +31,11 @@ public class EnchantmentConfigFabric implements ModInitializer {
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new EnchantmentConfigLoaderFabric());
     }
 
-    public static void setRegistries(@Nullable RegistryAccess registries) {
+    public static void setRegistryLookup(@Nullable HolderLookup.Provider registries) {
         EnchantmentConfigFabric.registries = registries;
     }
 
-    public static RegistryAccess getRegistries() {
+    public static HolderLookup.Provider getRegistryLookup() {
         return EnchantmentConfigFabric.registries;
     }
 }

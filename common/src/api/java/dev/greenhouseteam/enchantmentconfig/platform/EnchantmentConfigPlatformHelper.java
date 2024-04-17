@@ -1,8 +1,8 @@
 package dev.greenhouseteam.enchantmentconfig.platform;
 
 import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigGetter;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 
 public interface EnchantmentConfigPlatformHelper {
@@ -37,6 +37,6 @@ public interface EnchantmentConfigPlatformHelper {
 
     EnchantmentConfigGetter createGetter();
 
-    RegistryAccess getRegistries();
+    HolderLookup.Provider getRegistryLookup();
 
 }
