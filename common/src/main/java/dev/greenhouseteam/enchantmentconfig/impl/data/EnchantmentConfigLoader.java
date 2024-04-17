@@ -23,6 +23,7 @@ import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -84,19 +85,19 @@ public class EnchantmentConfigLoader extends SimplePreparableReloadListener<Map<
         Map<ResourceLocation, ConfiguredEnchantment<?, ?>> globalConfigured = new HashMap<>();
         for (Map.Entry<ResourceLocation, List<JsonElement>> entry : map.entrySet().stream().filter(entry -> isGlobal(entry.getKey())).toList()) {
             for (Map.Entry<ResourceKey<EnchantmentType<?>>, EnchantmentType<?>> type : EnchantmentConfigRegistries.ENCHANTMENT_TYPE.entrySet()) {
-                var configured = handleJson(type.getKey().location(), ops, entry.getValue(), Optional.empty(), true);
+                var configured = handleJson(type.getKey().location(), ops, entry.getValue(), Optional.empty(), entry.getKey());
                 if (configured != null)
                     globalConfigured.put(type.getKey().location(), configured);
             }
             hasLoggedError = false;
         }
         for (Map.Entry<ResourceLocation, List<JsonElement>> entry : map.entrySet().stream().filter(entry -> !isGlobal(entry.getKey())).toList()) {
-            handleJson(entry.getKey(), ops, entry.getValue(), Optional.ofNullable(globalConfigured.getOrDefault(entry.getKey(), null)), false);
+            handleJson(entry.getKey(), ops, entry.getValue(), Optional.ofNullable(globalConfigured.getOrDefault(entry.getKey(), null)), null);
             hasLoggedError = false;
         }
     }
 
-    private ConfiguredEnchantment<?, ?> handleJson(ResourceLocation key, DynamicOps<JsonElement> ops, List<JsonElement> elements, Optional<ConfiguredEnchantment<?, ?>> global, boolean globalContext) {
+    private ConfiguredEnchantment<?, ?> handleJson(ResourceLocation key, DynamicOps<JsonElement> ops, List<JsonElement> elements, Optional<ConfiguredEnchantment<?, ?>> global, @Nullable ResourceLocation fileKey) {
         Optional<ConfiguredEnchantment<?, ?>> currentConfigured = Optional.empty();
         if (elements.isEmpty() && global.isPresent())
             elements.add(new JsonObject());
@@ -108,11 +109,9 @@ public class EnchantmentConfigLoader extends SimplePreparableReloadListener<Map<
                     if (!condition.compare(configured.getType()))
                         continue;
                 } catch (UnsupportedOperationException ex) {
-                    if (globalContext) {
-                        if (!hasLoggedError)
-                            EnchantmentConfigUtil.LOGGER.error("Failed to decode enchantment configuration '" + key + "'. Failed to compare variable based condition: " + ex.getMessage());
-                        hasLoggedError = true;
-                    }
+                    if (fileKey == null || !hasLoggedError)
+                        EnchantmentConfigUtil.LOGGER.error("Failed to decode enchantment configuration '" + (fileKey != null ? fileKey : key) + "'. Failed to compare variable based condition: " + ex.getMessage());
+                    hasLoggedError = true;
                     continue;
                 }
             }
