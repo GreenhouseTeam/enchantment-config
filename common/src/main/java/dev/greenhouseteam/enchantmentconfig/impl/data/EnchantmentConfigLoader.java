@@ -98,29 +98,34 @@ public class EnchantmentConfigLoader extends SimplePreparableReloadListener<Map<
     }
 
     private ConfiguredEnchantment<?, ?> handleJson(ResourceLocation key, DynamicOps<JsonElement> ops, List<JsonElement> elements, Optional<ConfiguredEnchantment<?, ?>> global, @Nullable ResourceLocation fileKey) {
-        Optional<ConfiguredEnchantment<?, ?>> currentConfigured = Optional.empty();
-        if (elements.isEmpty() && global.isPresent())
-            elements.add(new JsonObject());
-        for (JsonElement json : elements) {
-            ConfiguredEnchantment<?, ?> configured = EnchantmentConfigRegistries.ENCHANTMENT_TYPE.get(key).codec().decode(ops, json).getOrThrow().getFirst();
-            if (((JsonObject)json).has("condition")) {
-                EnchantmentCondition condition = EnchantmentCondition.CODEC.decode(ops, ((JsonObject)json).get("condition")).getOrThrow().getFirst();
+        if (fileKey == null || !hasLoggedError) {
+            Optional<ConfiguredEnchantment<?, ?>> currentConfigured = Optional.empty();
+            if (elements.isEmpty() && global.isPresent())
+                elements.add(new JsonObject());
+            for (JsonElement json : elements) {
                 try {
-                    if (!condition.compare(configured.getType()))
-                        continue;
-                } catch (UnsupportedOperationException ex) {
-                    if (fileKey == null || !hasLoggedError)
-                        EnchantmentConfigUtil.LOGGER.error("Failed to decode enchantment configuration '" + (fileKey != null ? fileKey : key) + "'. Failed to compare variable based condition: " + ex.getMessage());
+                    ConfiguredEnchantment<?, ?> configured = EnchantmentConfigRegistries.ENCHANTMENT_TYPE.get(key).codec().decode(ops, json).getOrThrow().getFirst();
+                    if (((JsonObject) json).has("condition")) {
+                        EnchantmentCondition condition = EnchantmentCondition.CODEC.decode(ops, ((JsonObject) json).get("condition")).getOrThrow(s -> new IllegalStateException("Failed to decode enchantment condition: " + s)).getFirst();
+                        try {
+                            if (!condition.compare(configured.getType()))
+                                continue;
+                        } catch (UnsupportedOperationException ex) {
+                            throw new IllegalStateException("Failed to compare variable based condition: " + ex.getMessage());
+                        }
+                    }
+                    if (currentConfigured.isPresent() || global.isPresent())
+                        configured = configured.merge(currentConfigured, global);
+
+                    currentConfigured = Optional.of(configured);
+                } catch (Exception ex) {
+                    EnchantmentConfigUtil.LOGGER.error("Failed to decode enchantment configuration '{}'.", (fileKey != null ? fileKey : key), ex);
                     hasLoggedError = true;
-                    continue;
                 }
             }
-            if (currentConfigured.isPresent() || global.isPresent())
-                configured = configured.merge(currentConfigured, global);
-
-            currentConfigured = Optional.of(configured);
+            currentConfigured.ifPresent(configuredEnchantment -> ((EnchantmentConfigGetterImpl) EnchantmentConfigGetter.INSTANCE).register(configuredEnchantment));
+            return currentConfigured.orElse(null);
         }
-        currentConfigured.ifPresent(configuredEnchantment -> ((EnchantmentConfigGetterImpl) EnchantmentConfigGetter.INSTANCE).register(configuredEnchantment));
-        return currentConfigured.orElse(null);
+        return null;
     }
 }
