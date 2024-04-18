@@ -1,6 +1,5 @@
 package dev.greenhouseteam.enchantmentconfig.impl;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import dev.greenhouseteam.enchantmentconfig.api.config.condition.Condition;
 import dev.greenhouseteam.enchantmentconfig.api.config.variable.VariableTypes;

@@ -1,8 +1,11 @@
 package dev.greenhouseteam.enchantmentconfig.api.util;
 
 import dev.greenhouseteam.enchantmentconfig.platform.EnchantmentConfigPlatformHelper;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.enchantment.Enchantment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +15,8 @@ public class EnchantmentConfigUtil {
     public static final String MOD_ID = "enchantmentconfig";
     public static final String MOD_NAME = "Enchantment Config";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_NAME);
+
+    public static final TagKey<Enchantment> DISABLED_ENCHANTMENT_TAG = TagKey.create(Registries.ENCHANTMENT, asResource("disabled"));
 
     public static float getFloatFromLevel(int level, float original, Map<Integer, Float> levelToValueMap) {
         if (!levelToValueMap.isEmpty()) {
