@@ -6,7 +6,6 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigGetter;
 import dev.greenhouseteam.enchantmentconfig.api.config.ConfiguredEnchantment;
-import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
 import net.minecraft.core.Holder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -23,10 +22,7 @@ public class EnchantmentHelperMixin {
         if (configured == null)
             return original;
 
-        if (!configured.getGlobalFields().effectivenessOverrides().isEmpty())
-            return EnchantmentConfigUtil.getOverrideLevel(original, enchantment, stack, configured.getGlobalFields().effectivenessOverrides());
-
-        return original;
+        return configured.getGlobalFields().getOverrideLevel(original, enchantment, stack);
     }
 
     @ModifyArg(method = "runIterationOnItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper$EnchantmentVisitor;accept(Lnet/minecraft/world/item/enchantment/Enchantment;I)V"), index = 1)
@@ -35,9 +31,6 @@ public class EnchantmentHelperMixin {
         if (configured == null)
             return original;
 
-        if (!configured.getGlobalFields().effectivenessOverrides().isEmpty())
-            return EnchantmentConfigUtil.getOverrideLevel(original, entry.getKey().value(), stack, configured.getGlobalFields().effectivenessOverrides());
-
-        return original;
+        return configured.getGlobalFields().getOverrideLevel(original, entry.getKey().value(), stack);
     }
 }
