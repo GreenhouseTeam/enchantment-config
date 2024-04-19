@@ -10,8 +10,10 @@
     "EnchantmentMixin",
     "EnchantRandomlyFunctionMixin",
     "ItemEnchantmentsMixin",
+    "ItemEnchantmentsMutableMixin",
     "MappedRegistryMixin",
-    "ResourceArgumentMixin"
+    "ResourceArgumentMixin",
+    "VillagerTradesEnchantBookForEmeraldsMixin"
   ],
   "client": [
   ],

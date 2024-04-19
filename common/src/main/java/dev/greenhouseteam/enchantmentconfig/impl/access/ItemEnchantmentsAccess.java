@@ -1,5 +1,5 @@
 package dev.greenhouseteam.enchantmentconfig.impl.access;
 
 public interface ItemEnchantmentsAccess {
-    void enchantmentconfig$setToValidate();
+    void enchantmentconfig$validate();
 }

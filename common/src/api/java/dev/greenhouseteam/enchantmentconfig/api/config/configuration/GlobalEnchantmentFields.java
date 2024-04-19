@@ -10,8 +10,10 @@ import dev.greenhouseteam.enchantmentconfig.api.config.field.Field;
 import dev.greenhouseteam.enchantmentconfig.api.config.variable.VariableTypes;
 import dev.greenhouseteam.enchantmentconfig.api.util.MergeUtil;
 import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
@@ -50,7 +52,8 @@ public record GlobalEnchantmentFields(Optional<Integer> maxLevel,
                                       Optional<List<HolderSet<Enchantment>>> incompatibilities,
                                       Map<ItemPredicate, Integer> enchantingTableWeight,
                                       Optional<Boolean> tradeable,
-                                      Optional<Boolean> treasure) {
+                                      Optional<Boolean> treasure,
+                                      Optional<Holder<Enchantment>> replacement) {
 
     public static final MapCodec<GlobalEnchantmentFields> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
             EnchantmentConfigCodecs.defaultableCodec("max_level", Codec.INT).forGetter(GlobalEnchantmentFields::maxLevel),
@@ -59,7 +62,8 @@ public record GlobalEnchantmentFields(Optional<Integer> maxLevel,
             EnchantmentConfigCodecs.mapCollectionCodec("item_predicate", "weight", ItemPredicate.CODEC, Codec.INT).optionalFieldOf("enchanting_table_weight", Map.of()).forGetter(GlobalEnchantmentFields::enchantingTableWeight),
             // TODO: Expand on tradeable field by utilising predicates and other stuff.
             EnchantmentConfigCodecs.defaultableCodec("tradeable", Codec.BOOL).forGetter(GlobalEnchantmentFields::tradeable),
-            EnchantmentConfigCodecs.defaultableCodec("treasure", Codec.BOOL).forGetter(GlobalEnchantmentFields::treasure)
+            EnchantmentConfigCodecs.defaultableCodec("treasure", Codec.BOOL).forGetter(GlobalEnchantmentFields::treasure),
+            BuiltInRegistries.ENCHANTMENT.holderByNameCodec().optionalFieldOf("replacement").forGetter(GlobalEnchantmentFields::replacement)
     ).apply(inst, GlobalEnchantmentFields::new));
 
     public static Optional<Boolean> isCompatible(Enchantment enchantment, Enchantment other) {
@@ -127,6 +131,8 @@ public record GlobalEnchantmentFields(Optional<Integer> maxLevel,
         Optional<Boolean> tradeable = MergeUtil.mergePrimitiveOptional(tradeable(), oldConfiguration.flatMap(GlobalEnchantmentFields::tradeable), globalConfiguration.flatMap(GlobalEnchantmentFields::tradeable));
         Optional<Boolean> treasure = MergeUtil.mergePrimitiveOptional(treasure(), oldConfiguration.flatMap(GlobalEnchantmentFields::treasure), globalConfiguration.flatMap(GlobalEnchantmentFields::treasure));
 
-        return new GlobalEnchantmentFields(maxLevel, effectivenessOverrides, incompatibilities, enchantingTableWeight, tradeable, treasure);
+        Optional<Holder<Enchantment>> replacement = MergeUtil.mergePrimitiveOptional(replacement(), oldConfiguration.flatMap(GlobalEnchantmentFields::replacement), globalConfiguration.flatMap(GlobalEnchantmentFields::replacement));
+
+        return new GlobalEnchantmentFields(maxLevel, effectivenessOverrides, incompatibilities, enchantingTableWeight, tradeable, treasure, replacement);
     }
 }

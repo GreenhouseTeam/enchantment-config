@@ -1,8 +1,8 @@
 {
   "replace": false,
   "values": [
-    "minecraft:thorns",
-    "minecraft:protection",
-    "minecraft:projectile_protection"
+    "minecraft:punch",
+    "minecraft:bane_of_arthropods",
+    "minecraft:protection"
   ]
 }
