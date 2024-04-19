@@ -59,4 +59,9 @@ public enum Comparison {
         throw new RuntimeException("Could not get comparison type from '" + string + "'.");
     }
 
+    @Override
+    public String toString() {
+        return representation;
+    }
+
 }

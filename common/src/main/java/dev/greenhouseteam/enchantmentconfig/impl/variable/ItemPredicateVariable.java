@@ -1,8 +1,10 @@
 package dev.greenhouseteam.enchantmentconfig.impl.variable;
 
+import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.greenhouseteam.enchantmentconfig.api.codec.EnchantmentConfigCodecs;
+import dev.greenhouseteam.enchantmentconfig.api.config.condition.Comparison;
 import dev.greenhouseteam.enchantmentconfig.api.config.field.Field;
 import dev.greenhouseteam.enchantmentconfig.api.config.variable.SingleTypedSerializer;
 import dev.greenhouseteam.enchantmentconfig.api.config.variable.Variable;
@@ -16,24 +18,46 @@ import net.minecraft.world.item.enchantment.Enchantment;
 
 import java.util.Optional;
 
-public record ItemPredicateVariable<I>(Field<I, Object> field, Optional<Field<I, Object>> elseField, ItemPredicate predicate) implements Variable<I, Object> {
+public class ItemPredicateVariable<I> implements Variable<I, Object> {
     public static final ResourceLocation ID = EnchantmentConfigUtil.asResource("item_predicate");
     public static final Serializer SERIALIZER = new Serializer();
 
     public static <T> MapCodec<ItemPredicateVariable<T>> staticCodec(VariableType<T> variableType) {
         return RecordCodecBuilder.mapCodec(inst -> inst.group(
-                EnchantmentConfigCodecs.inputFieldCodec(variableType).fieldOf("value").forGetter(ItemPredicateVariable::field),
-                EnchantmentConfigCodecs.inputFieldCodec(variableType).optionalFieldOf("else").forGetter(ItemPredicateVariable::elseField),
-                ItemPredicate.CODEC.fieldOf("predicate").forGetter(ItemPredicateVariable::predicate)
+                EnchantmentConfigCodecs.inputFieldCodec(variableType).fieldOf("value").forGetter(var -> var.field),
+                EnchantmentConfigCodecs.inputFieldCodec(variableType).optionalFieldOf("else").forGetter(var -> var.elseField),
+                ItemPredicate.CODEC.fieldOf("predicate").forGetter(var -> var.predicate),
+                Comparison.CODEC.fieldOf("comparison").forGetter(var -> var.comparison)
         ).apply(inst, ItemPredicateVariable::new));
+    }
+
+    private final Field<I, Object> field;
+    private final Optional<Field<I, Object>> elseField;
+    private final ItemPredicate predicate;
+    private final Comparison comparison;
+    private boolean hasLoggedError = false;
+
+    public ItemPredicateVariable(Field<I, Object> field, Optional<Field<I, Object>> elseField,
+                                 ItemPredicate predicate, Comparison comparison) {
+        this.field = field;
+        this.elseField = elseField;
+        this.predicate = predicate;
+        this.comparison = comparison;
     }
 
     @Override
     public Object getValue(Enchantment enchantment, ItemStack stack, I original) {
-        if (predicate.test(stack))
-            return field.get(enchantment, stack, original);
-        else if (elseField.isPresent())
-            return elseField.get().get(enchantment, stack, original);
+        try {
+            if (comparison.compare(predicate.test(stack), true))
+                return field.get(enchantment, stack, original);
+            else if (elseField.isPresent())
+                return elseField.get().get(enchantment, stack, original);
+        } catch (UnsupportedOperationException ex) {
+            if (!hasLoggedError) {
+                EnchantmentConfigUtil.LOGGER.error("Could not handle {} item predicate with comparison {}. Returning original value.", ItemPredicate.CODEC.encodeStart(JsonOps.INSTANCE, predicate).result().get(), comparison, ex);
+                hasLoggedError = true;
+            }
+        }
         return original;
     }
 

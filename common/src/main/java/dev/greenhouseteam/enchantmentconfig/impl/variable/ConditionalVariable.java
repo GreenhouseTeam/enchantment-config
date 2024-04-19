@@ -37,7 +37,7 @@ public class ConditionalVariable<I, O> implements Variable<I, Boolean> {
             return comparison.compare(fieldPair.left().get(enchantment, stack, original), fieldPair.right().get(enchantment, stack, original));
         } catch (UnsupportedOperationException ex) {
             if (!hasLoggedError) {
-                EnchantmentConfigUtil.LOGGER.error("Could not handle {} variable.", EnchantmentConfigRegistries.VARIABLE_SERIALIZER.getKey(fieldPair.left().getInnerVariable().getSerializer()), ex);
+                EnchantmentConfigUtil.LOGGER.error("Could not handle {} variable with comparison {}. Returning false.", EnchantmentConfigRegistries.VARIABLE_SERIALIZER.getKey(fieldPair.left().getInnerVariable().getSerializer()), ex);
                 hasLoggedError = true;
             }
         }
