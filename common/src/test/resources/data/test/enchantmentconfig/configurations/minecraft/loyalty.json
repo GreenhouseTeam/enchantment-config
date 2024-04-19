@@ -10,7 +10,7 @@
           "unmodified": true
         },
         "predicate": {
-          "items": "#c:tools/spears"
+          "items": "#minecraft:enchantable/trident"
         }
       }
     }
