@@ -23,6 +23,9 @@ public class VillagerTradesEnchantBookForEmeraldsMixin {
     @Shadow @Mutable @Final
     private List<Enchantment> tradeableEnchantments;
 
+    @Mutable
+    @Shadow @Final private int minLevel;
+
     @Inject(method = "<init>(III[Lnet/minecraft/world/item/enchantment/Enchantment;)V", at = @At("TAIL"))
     private void enchantmentconfig$disableFromVillagerTrades(int minLevel, int maxLevel, int villagerXp, Enchantment[] enchantments, CallbackInfo ci) {
         List<Enchantment> finalEnchantments = new ArrayList<>();
@@ -34,7 +37,10 @@ public class VillagerTradesEnchantBookForEmeraldsMixin {
             }
         }
         if (finalEnchantments.isEmpty()) {
+            // This only affects the villager rework.
             this.tradeableEnchantments = Arrays.asList(BuiltInRegistries.ENCHANTMENT.stream().filter(Enchantment::isTradeable).toArray(Enchantment[]::new));
+            // This should guarantee the same level as the villager rework, or lower if below the required level.
+            this.minLevel = Math.min(maxLevel, tradeableEnchantments.get(0).getMaxLevel());
         } else
             this.tradeableEnchantments = ImmutableList.copyOf(finalEnchantments);
     }
