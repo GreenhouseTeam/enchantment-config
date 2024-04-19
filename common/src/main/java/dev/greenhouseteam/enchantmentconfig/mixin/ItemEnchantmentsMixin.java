@@ -48,7 +48,7 @@ public abstract class ItemEnchantmentsMixin implements ItemEnchantmentsAccess {
                 }
                 var newItemEnchantments = new ItemEnchantments(potentialNewMap, ((ItemEnchantmentsMixin) (Object) itemEnchantments).enchantmentconfig$getShowInTooltip());
                 if (disabledHolders.size() == 1)
-                    return DataResult.error(() -> "Enchantment " + disabledHolders.getFirst().getRegisteredName() + " has been disabled via Enchantment Config.", newItemEnchantments);
+                    return DataResult.error(() -> "Enchantment " + disabledHolders.getFirst().getRegisteredName() + " has been disabled via the enchantmentconfig:disabled enchantment tag.", newItemEnchantments);
                 StringBuilder builder = new StringBuilder();
                 for (int i = 0; i < disabledHolders.size(); ++i) {
                     if (i == disabledHolders.size() - 1)
@@ -57,7 +57,7 @@ public abstract class ItemEnchantmentsMixin implements ItemEnchantmentsAccess {
                     if (i < disabledHolders.size() - 1)
                         builder.append(", ");
                 }
-                return DataResult.error(() -> "Enchantments " + builder.toString() + " have been disabled via Enchantment Config.");
+                return DataResult.error(() -> "Enchantments " + builder.toString() + " have been disabled via the enchantmentconfig:disabled enchantment tag.");
             }
             return DataResult.success(itemEnchantments);
         }, DataResult::success);
