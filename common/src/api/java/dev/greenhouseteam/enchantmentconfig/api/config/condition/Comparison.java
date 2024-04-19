@@ -48,6 +48,10 @@ public enum Comparison {
         this.function = function;
     }
 
+    public <T> boolean compare(T value, T compareTo) {
+        return function.apply(value, compareTo);
+    }
+
     public static Comparison getFromString(String string) {
         for (Comparison comparison : Comparison.values())
             if (comparison.representation.equals(string))

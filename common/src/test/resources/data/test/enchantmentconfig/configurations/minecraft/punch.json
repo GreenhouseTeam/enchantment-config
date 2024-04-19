@@ -1,3 +1,25 @@
 {
+  "effectiveness_overrides": [
+    {
+      "base_value": 0,
+      "new_value": {
+        "type": "enchantmentconfig:item_predicate",
+        "value": {
+          "type": "enchantmentconfig:enchantment_level",
+          "enchantment": "minecraft:knockback"
+        },
+        "predicate": {
+          "items": "#minecraft:enchantable/bow",
+          "predicates": {
+            "minecraft:enchantments": [
+              {
+                "enchantment": "minecraft:knockback"
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
   "replacement": "minecraft:knockback"
 }

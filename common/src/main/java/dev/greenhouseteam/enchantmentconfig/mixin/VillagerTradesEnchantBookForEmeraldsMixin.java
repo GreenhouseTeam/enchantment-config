@@ -32,7 +32,7 @@ public class VillagerTradesEnchantBookForEmeraldsMixin {
         for (Enchantment enchantment : enchantments) {
             if (!enchantment.builtInRegistryHolder().is(EnchantmentConfigUtil.DISABLED_ENCHANTMENT_TAG))
                 finalEnchantments.add(enchantment);
-            else if (EnchantmentConfigGetter.INSTANCE.getConfig(enchantment, true).getGlobalFields().replacement().isPresent()) {
+            else if (EnchantmentConfigGetter.INSTANCE.getConfig(enchantment, true) != null && EnchantmentConfigGetter.INSTANCE.getConfig(enchantment, true).getGlobalFields().replacement().isPresent()) {
                 finalEnchantments.add(EnchantmentConfigGetter.INSTANCE.getConfig(enchantment, true).getGlobalFields().replacement().get().value());
                 if (enchantment.getMaxLevel() < minLevel)
                     this.minLevel = enchantment.getMaxLevel();

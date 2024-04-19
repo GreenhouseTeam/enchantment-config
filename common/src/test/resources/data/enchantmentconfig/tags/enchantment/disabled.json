@@ -1,8 +1,9 @@
 {
   "replace": false,
   "values": [
-    "minecraft:punch",
     "minecraft:bane_of_arthropods",
-    "minecraft:protection"
+    "minecraft:punch",
+    "minecraft:protection",
+    "minecraft:loyalty"
   ]
 }

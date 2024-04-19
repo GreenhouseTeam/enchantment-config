@@ -48,7 +48,7 @@ import java.util.Optional;
  *                                  Leaving this empty results in default behavior.
  */
 public record GlobalEnchantmentFields(Optional<Integer> maxLevel,
-                                      Map<Integer, Field<Integer>> effectivenessOverrides,
+                                      Map<Integer, Field<Integer, Integer>> effectivenessOverrides,
                                       Optional<List<HolderSet<Enchantment>>> incompatibilities,
                                       Map<ItemPredicate, Integer> enchantingTableWeight,
                                       Optional<Boolean> tradeable,
@@ -122,7 +122,7 @@ public record GlobalEnchantmentFields(Optional<Integer> maxLevel,
     public GlobalEnchantmentFields merge(Optional<GlobalEnchantmentFields> oldConfiguration, Optional<GlobalEnchantmentFields> globalConfiguration) {
         Optional<Integer> maxLevel = MergeUtil.mergePrimitiveOptional(maxLevel(), oldConfiguration.flatMap(GlobalEnchantmentFields::maxLevel), globalConfiguration.flatMap(GlobalEnchantmentFields::maxLevel));
 
-        Map<Integer, Field<Integer>> effectivenessOverrides = MergeUtil.mergeMap(effectivenessOverrides(), oldConfiguration.map(GlobalEnchantmentFields::effectivenessOverrides), globalConfiguration.map(GlobalEnchantmentFields::effectivenessOverrides));
+        Map<Integer, Field<Integer, Integer>> effectivenessOverrides = MergeUtil.mergeMap(effectivenessOverrides(), oldConfiguration.map(GlobalEnchantmentFields::effectivenessOverrides), globalConfiguration.map(GlobalEnchantmentFields::effectivenessOverrides));
 
         Optional<List<HolderSet<Enchantment>>> incompatibilities = MergeUtil.mergeOptionalList(incompatibilities(), oldConfiguration.flatMap(GlobalEnchantmentFields::incompatibilities), globalConfiguration.flatMap(GlobalEnchantmentFields::incompatibilities));
 

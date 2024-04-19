@@ -8,30 +8,37 @@ import net.minecraft.world.item.enchantment.Enchantment;
 
 import java.util.function.Supplier;
 
-public class Field<T> {
+public class Field<I, O> {
     private static final Supplier<UnsupportedOperationException> NOT_A_NUMBER_EXCEPTION = () -> new UnsupportedOperationException("Field is not a number.");
 
-    private final Variable<T> variable;
-    private final VariableType<T> variableType;
-    private final T value;
+    private final Variable<I, O> variable;
+    private final VariableType<I> inputType;
+    private final VariableType<O> outputType;
+    private final O value;
 
-    public Field(Variable<T> variable) {
+    public Field(Variable<I, O> variable, VariableType<I> inputType) {
         this.variable = variable;
-        this.variableType = variable.variableType();
+        this.inputType = variable.getSerializer().inputType(inputType);
+        this.outputType = variable.getSerializer().outputType(inputType);
         this.value = null;
     }
 
-    public Field(T value, VariableType<T> type) {
+    public Field(O value, VariableType<O> type) {
         this.variable = null;
         this.value = value;
-        this.variableType = type;
+        this.inputType = (VariableType<I>) type;
+        this.outputType = type;
     }
 
-    public VariableType<T> getVariableType() {
-        return variableType;
+    public VariableType<I> getInputType() {
+        return inputType;
     }
 
-    public T get(Enchantment enchantment, ItemStack stack, T original) {
+    public VariableType<O> getOutputType() {
+        return outputType;
+    }
+
+    public O get(Enchantment enchantment, ItemStack stack, I original) {
         if (variable == null)
             return value;
         return variable.getValue(enchantment, stack, original);
@@ -41,8 +48,8 @@ public class Field<T> {
         if (variable == null) {
             if (value instanceof Number number)
                 return number.intValue();
-        } else if (variableType instanceof NumberVariableType<?>)
-            return ((Number)variable.getValue(enchantment, stack, (T) original)).intValue();
+        } else if (outputType instanceof NumberVariableType<?>)
+            return ((Number)variable.getValue(enchantment, stack, (I) original)).intValue();
         throw NOT_A_NUMBER_EXCEPTION.get();
     }
 
@@ -50,8 +57,8 @@ public class Field<T> {
         if (variable == null) {
             if (value instanceof Number number)
                 return number.floatValue();
-        } else if (variableType instanceof NumberVariableType<?>)
-            return ((Number)variable.getValue(enchantment, stack, (T) original)).floatValue();
+        } else if (outputType instanceof NumberVariableType<?>)
+            return ((Number)variable.getValue(enchantment, stack, (I) original)).floatValue();
         throw NOT_A_NUMBER_EXCEPTION.get();
     }
 
@@ -59,8 +66,8 @@ public class Field<T> {
         if (variable == null) {
             if (value instanceof Number number)
                 return number.doubleValue();
-        } else if (variableType instanceof NumberVariableType<?>)
-                return ((Number)variable.getValue(enchantment, stack, (T) original)).doubleValue();
+        } else if (outputType instanceof NumberVariableType<?>)
+                return ((Number)variable.getValue(enchantment, stack, (I) original)).doubleValue();
         throw NOT_A_NUMBER_EXCEPTION.get();
     }
 
@@ -68,16 +75,16 @@ public class Field<T> {
         if (variable == null) {
             if (value instanceof Number number)
                 return number.longValue();
-        } else if (variableType instanceof NumberVariableType<?>)
-                return ((Number)variable.getValue(enchantment, stack, (T) original)).longValue();
+        } else if (outputType instanceof NumberVariableType<?>)
+                return ((Number)variable.getValue(enchantment, stack, (I) original)).longValue();
         throw NOT_A_NUMBER_EXCEPTION.get();
     }
 
-    public Variable<T> getInnerVariable() {
+    public Variable<I, O> getInnerVariable() {
         return variable;
     }
 
-    public T getRawValue() {
+    public O getRawValue() {
         return value;
     }
 }

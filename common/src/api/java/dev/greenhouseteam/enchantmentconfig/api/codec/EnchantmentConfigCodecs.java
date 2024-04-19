@@ -3,6 +3,7 @@ package dev.greenhouseteam.enchantmentconfig.api.codec;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import dev.greenhouseteam.enchantmentconfig.api.config.variable.type.VariableType;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -28,8 +29,16 @@ public class EnchantmentConfigCodecs {
         return new RangeAllowedIntegerMapCodec<>(keyName, valueName, valueCodec);
     }
 
-    public static <T> FieldCodec<T> fieldCodec(VariableType<T> type) {
-        return new FieldCodec<>(type.getValueCodec(), type);
+    public static <T> FieldCodec<T, T> fieldCodec(@Nullable VariableType<T> type) {
+        return new FieldCodec<>(type, type);
+    }
+
+    public static <I> FieldCodec<I, Object> inputFieldCodec(@Nullable VariableType<I> type) {
+        return new FieldCodec<>(type, null);
+    }
+
+    public static <I, O> FieldCodec<I, O> outputFieldCodec(@Nullable VariableType<I> type, @Nullable VariableType<O> outputType) {
+        return new FieldCodec<>(null, outputType);
     }
 
 }

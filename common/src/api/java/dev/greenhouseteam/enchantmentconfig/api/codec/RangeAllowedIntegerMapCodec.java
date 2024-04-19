@@ -63,12 +63,12 @@ public class RangeAllowedIntegerMapCodec<V> extends MapCollectionCodec<Integer, 
                     } else {
                         final DataResult<T> keyResult = ops.get(val, keyName);
 
-                        if (keyResult.result().isEmpty()) {
+                        if (keyResult.isError()) {
                             failed.add(val);
                             errorMessage.add("Failed to find '" + keyName + "' field");
                         }
 
-                        if (valueResult.result().isEmpty()) {
+                        if (valueResult.isError()) {
                             failed.add(val);
                             errorMessage.add("Failed to find '" + valueName + "' field");
                         }
@@ -131,10 +131,6 @@ public class RangeAllowedIntegerMapCodec<V> extends MapCollectionCodec<Integer, 
                 final T errors = ops.createList(errorList.stream());
 
                 final Pair<Map<Integer, V>, T> pair = Pair.of(elements, errors);
-
-                if (elements.isEmpty()) {
-                    return null;
-                }
 
                 DataResult<Pair<Map<Integer, V>, T>> retValue = result.getPlain().map(unit -> pair);
                 if (!errorList.isEmpty()) {

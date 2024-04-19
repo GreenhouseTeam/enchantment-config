@@ -3,9 +3,7 @@ package dev.greenhouseteam.enchantmentconfig.api.config.condition;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import dev.greenhouseteam.enchantmentconfig.api.codec.VariableTypeCodec;
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
-import dev.greenhouseteam.enchantmentconfig.api.config.variable.type.VariableType;
 import dev.greenhouseteam.enchantmentconfig.api.registries.EnchantmentConfigRegistries;
 import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -53,15 +51,15 @@ public interface Condition {
         }
     }
 
-    record Variable<T>(FieldPair<T> fieldPair, Comparison comparison) implements Condition {
+    record Variable<I, O>(FieldPair<I, O> fieldPair, Comparison comparison) implements Condition {
         public static final ResourceLocation ID = EnchantmentConfigUtil.asResource("variable");
 
-        public static final MapCodec<Variable<Object>> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
+        public static final MapCodec<Variable<Object, Object>> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
                 new FieldPair.Codec("value", "compare_to").xmap(pair -> {
-                    if (pair.left().getInnerVariable() != null && !pair.left().getInnerVariable().isComparable())
-                        throw new UnsupportedOperationException("Variable of type '" + pair.left().getInnerVariable().id() + "' is unsupported.");
-                    else if (pair.right().getInnerVariable() != null && !pair.right().getInnerVariable().isComparable())
-                        throw new UnsupportedOperationException("Variable of type '" + pair.right().getInnerVariable().id() + "' is unsupported.");
+                    if (pair.left().getInnerVariable() != null && !pair.left().getInnerVariable().allowedInRootCondition())
+                        throw new UnsupportedOperationException("Variable of type '" + pair.left().getInnerVariable().getSerializer().id() + "' is unsupported.");
+                    else if (pair.right().getInnerVariable() != null && !pair.right().getInnerVariable().allowedInRootCondition())
+                        throw new UnsupportedOperationException("Variable of type '" + pair.right().getInnerVariable().getSerializer().id() + "' is unsupported.");
                     return pair;
                 }, pair -> pair).forGetter(Variable::fieldPair),
                 Comparison.CODEC.optionalFieldOf("comparison", Comparison.EQUAL).forGetter(Variable::comparison)
@@ -69,13 +67,13 @@ public interface Condition {
 
         public boolean compare(EnchantmentType<?> type) {
             Enchantment enchantment = BuiltInRegistries.ENCHANTMENT.get(type.getEnchantment());
-            T variable = fieldPair().left().get(enchantment, null, null);
-            T value = fieldPair().right().get(enchantment, null, null);
+            O variable = fieldPair().left().get(enchantment, null, null);
+            O value = fieldPair().right().get(enchantment, null, null);
             return comparison().function.apply(variable, value);
         }
 
         @Override
-        public MapCodec<Variable<Object>> codec() {
+        public MapCodec<Variable<Object, Object>> codec() {
             return CODEC;
         }
 
