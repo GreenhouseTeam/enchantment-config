@@ -27,7 +27,7 @@ public class ItemPredicateVariable<I> implements Variable<I, Object> {
                 EnchantmentConfigCodecs.inputFieldCodec(variableType).fieldOf("value").forGetter(var -> var.field),
                 EnchantmentConfigCodecs.inputFieldCodec(variableType).optionalFieldOf("else").forGetter(var -> var.elseField),
                 ItemPredicate.CODEC.fieldOf("predicate").forGetter(var -> var.predicate),
-                Comparison.CODEC.fieldOf("comparison").forGetter(var -> var.comparison)
+                Comparison.CODEC.optionalFieldOf("comparison", Comparison.EQUAL).forGetter(var -> var.comparison)
         ).apply(inst, ItemPredicateVariable::new));
     }
 
