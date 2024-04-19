@@ -86,7 +86,7 @@ public abstract class MappedRegistryMixin<T> {
         List<T> list = new ArrayList<>();
         while (original.hasNext()) {
             T it = original.next();
-            if (it instanceof Holder.Reference<?> reference && !reference.key().isFor(Registries.ENCHANTMENT) && reference.is((TagKey)EnchantmentConfigUtil.DISABLED_ENCHANTMENT_TAG))
+            if (it instanceof Holder.Reference<?> reference && reference.key().isFor(Registries.ENCHANTMENT) && !reference.is((TagKey)EnchantmentConfigUtil.DISABLED_ENCHANTMENT_TAG))
                 list.add(it);
         }
         return list.iterator();
