@@ -48,7 +48,7 @@ public abstract class ItemEnchantmentsMixin implements ItemEnchantmentsAccess {
                 }
                 var newItemEnchantments = new ItemEnchantments(potentialNewMap, ((ItemEnchantmentsMixin) (Object) itemEnchantments).enchantmentconfig$getShowInTooltip());
                 if (disabledHolders.size() == 1)
-                    return DataResult.error(() -> "Enchantment " + disabledHolders.getFirst() + " has been disabled via Enchantment Config.", newItemEnchantments);
+                    return DataResult.error(() -> "Enchantment " + disabledHolders.getFirst().getRegisteredName() + " has been disabled via Enchantment Config.", newItemEnchantments);
                 StringBuilder builder = new StringBuilder();
                 for (int i = 0; i < disabledHolders.size(); ++i) {
                     if (i == disabledHolders.size() - 1)
