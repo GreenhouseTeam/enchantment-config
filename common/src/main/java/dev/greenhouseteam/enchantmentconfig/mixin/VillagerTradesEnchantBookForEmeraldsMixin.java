@@ -34,7 +34,7 @@ public class VillagerTradesEnchantBookForEmeraldsMixin {
                 finalEnchantments.add(enchantment);
             else if (EnchantmentConfigGetter.INSTANCE.getConfig(enchantment, true).getGlobalFields().replacement().isPresent()) {
                 finalEnchantments.add(EnchantmentConfigGetter.INSTANCE.getConfig(enchantment, true).getGlobalFields().replacement().get().value());
-                if (enchantment.getMaxLevel() > minLevel)
+                if (enchantment.getMaxLevel() < minLevel)
                     this.minLevel = enchantment.getMaxLevel();
             }
         }
@@ -42,7 +42,7 @@ public class VillagerTradesEnchantBookForEmeraldsMixin {
             // This only affects the villager rework.
             this.tradeableEnchantments = Arrays.asList(BuiltInRegistries.ENCHANTMENT.stream().filter(Enchantment::isTradeable).toArray(Enchantment[]::new));
             // This should guarantee the same level as the villager rework, or lower if below the required level.
-            if (tradeableEnchantments.get(0).getMaxLevel() > minLevel)
+            if (tradeableEnchantments.get(0).getMaxLevel() < minLevel)
                 this.minLevel = tradeableEnchantments.get(0).getMaxLevel();
         } else
             this.tradeableEnchantments = ImmutableList.copyOf(finalEnchantments);
