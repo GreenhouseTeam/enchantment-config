@@ -1,6 +1,7 @@
 package dev.greenhouseteam.enchantmentconfig.impl;
 
 import com.mojang.serialization.MapCodec;
+import dev.greenhouseteam.enchantmentconfig.api.config.ModificationType;
 import dev.greenhouseteam.enchantmentconfig.api.config.condition.Condition;
 import dev.greenhouseteam.enchantmentconfig.api.config.variable.VariableTypes;
 import dev.greenhouseteam.enchantmentconfig.api.config.variable.type.BooleanVariableType;
@@ -12,6 +13,18 @@ import dev.greenhouseteam.enchantmentconfig.api.config.variable.type.VariableTyp
 import dev.greenhouseteam.enchantmentconfig.api.registries.EnchantmentConfigRegistries;
 
 public class EnchantmentConfig {
+    private static ModificationType currentModificationType;
+
+    public static void setModificationType(ModificationType type) {
+        currentModificationType = type;
+    }
+
+    public static ModificationType getAndClearModificationType() {
+        ModificationType retValue = currentModificationType;
+        currentModificationType = null;
+        return retValue;
+    }
+
     public static void registerConditionCodecs(RegistrationCallback<MapCodec<? extends Condition>> callback) {
         callback.register(EnchantmentConfigRegistries.CONDITION_CODEC, Condition.And.ID, Condition.And.CODEC);
         callback.register(EnchantmentConfigRegistries.CONDITION_CODEC, Condition.Or.ID, Condition.Or.CODEC);

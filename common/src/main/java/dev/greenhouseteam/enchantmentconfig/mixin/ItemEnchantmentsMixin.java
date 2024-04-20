@@ -41,7 +41,7 @@ public abstract class ItemEnchantmentsMixin implements ItemEnchantmentsAccess {
                 for (Object2IntMap.Entry<Holder<Enchantment>> entry : itemEnchantments.entrySet()) {
                     if (!entry.getKey().is(EnchantmentConfigUtil.DISABLED_ENCHANTMENT_TAG))
                         potentialNewMap.addTo(entry.getKey(), entry.getIntValue());
-                    else if (entry.getKey().isBound() && EnchantmentConfigGetter.INSTANCE.getConfig(entry.getKey().value(), true).getGlobalFields().replacement().isPresent()) {
+                    else if (entry.getKey().isBound() && EnchantmentConfigGetter.INSTANCE.getConfig(entry.getKey().value(), true) != null && EnchantmentConfigGetter.INSTANCE.getConfig(entry.getKey().value(), true).getGlobalFields().replacement().isPresent()) {
                         potentialNewMap.addTo(EnchantmentConfigGetter.INSTANCE.getConfig(entry.getKey().value(), true).getGlobalFields().replacement().get(), entry.getIntValue());
                         disabledHolders.remove(entry.getKey());
                     }

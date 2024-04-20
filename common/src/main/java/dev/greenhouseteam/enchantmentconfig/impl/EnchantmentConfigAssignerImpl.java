@@ -52,7 +52,7 @@ public class EnchantmentConfigAssignerImpl implements EnchantmentConfigAssigner 
         EXTRA_FIELD_MAP.clear();
     }
 
-    protected void registerCodecs(RegistrationCallback<VariableSerializer<?, ?>> callback) {
+    protected void registerSerializers(RegistrationCallback<VariableSerializer<?, ?>> callback) {
         VARIABLE_SERIALIZER_MAP.forEach((id, serializer) -> callback.register(EnchantmentConfigRegistries.VARIABLE_SERIALIZER, id, serializer));
         VARIABLE_SERIALIZER_MAP.clear();
     }

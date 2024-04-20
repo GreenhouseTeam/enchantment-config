@@ -6,7 +6,8 @@
         "type": "enchantmentconfig:item_predicate",
         "value": {
           "type": "enchantmentconfig:enchantment_level",
-          "enchantment": "minecraft:knockback"
+          "enchantment": "minecraft:knockback",
+          "modification_type": "no_configs"
         },
         "predicate": {
           "items": "#minecraft:enchantable/bow",
