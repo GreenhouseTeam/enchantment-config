@@ -1,6 +1,6 @@
 package dev.greenhouseteam.enchantmentconfig.mixin;
 
-import dev.greenhouseteam.enchantmentconfig.impl.EnchantmentConfigFabric;
+import dev.greenhouseteam.enchantmentconfig.impl.EnchantmentConfig;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.ReloadableServerResources;
@@ -18,6 +18,6 @@ public class ReloadableServerResourcesMixin {
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void enchantmentconfig$setServer(RegistryAccess.Frozen frozen, FeatureFlagSet featureFlagSet, Commands.CommandSelection commandSelection, int i, CallbackInfo ci) {
-        EnchantmentConfigFabric.setRegistryLookup(this.registryLookup);
+        EnchantmentConfig.setRegistryLookup(this.registryLookup);
     }
 }

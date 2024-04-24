@@ -36,7 +36,7 @@ public record EnchantmentLevelVariable(Holder<Enchantment> otherEnchantment, Mod
             return switch (modificationType) {
                 case BEFORE -> stack.getEnchantments().getLevel(otherEnchantment.value());
                 case CONFIG_ONLY -> {
-                    ConfiguredEnchantment<?, ?> configured = EnchantmentConfigGetter.INSTANCE.getConfig(otherEnchantment.value(), true);
+                    ConfiguredEnchantment<?, ?> configured = EnchantmentConfigGetter.INSTANCE.getConfig(otherEnchantment.value());
                     if (configured != null)
                         yield configured.getGlobalFields().getOverrideLevel(original, otherEnchantment.value(), stack);
                     yield  0;

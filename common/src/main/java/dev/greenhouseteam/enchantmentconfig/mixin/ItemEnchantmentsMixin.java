@@ -41,8 +41,8 @@ public abstract class ItemEnchantmentsMixin implements ItemEnchantmentsAccess {
                 for (Object2IntMap.Entry<Holder<Enchantment>> entry : itemEnchantments.entrySet()) {
                     if (!entry.getKey().is(EnchantmentConfigUtil.DISABLED_ENCHANTMENT_TAG))
                         potentialNewMap.addTo(entry.getKey(), entry.getIntValue());
-                    else if (entry.getKey().isBound() && EnchantmentConfigGetter.INSTANCE.getConfig(entry.getKey().value(), true) != null && EnchantmentConfigGetter.INSTANCE.getConfig(entry.getKey().value(), true).getGlobalFields().replacement().isPresent()) {
-                        potentialNewMap.addTo(EnchantmentConfigGetter.INSTANCE.getConfig(entry.getKey().value(), true).getGlobalFields().replacement().get(), entry.getIntValue());
+                    else if (entry.getKey().isBound() && EnchantmentConfigGetter.INSTANCE.getConfig(entry.getKey().value()) != null && EnchantmentConfigGetter.INSTANCE.getConfig(entry.getKey().value()).getGlobalFields().replacement().isPresent()) {
+                        potentialNewMap.addTo(EnchantmentConfigGetter.INSTANCE.getConfig(entry.getKey().value()).getGlobalFields().replacement().get(), entry.getIntValue());
                         disabledHolders.remove(entry.getKey());
                     }
                 }
@@ -69,8 +69,8 @@ public abstract class ItemEnchantmentsMixin implements ItemEnchantmentsAccess {
             if (entry.getKey().is(EnchantmentConfigUtil.DISABLED_ENCHANTMENT_TAG)) {
                 EnchantmentConfigUtil.LOGGER.info("Removed enchantment {} from \"minecraft:enchantments\" component", entry.getKey().getRegisteredName());
                 this.enchantments.remove(entry, entry.getIntValue());
-                if (entry.getKey().isBound() && EnchantmentConfigGetter.INSTANCE.getConfig(entry.getKey().value(), true).getGlobalFields().replacement().isPresent()) {
-                    this.enchantments.addTo(EnchantmentConfigGetter.INSTANCE.getConfig(entry.getKey().value(), true).getGlobalFields().replacement().get(), entry.getIntValue());
+                if (entry.getKey().isBound() && EnchantmentConfigGetter.INSTANCE.getConfig(entry.getKey().value()).getGlobalFields().replacement().isPresent()) {
+                    this.enchantments.addTo(EnchantmentConfigGetter.INSTANCE.getConfig(entry.getKey().value()).getGlobalFields().replacement().get(), entry.getIntValue());
                 }
             }
         }

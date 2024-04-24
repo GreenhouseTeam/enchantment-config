@@ -3,42 +3,29 @@ import org.apache.tools.ant.filters.LineContains
 plugins {
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.gradle.userdev' version '7.0.45'
-    id 'net.neoforged.gradle.mixin' version '7.0.45'
+    id 'net.neoforged.gradle.userdev' version '7.0.105'
     id 'java-library'
 }
 base {
     archivesName = "${archives_base_name}-neoforge"
 }
 
-mixin {
-    config("${mod_id}.mixins.json")
-    config("${mod_id}.neoforge.mixins.json")
-}
-
 jarJar.enable()
 
-if (file('src/main/resources/META-INF/accesstransformer.cfg').exists()) {
-    minecraft.accessTransformers.file file('src/main/resources/META-INF/accesstransformer.cfg')
+if (file('src/main/resources/enchantmentconfig.cfg').exists()) {
+    minecraft.accessTransformers.file file('src/main/resources/enchantmentconfig.cfg')
 }
 
 runs {
     configureEach {
-        modSource project.sourceSets.main
-    }
-    client {
+        modSources.addAll sourceSets.main, sourceSets.test
         systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
     }
+    client {}
     server {
-        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         programArgument '--nogui'
     }
-    data {
-        programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
-    }
 }
-
-sourceSets.main.resources.srcDir 'src/generated/resources'
 
 repositories {
     mavenCentral()
@@ -46,8 +33,10 @@ repositories {
 
 dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
-    implementation project(path: ':common', configuration: 'api')
+    compileOnly project(path: ':common', configuration: 'api')
     compileOnly project(":common")
+    testCompileOnly project(path: ':common', configuration: 'api')
+    testCompileOnly project(":common")
 }
 
 // NeoGradle compiles the game, but we don't want to add our common code to the game's code
@@ -65,7 +54,7 @@ tasks.named("sourcesJar", Jar) {
     from(project(":common").sourceSets.main.allSource)
 }
 
-tasks.withType(ProcessResources).matching(notNeoTask).configureEach {
+processResources {
     from project(":common").sourceSets.main.resources
 
     filesMatching("*.mixins.json") {
@@ -73,12 +62,12 @@ tasks.withType(ProcessResources).matching(notNeoTask).configureEach {
     }
 }
 
-tasks.named('jarJar').configure {
-    archiveClassifier = ""
+processTestResources {
+    from project(":common").sourceSets.test.resources
 }
 
-tasks.named('build').configure {
-    dependsOn('jarJar')
+tasks.named('jarJar').configure {
+    archiveClassifier = ""
 }
 
 publishing {

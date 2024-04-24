@@ -13,6 +13,7 @@ import dev.greenhouseteam.enchantmentconfig.api.config.variable.VariableTypes;
 import dev.greenhouseteam.enchantmentconfig.api.config.variable.type.VariableType;
 import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
 import dev.greenhouseteam.enchantmentconfig.impl.EnchantmentConfig;
+import dev.greenhouseteam.enchantmentconfig.mixin.EnchantmentAccessor;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -40,18 +41,18 @@ public record MaxLevelVariable(Optional<Holder<Enchantment>> otherEnchantment, M
         Enchantment finalEnchantment = otherEnchantment.map(Holder::value).orElse(enchantment);
 
         return switch (modificationType) {
-            case BEFORE -> stack.getEnchantments().getLevel(finalEnchantment);
+            case BEFORE -> ((EnchantmentAccessor)(Object)stack).getDefinition().maxLevel();
             case CONFIG_ONLY -> {
-                ConfiguredEnchantment<?, ?> configured = EnchantmentConfigGetter.INSTANCE.getConfig(finalEnchantment, true);
+                ConfiguredEnchantment<?, ?> configured = EnchantmentConfigGetter.INSTANCE.getConfig(finalEnchantment);
                 if (configured != null)
-                    yield configured.getGlobalFields().getOverrideLevel(original, finalEnchantment, stack);
-                yield original;
+                    yield configured.getGlobalFields().maxLevel().orElse(finalEnchantment.getMaxLevel());
+                yield finalEnchantment.getMaxLevel();
             }
             case NO_CONFIGS -> {
                 EnchantmentConfig.setModificationType(ModificationType.NO_CONFIGS);
-                yield EnchantmentHelper.getItemEnchantmentLevel(finalEnchantment, stack);
+                yield finalEnchantment.getMaxLevel();
             }
-            default -> EnchantmentHelper.getItemEnchantmentLevel(finalEnchantment, stack);
+            default -> finalEnchantment.getMaxLevel();
         };
     }
 

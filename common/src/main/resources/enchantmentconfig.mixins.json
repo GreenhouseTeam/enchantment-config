@@ -12,6 +12,7 @@
     "ItemEnchantmentsMixin",
     "ItemEnchantmentsMutableMixin",
     "MappedRegistryMixin",
+    "ReloadableServerResourcesMixin",
     "ResourceArgumentMixin",
     "VillagerTradesEnchantBookForEmeraldsMixin"
   ],

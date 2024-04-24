@@ -21,7 +21,7 @@ public class DamageEnchantmentMixin {
 
     @ModifyReturnValue(method = "getDamageBonus", at = @At("RETURN"))
     private float enchantmentconfig$modifyDamageValue(float original, int level, @Nullable EntityType<?> targetType) {
-        ConfiguredEnchantment<?, ?> configured = EnchantmentConfigGetter.INSTANCE.getConfig((DamageEnchantment)(Object)this, true);
+        ConfiguredEnchantment<?, ?> configured = EnchantmentConfigGetter.INSTANCE.getConfig((DamageEnchantment)(Object)this);
         if (configured == null)
             return original;
 

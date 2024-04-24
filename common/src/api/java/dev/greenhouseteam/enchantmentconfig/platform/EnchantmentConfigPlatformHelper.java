@@ -37,6 +37,4 @@ public interface EnchantmentConfigPlatformHelper {
 
     EnchantmentConfigGetter createGetter();
 
-    HolderLookup.Provider getRegistryLookup();
-
 }

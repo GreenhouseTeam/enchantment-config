@@ -12,16 +12,12 @@ import net.fabricmc.fabric.api.item.v1.EnchantmentEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.util.TriState;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.server.packs.PackType;
 
-import javax.annotation.Nullable;
 import java.util.Optional;
 
 public class EnchantmentConfigFabric implements ModInitializer {
-    private static HolderLookup.Provider registries;
-
     @Override
     public void onInitialize() {
         EnchantmentConfigUtil.init(new EnchantmentConfigPlatformHelperFabric());
@@ -42,7 +38,7 @@ public class EnchantmentConfigFabric implements ModInitializer {
     public static void registerEvents() {
         EnchantmentEvents.ALLOW_ENCHANTING.register((enchantment, target, enchantingContext) -> {
             if (enchantingContext != EnchantingContext.RANDOM_ENCHANTMENT) {
-                ConfiguredEnchantment<?, ?> configured = EnchantmentConfigGetter.INSTANCE.getConfig(enchantment, true);
+                ConfiguredEnchantment<?, ?> configured = EnchantmentConfigGetter.INSTANCE.getConfig(enchantment);
                 if (configured == null)
                     return TriState.DEFAULT;
 
@@ -51,13 +47,5 @@ public class EnchantmentConfigFabric implements ModInitializer {
             }
             return TriState.DEFAULT;
         });
-    }
-
-    public static void setRegistryLookup(@Nullable HolderLookup.Provider registries) {
-        EnchantmentConfigFabric.registries = registries;
-    }
-
-    public static HolderLookup.Provider getRegistryLookup() {
-        return EnchantmentConfigFabric.registries;
     }
 }

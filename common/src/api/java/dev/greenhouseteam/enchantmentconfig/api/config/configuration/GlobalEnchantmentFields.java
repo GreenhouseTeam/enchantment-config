@@ -78,11 +78,11 @@ public record GlobalEnchantmentFields(Optional<Integer> maxLevel,
     }
 
     private static Optional<Boolean> checkCompatibility(Enchantment enchantment, Enchantment other) {
-        ConfiguredEnchantment<?, ?> type = EnchantmentConfigGetter.INSTANCE.getConfig(enchantment, true);
-        if (type == null)
+        ConfiguredEnchantment<?, ?> configured = EnchantmentConfigGetter.INSTANCE.getConfig(enchantment);
+        if (configured == null)
             return Optional.empty();
 
-        return EnchantmentConfigGetter.INSTANCE.getConfig(type.getType()).getGlobalFields().incompatibilities().isPresent() ? Optional.of(EnchantmentConfigGetter.INSTANCE.getConfig(type.getType()).getGlobalFields().incompatibilities().get().stream().noneMatch(holders -> holders.contains(other.builtInRegistryHolder()))) : Optional.empty();
+        return configured.getGlobalFields().incompatibilities().isPresent() ? Optional.of(configured.getGlobalFields().incompatibilities().get().stream().noneMatch(holders -> holders.contains(other.builtInRegistryHolder()))) : Optional.empty();
     }
 
     public int getOverrideLevel(int level, Enchantment enchantment, ItemStack stack) {

@@ -13,6 +13,7 @@ import dev.greenhouseteam.enchantmentconfig.api.config.ConfiguredEnchantment;
 import dev.greenhouseteam.enchantmentconfig.api.config.condition.Condition;
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
 import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
+import dev.greenhouseteam.enchantmentconfig.impl.EnchantmentConfig;
 import dev.greenhouseteam.enchantmentconfig.impl.EnchantmentConfigGetterImpl;
 import dev.greenhouseteam.enchantmentconfig.api.registries.EnchantmentConfigRegistries;
 import net.minecraft.resources.RegistryOps;
@@ -37,7 +38,7 @@ public class EnchantmentConfigLoader extends SimplePreparableReloadListener<Map<
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static boolean hasLoggedError = false;
 
-    protected EnchantmentConfigLoader() {
+    public EnchantmentConfigLoader() {
     }
 
     @Override
@@ -82,7 +83,7 @@ public class EnchantmentConfigLoader extends SimplePreparableReloadListener<Map<
     protected void apply(Map<ResourceLocation, List<JsonElement>> map, ResourceManager manager, ProfilerFiller filler) {
         ((EnchantmentConfigGetterImpl) EnchantmentConfigGetter.INSTANCE).clear();
 
-        DynamicOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, EnchantmentConfigUtil.getHelper().getRegistryLookup());
+        DynamicOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, EnchantmentConfig.getRegistryLookup());
         Map<ResourceLocation, ConfiguredEnchantment<?, ?>> globalConfigured = new HashMap<>();
         for (Map.Entry<ResourceLocation, List<JsonElement>> entry : map.entrySet().stream().filter(entry -> isGlobal(entry.getKey())).toList()) {
             for (Map.Entry<ResourceKey<EnchantmentType<?>>, EnchantmentType<?>> type : EnchantmentConfigRegistries.ENCHANTMENT_TYPE.entrySet()) {
@@ -96,6 +97,7 @@ public class EnchantmentConfigLoader extends SimplePreparableReloadListener<Map<
             handleJson(entry.getKey(), ops, entry.getValue(), Optional.ofNullable(globalConfigured.getOrDefault(entry.getKey(), null)), null);
             hasLoggedError = false;
         }
+        EnchantmentConfig.setRegistryLookup(null);
     }
 
     private ConfiguredEnchantment<?, ?> handleJson(ResourceLocation key, DynamicOps<JsonElement> ops, List<JsonElement> elements, Optional<ConfiguredEnchantment<?, ?>> global, @Nullable ResourceLocation fileKey) {

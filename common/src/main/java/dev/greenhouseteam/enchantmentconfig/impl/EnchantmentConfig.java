@@ -11,8 +11,12 @@ import dev.greenhouseteam.enchantmentconfig.api.config.variable.type.IntVariable
 import dev.greenhouseteam.enchantmentconfig.api.config.variable.type.LongVariableType;
 import dev.greenhouseteam.enchantmentconfig.api.config.variable.type.VariableType;
 import dev.greenhouseteam.enchantmentconfig.api.registries.EnchantmentConfigRegistries;
+import net.minecraft.core.HolderLookup;
+
+import javax.annotation.Nullable;
 
 public class EnchantmentConfig {
+    private static HolderLookup.Provider registries;
     private static ModificationType currentModificationType;
 
     public static void setModificationType(ModificationType type) {
@@ -37,5 +41,13 @@ public class EnchantmentConfig {
         callback.register(EnchantmentConfigRegistries.VARIABLE_TYPE, FloatVariableType.ID, VariableTypes.FLOAT);
         callback.register(EnchantmentConfigRegistries.VARIABLE_TYPE, IntVariableType.ID, VariableTypes.INT);
         callback.register(EnchantmentConfigRegistries.VARIABLE_TYPE, LongVariableType.ID, VariableTypes.LONG);
+    }
+
+    public static void setRegistryLookup(@Nullable HolderLookup.Provider registries) {
+        EnchantmentConfig.registries = registries;
+    }
+
+    public static HolderLookup.Provider getRegistryLookup() {
+        return EnchantmentConfig.registries;
     }
 }

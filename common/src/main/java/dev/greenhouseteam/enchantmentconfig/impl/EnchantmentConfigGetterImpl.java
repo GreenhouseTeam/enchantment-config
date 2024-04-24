@@ -27,11 +27,10 @@ public class EnchantmentConfigGetterImpl implements EnchantmentConfigGetter {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <C extends EnchantmentConfiguration, T extends EnchantmentType<C>> ConfiguredEnchantment<C, T> getConfig(T type) {
-        if (!ENTRIES.containsKey(type))
-            throw new NullPointerException("ConfiguredEnchantment for EnchantmentType '" + type.getPath() + "' does not exist at this time or at all.");
-
-        return (ConfiguredEnchantment<C, T>) ENTRIES.get(type);
+    public <C extends EnchantmentConfiguration, T extends EnchantmentType<C>> ConfiguredEnchantment<C, T> getConfig(T type, boolean nullSafe) {
+        if (!ENTRIES.containsKey(type) && !nullSafe)
+                throw new NullPointerException("ConfiguredEnchantment for EnchantmentType '" + type.getPath() + "' does not exist at this time or at all.");
+        return (ConfiguredEnchantment<C, T>) ENTRIES.getOrDefault(type, null);
     }
 
     @Override
@@ -60,6 +59,9 @@ public class EnchantmentConfigGetterImpl implements EnchantmentConfigGetter {
 
     @Override
     public <T> @Nullable T getExtraField(EnchantmentType<?> key, ExtraFieldType<T> fieldType) {
-        return getConfig(key).getExtraField(fieldType);
+        ConfiguredEnchantment<?, ?> configuration = getConfig(key, true);
+        if (configuration == null)
+            return null;
+        return configuration.getExtraField(fieldType);
     }
 }

@@ -8,7 +8,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 
-public class EnchantmentConfigPlatformHelperFabric implements EnchantmentConfigPlatformHelperMain {
+public class EnchantmentConfigPlatformHelperFabric implements EnchantmentConfigPlatformHelperCommon {
 
     @Override
     public Platform getPlatform() {
@@ -30,10 +30,5 @@ public class EnchantmentConfigPlatformHelperFabric implements EnchantmentConfigP
     @Override
     public <T> Registry<T> createRegistry(ResourceKey<Registry<T>> key) {
         return FabricRegistryBuilder.createSimple(key).attribute(RegistryAttribute.SYNCED).buildAndRegister();
-    }
-
-    @Override
-    public HolderLookup.Provider getRegistryLookup() {
-        return EnchantmentConfigFabric.getRegistryLookup();
     }
 }

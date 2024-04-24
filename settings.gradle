@@ -26,4 +26,4 @@ rootProject.name = 'enchantmentconfig'
 include("common")
 include("common:intermediary")
 include("fabric")
-// include("neoforge")
+include("neoforge")

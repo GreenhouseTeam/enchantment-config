@@ -5,7 +5,10 @@
     "name": "${mod_name} Test",
     "description": "${mod_description}",
     "authors": [
-        "${mod_author}"
+        "Greenhouse Team"
+    ],
+    "contributors": [
+        "MerchantPug"
     ],
     "contact": {
         "homepage": "https://github.com/GreenhouseTeam/enchantment-config",
@@ -26,4 +29,3 @@
         "java": ">=17"
     }
 }
-  

@@ -23,7 +23,7 @@ public class EnchantmentHelperMixin {
         if (EnchantmentConfig.getAndClearModificationType() == ModificationType.NO_CONFIGS)
             return original;
 
-        ConfiguredEnchantment<?, ?> configured = EnchantmentConfigGetter.INSTANCE.getConfig(enchantment, true);
+        ConfiguredEnchantment<?, ?> configured = EnchantmentConfigGetter.INSTANCE.getConfig(enchantment);
         if (configured == null)
             return original;
 
@@ -32,7 +32,7 @@ public class EnchantmentHelperMixin {
 
     @ModifyArg(method = "runIterationOnItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper$EnchantmentVisitor;accept(Lnet/minecraft/world/item/enchantment/Enchantment;I)V"), index = 1)
     private static int enchantmentconfig$overrideIterations(int original, @Local(argsOnly = true) ItemStack stack, @Local Entry<Holder<Enchantment>> entry) {
-        ConfiguredEnchantment<?, ?> configured = EnchantmentConfigGetter.INSTANCE.getConfig(entry.getKey().value(), true);
+        ConfiguredEnchantment<?, ?> configured = EnchantmentConfigGetter.INSTANCE.getConfig(entry.getKey().value());
         if (configured == null)
             return original;
 
