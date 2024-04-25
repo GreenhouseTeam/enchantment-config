@@ -1,9 +1,11 @@
 package dev.greenhouseteam.enchantmentconfig.impl.variable;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.greenhouseteam.enchantmentconfig.api.codec.EnchantmentConfigCodecs;
+import dev.greenhouseteam.enchantmentconfig.api.config.ModificationType;
 import dev.greenhouseteam.enchantmentconfig.api.config.condition.Comparison;
 import dev.greenhouseteam.enchantmentconfig.api.config.field.Field;
 import dev.greenhouseteam.enchantmentconfig.api.config.variable.SingleTypedSerializer;
@@ -11,12 +13,17 @@ import dev.greenhouseteam.enchantmentconfig.api.config.variable.Variable;
 import dev.greenhouseteam.enchantmentconfig.api.config.variable.VariableSerializer;
 import dev.greenhouseteam.enchantmentconfig.api.config.variable.type.VariableType;
 import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
+import dev.greenhouseteam.enchantmentconfig.impl.EnchantmentConfig;
+import dev.greenhouseteam.enchantmentconfig.impl.access.ItemEnchantmentsPredicateAccess;
+import net.minecraft.advancements.critereon.ItemEnchantmentsPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 
+import java.util.Map;
 import java.util.Optional;
+import java.util.WeakHashMap;
 
 public class ItemPredicateVariable<I> implements Variable<I, Object> {
     public static final ResourceLocation ID = EnchantmentConfigUtil.asResource("item_predicate");
@@ -43,11 +50,16 @@ public class ItemPredicateVariable<I> implements Variable<I, Object> {
         this.elseField = elseField;
         this.predicate = predicate;
         this.comparison = comparison;
+        this.predicate.subPredicates().forEach((type, itemSubPredicate) -> {
+            if (itemSubPredicate instanceof ItemEnchantmentsPredicate enchantmentsPredicate)
+                ((ItemEnchantmentsPredicateAccess)enchantmentsPredicate).enchantmentconfig$setNoConfigs();
+        });
     }
 
     @Override
     public Object getValue(Enchantment enchantment, ItemStack stack, I original) {
         try {
+            // Avoid StackOverflowError the only way I know how.
             if (comparison.compare(predicate.test(stack), true))
                 return field.get(enchantment, stack, original);
             else if (elseField.isPresent())

@@ -1,13 +1,16 @@
 {
   "effectiveness_overrides": [
     {
-      "min": 0,
+      "min": 1,
       "max": 255,
       "new_value": {
         "type": "enchantmentconfig:item_predicate",
-        "value": 0,
+        "value": {
+          "type": "enchantmentconfig:original"
+        },
+        "else": 0,
         "predicate": {
-          "items": "#minecraft:enchantable/bow"
+          "items": "#minecraft:enchantable/sword"
         }
       }
     }

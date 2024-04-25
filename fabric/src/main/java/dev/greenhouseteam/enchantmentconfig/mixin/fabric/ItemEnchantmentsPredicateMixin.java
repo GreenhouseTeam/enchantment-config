@@ -2,8 +2,10 @@ package dev.greenhouseteam.enchantmentconfig.mixin.fabric;
 
 import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigGetter;
 import dev.greenhouseteam.enchantmentconfig.api.config.ConfiguredEnchantment;
+import dev.greenhouseteam.enchantmentconfig.api.config.ModificationType;
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
 import dev.greenhouseteam.enchantmentconfig.api.registries.EnchantmentConfigRegistries;
+import dev.greenhouseteam.enchantmentconfig.impl.EnchantmentConfig;
 import net.minecraft.advancements.critereon.ItemEnchantmentsPredicate;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.ItemStack;
@@ -13,11 +15,11 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
-@Mixin(ItemEnchantmentsPredicate.class)
+@Mixin(value = ItemEnchantmentsPredicate.class, priority = 1500)
 public class ItemEnchantmentsPredicateMixin {
     @ModifyVariable(method = "matches(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/enchantment/ItemEnchantments;)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancements/critereon/EnchantmentPredicate;containedIn(Lnet/minecraft/world/item/enchantment/ItemEnchantments;)Z"), argsOnly = true)
     private ItemEnchantments enchantmentconfig$modifyPredicate(ItemEnchantments enchantments, ItemStack stack) {
-        if (!((ItemEnchantmentsPredicate)(Object)this instanceof ItemEnchantmentsPredicate.Enchantments))
+        if (!((ItemEnchantmentsPredicate)(Object)this instanceof ItemEnchantmentsPredicate.Enchantments) || EnchantmentConfig.getAndClearModificationType() == ModificationType.NO_CONFIGS)
             return enchantments;
 
         ItemEnchantments.Mutable mutable = new ItemEnchantments.Mutable(enchantments);
