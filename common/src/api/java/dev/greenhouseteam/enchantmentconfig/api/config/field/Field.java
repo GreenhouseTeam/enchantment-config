@@ -71,7 +71,7 @@ public class Field<I, O> {
         throw NOT_A_NUMBER_EXCEPTION.get();
     }
 
-    public float getLong(Enchantment enchantment, ItemStack stack, Number original) {
+    public long getLong(Enchantment enchantment, ItemStack stack, Number original) {
         if (variable == null) {
             if (value instanceof Number number)
                 return number.longValue();
