@@ -7,9 +7,6 @@
         "type": "enchantmentconfig:item_predicate",
         "value": {
           "type": "enchantmentconfig:modifier",
-          "base": {
-            "type": "enchantmentconfig:original"
-          },
           "value": {
             "type": "enchantmentconfig:enchantment_level",
             "enchantment": "minecraft:flame"
