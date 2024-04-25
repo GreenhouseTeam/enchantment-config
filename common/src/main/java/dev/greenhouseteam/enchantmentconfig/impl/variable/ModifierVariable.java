@@ -21,6 +21,10 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
+
+import java.util.Map;
+import java.util.WeakHashMap;
 
 public class ModifierVariable implements SingleTypedVariable<Number> {
     public static final ResourceLocation ID = EnchantmentConfigUtil.asResource("modifier");
@@ -46,7 +50,7 @@ public class ModifierVariable implements SingleTypedVariable<Number> {
     private final Field<Number, Number> base;
     private final Field<Number, Number> modifier;
     private final AttributeModifier.Operation operation;
-    private AttributeInstance instance;
+    private final Map<ItemEnchantments, AttributeInstance> instance = new WeakHashMap<>(64);
 
     public ModifierVariable(Field<Number, Number> base, Field<Number, Number> modifier, AttributeModifier.Operation operation) {
         this.base = base;
@@ -56,14 +60,14 @@ public class ModifierVariable implements SingleTypedVariable<Number> {
 
     @Override
     public Number getValue(Enchantment enchantment, ItemStack stack, Number original) {
-        if (instance == null) {
+        if (!instance.containsKey(stack.getEnchantments())) {
             // Use attribute as
             AttributeInstance instance = new AttributeInstance(Holder.Reference.createStandAlone(BuiltInRegistries.ATTRIBUTE.asLookup(), ResourceKey.create(Registries.ATTRIBUTE, EnchantmentConfigUtil.asResource("modifier_variable"))),attributeInstance -> {});
             instance.setBaseValue(base.getDouble(enchantment, stack, original));
             instance.addPermanentModifier(new AttributeModifier("Attribute for ModifierVariable", modifier.getDouble(enchantment, stack, original), operation));
-            this.instance = instance;
+            this.instance.put(stack.getEnchantments(), instance);
         }
-        return instance.getValue();
+        return instance.get(stack.getEnchantments()).getValue();
     }
 
     public Field<Number, Number> base() {
