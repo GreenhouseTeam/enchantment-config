@@ -1,5 +1,6 @@
 {
   "incompatibilities": [
-    "minecraft:fire_aspect"
+    "minecraft:fire_aspect",
+    "-#c:weapon_damage_enhancements"
   ]
 }

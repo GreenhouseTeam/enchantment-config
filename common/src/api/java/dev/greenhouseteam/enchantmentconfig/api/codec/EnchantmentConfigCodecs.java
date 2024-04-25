@@ -3,6 +3,10 @@ package dev.greenhouseteam.enchantmentconfig.api.codec;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import dev.greenhouseteam.enchantmentconfig.api.config.variable.type.VariableType;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.RegistryFileCodec;
+import net.minecraft.resources.RegistryFixedCodec;
+import net.minecraft.resources.ResourceKey;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -39,6 +43,14 @@ public class EnchantmentConfigCodecs {
 
     public static <I, O> FieldCodec<I, O> outputFieldCodec(@Nullable VariableType<I> type, @Nullable VariableType<O> outputType) {
         return new FieldCodec<>(null, outputType);
+    }
+
+    public static <T> ExcludableHolderSetCodec<T> excludableHolderSetCodec(ResourceKey<? extends Registry<T>> registryKey) {
+        return new ExcludableHolderSetCodec<>(registryKey, RegistryFixedCodec.create(registryKey));
+    }
+
+    public static <T> ExcludableHolderSetCodec<T> excludableHolderSetCodec(ResourceKey<? extends Registry<T>> registryKey, Codec<T> codec) {
+        return new ExcludableHolderSetCodec<>(registryKey, RegistryFileCodec.create(registryKey, codec));
     }
 
 }

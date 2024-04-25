@@ -14,6 +14,7 @@ import net.fabricmc.fabric.api.util.TriState;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
 import net.minecraft.server.packs.PackType;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.Optional;
 
@@ -36,13 +37,13 @@ public class EnchantmentConfigFabric implements ModInitializer {
     }
 
     public static void registerEvents() {
-        EnchantmentEvents.ALLOW_ENCHANTING.register((enchantment, target, enchantingContext) -> {
-            if (enchantingContext != EnchantingContext.RANDOM_ENCHANTMENT) {
+        EnchantmentEvents.ALLOW_ENCHANTING.register((enchantment, target, context) -> {
+            if (context != EnchantingContext.RANDOM_ENCHANTMENT) {
                 ConfiguredEnchantment<?, ?> configured = EnchantmentConfigGetter.INSTANCE.getConfig(enchantment);
                 if (configured == null)
                     return TriState.DEFAULT;
 
-                Optional<Boolean> appliable = configured.getGlobalFields().isApplicable(target);
+                Optional<Boolean> appliable = configured.getGlobalFields().isApplicable(target, target.getItem().canBeEnchantedWith(target, enchantment, context));
                 return appliable.isEmpty() ? TriState.DEFAULT : TriState.of(appliable.get());
             }
             return TriState.DEFAULT;

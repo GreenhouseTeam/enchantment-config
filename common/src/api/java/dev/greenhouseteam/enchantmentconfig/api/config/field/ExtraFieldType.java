@@ -55,5 +55,4 @@ public record ExtraFieldType<T>(String key, Codec<T> codec) {
         return this.codec().xmap(t -> t, object -> (T)object);
     }
 
-
 }

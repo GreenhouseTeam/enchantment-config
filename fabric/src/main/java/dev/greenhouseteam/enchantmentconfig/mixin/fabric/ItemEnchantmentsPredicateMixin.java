@@ -1,4 +1,4 @@
-package dev.greenhouseteam.enchantmentconfig.mixin;
+package dev.greenhouseteam.enchantmentconfig.mixin.fabric;
 
 import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigGetter;
 import dev.greenhouseteam.enchantmentconfig.api.config.ConfiguredEnchantment;

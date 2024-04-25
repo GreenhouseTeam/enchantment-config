@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 public class EnchantmentMixin {
     @ModifyReturnValue(method = "isCompatibleWith", at = @At("RETURN"))
     private boolean enchantmentconfig$modifyCompatibility(boolean original, Enchantment other) {
-        return GlobalEnchantmentFields.isCompatible((Enchantment)(Object)this, other).orElse(original);
+        return GlobalEnchantmentFields.isCompatible((Enchantment)(Object)this, other, original);
     }
 
     @ModifyReturnValue(method = "getMaxLevel", at = @At("RETURN"))
