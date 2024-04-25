@@ -44,7 +44,7 @@ public class Field<I, O> {
         return variable.getValue(enchantment, stack, original);
     }
 
-    public int getInt(Enchantment enchantment, ItemStack stack, Integer original) {
+    public int getInt(Enchantment enchantment, ItemStack stack, Number original) {
         if (variable == null) {
             if (value instanceof Number number)
                 return number.intValue();
@@ -53,7 +53,7 @@ public class Field<I, O> {
         throw NOT_A_NUMBER_EXCEPTION.get();
     }
 
-    public float getFloat(Enchantment enchantment, ItemStack stack, Float original) {
+    public float getFloat(Enchantment enchantment, ItemStack stack, Number original) {
         if (variable == null) {
             if (value instanceof Number number)
                 return number.floatValue();
@@ -62,7 +62,7 @@ public class Field<I, O> {
         throw NOT_A_NUMBER_EXCEPTION.get();
     }
 
-    public double getDouble(Enchantment enchantment, ItemStack stack, Float original) {
+    public double getDouble(Enchantment enchantment, ItemStack stack, Number original) {
         if (variable == null) {
             if (value instanceof Number number)
                 return number.doubleValue();
@@ -71,7 +71,7 @@ public class Field<I, O> {
         throw NOT_A_NUMBER_EXCEPTION.get();
     }
 
-    public float getLong(Enchantment enchantment, ItemStack stack, Float original) {
+    public float getLong(Enchantment enchantment, ItemStack stack, Number original) {
         if (variable == null) {
             if (value instanceof Number number)
                 return number.longValue();

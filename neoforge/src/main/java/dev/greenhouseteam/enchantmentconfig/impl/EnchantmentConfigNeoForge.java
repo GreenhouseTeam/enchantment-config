@@ -8,7 +8,9 @@ import dev.greenhouseteam.enchantmentconfig.api.registries.EnchantmentConfigRegi
 import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
 import dev.greenhouseteam.enchantmentconfig.impl.data.EnchantmentConfigLoader;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -29,16 +31,25 @@ public class EnchantmentConfigNeoForge {
             if (EnchantmentConfig.getAndClearModificationType() == ModificationType.NO_CONFIGS && event.getTargetEnchant() != null)
                 return;
 
+            if (event.getTargetEnchant() != null) {
+                setEnchantmentLevel(event.getEnchantments(), event.getStack(), event.getTargetEnchant());
+                return;
+            }
+
             for (EnchantmentType<?> type : EnchantmentConfigRegistries.ENCHANTMENT_TYPE) {
                 Enchantment enchantment = BuiltInRegistries.ENCHANTMENT.get(type.getEnchantment());
                 if (enchantment == null)
                     continue;
-                ConfiguredEnchantment<?, ?> configured = EnchantmentConfigGetter.INSTANCE.getConfig(type);
-                if (configured == null)
-                    continue;
-                int originalLevel = event.getEnchantments().getLevel(enchantment);
-                event.getEnchantments().set(enchantment, configured.getGlobalFields().getOverrideLevel(originalLevel, enchantment, event.getStack()));
+                setEnchantmentLevel(event.getEnchantments(), event.getStack(), enchantment);
             }
+        }
+
+        private static void setEnchantmentLevel(ItemEnchantments.Mutable enchantments, ItemStack stack, Enchantment enchantment) {
+            ConfiguredEnchantment<?, ?> configured = EnchantmentConfigGetter.INSTANCE.getConfig(enchantment);
+            if (configured == null) return;
+            int originalLevel = enchantments.getLevel(enchantment);
+            enchantments.set(enchantment, configured.getGlobalFields().getOverrideLevel(originalLevel, enchantment, stack));
+
         }
 
         @SubscribeEvent

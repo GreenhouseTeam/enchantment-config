@@ -5,7 +5,7 @@
       "base_value": 2,
       "new_value": {
         "type": "enchantmentconfig:max_level",
-        "unmodified": true,
+        "modification_type": "no_configs",
         "percentage": 0.6
       }
     },
@@ -13,7 +13,7 @@
       "base_value": 3,
       "new_value": {
         "type": "enchantmentconfig:max_level",
-        "unmodified": true
+        "modification_type": "no_configs"
       }
     }
   ],

@@ -7,7 +7,7 @@
         "type": "enchantmentconfig:item_predicate",
         "value": {
           "type": "enchantmentconfig:max_level",
-          "unmodified": true
+          "modification_type": "no_configs"
         },
         "predicate": {
           "items": "#minecraft:enchantable/trident"

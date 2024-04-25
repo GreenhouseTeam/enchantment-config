@@ -41,7 +41,7 @@ public record MaxLevelVariable(Optional<Holder<Enchantment>> otherEnchantment, M
         Enchantment finalEnchantment = otherEnchantment.map(Holder::value).orElse(enchantment);
 
         return switch (modificationType) {
-            case BEFORE -> ((EnchantmentAccessor)(Object)stack).getDefinition().maxLevel();
+            case BEFORE -> ((EnchantmentAccessor) finalEnchantment).getDefinition().maxLevel();
             case CONFIG_ONLY -> {
                 ConfiguredEnchantment<?, ?> configured = EnchantmentConfigGetter.INSTANCE.getConfig(finalEnchantment);
                 if (configured != null)

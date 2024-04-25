@@ -11,6 +11,7 @@ import dev.greenhouseteam.enchantmentconfig.impl.variable.EnchantmentLevelVariab
 import dev.greenhouseteam.enchantmentconfig.impl.variable.ItemPredicateVariable;
 import dev.greenhouseteam.enchantmentconfig.impl.variable.MatchesVariable;
 import dev.greenhouseteam.enchantmentconfig.impl.variable.MaxLevelVariable;
+import dev.greenhouseteam.enchantmentconfig.impl.variable.ModifierVariable;
 import dev.greenhouseteam.enchantmentconfig.impl.variable.OriginalVariable;
 
 @EnchantmentConfigEntrypoint
@@ -33,6 +34,7 @@ public class VanillaEnchantmentConfigEntry implements EnchantmentConfigPlugin {
         assigner.registerVariable(ItemPredicateVariable.SERIALIZER);
         assigner.registerVariable(MatchesVariable.SERIALIZER);
         assigner.registerVariable(MaxLevelVariable.SERIALIZER);
+        assigner.registerVariable(ModifierVariable.SERIALIZER);
         assigner.registerVariable(OriginalVariable.SERIALIZER);
     }
 }

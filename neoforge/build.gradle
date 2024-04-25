@@ -18,11 +18,14 @@ if (file('src/main/resources/enchantmentconfig.cfg').exists()) {
 
 runs {
     configureEach {
-        modSources.addAll sourceSets.main, sourceSets.test
+        modSource sourceSets.main
+        modSource sourceSets.test
+    }
+    client {
         systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
     }
-    client {}
     server {
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         programArgument '--nogui'
     }
 }

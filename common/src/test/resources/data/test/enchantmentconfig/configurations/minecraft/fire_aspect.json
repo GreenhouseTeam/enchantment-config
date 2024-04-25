@@ -1,0 +1,25 @@
+{
+  "effectiveness_overrides": [
+    {
+      "min": 0,
+      "max": 255,
+      "new_value": {
+        "type": "enchantmentconfig:item_predicate",
+        "value": {
+          "type": "enchantmentconfig:modifier",
+          "base": {
+            "type": "enchantmentconfig:original"
+          },
+          "value": {
+            "type": "enchantmentconfig:enchantment_level",
+            "enchantment": "minecraft:flame"
+          },
+          "operation": "add_value"
+        },
+        "predicate": {
+          "items": "#minecraft:enchantable/sword"
+        }
+      }
+    }
+  ]
+}

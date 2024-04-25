@@ -57,9 +57,9 @@ public interface Condition {
         public static final MapCodec<Variable<Object, Object>> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
                 new FieldPair.Codec("value", "compare_to").xmap(pair -> {
                     if (pair.left().getInnerVariable() != null && !pair.left().getInnerVariable().allowedInRootCondition())
-                        throw new UnsupportedOperationException("Variable of type '" + pair.left().getInnerVariable().getSerializer().id() + "' is unsupported.");
+                        throw new UnsupportedOperationException("Variable of type '" + pair.left().getInnerVariable().getSerializer().id() + "' is unsupported in conditions.");
                     else if (pair.right().getInnerVariable() != null && !pair.right().getInnerVariable().allowedInRootCondition())
-                        throw new UnsupportedOperationException("Variable of type '" + pair.right().getInnerVariable().getSerializer().id() + "' is unsupported.");
+                        throw new UnsupportedOperationException("Variable of type '" + pair.right().getInnerVariable().getSerializer().id() + "' is unsupported in conditions.");
                     return pair;
                 }, pair -> pair).forGetter(Variable::fieldPair),
                 Comparison.CODEC.optionalFieldOf("comparison", Comparison.EQUAL).forGetter(Variable::comparison)

@@ -1,0 +1,6 @@
+{
+  "applicable_items": [
+    "#minecraft:enchantable/bow",
+    "#minecraft:enchantable/sword"
+  ]
+}
