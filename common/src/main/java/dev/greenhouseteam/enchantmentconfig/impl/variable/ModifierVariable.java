@@ -50,7 +50,7 @@ public class ModifierVariable implements SingleTypedVariable<Number> {
     private final Field<Number, Number> base;
     private final Field<Number, Number> modifier;
     private final AttributeModifier.Operation operation;
-    private final Map<ItemEnchantments, AttributeInstance> instance = new WeakHashMap<>(64);
+    private final Map<ItemEnchantments, AttributeInstance> instance = new WeakHashMap<>(32);
 
     public ModifierVariable(Field<Number, Number> base, Field<Number, Number> modifier, AttributeModifier.Operation operation) {
         this.base = base;
