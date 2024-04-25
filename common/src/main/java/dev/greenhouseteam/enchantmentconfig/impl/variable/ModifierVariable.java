@@ -50,7 +50,7 @@ public class ModifierVariable implements SingleTypedVariable<Number> {
     private final Field<Number, Number> base;
     private final Field<Number, Number> modifier;
     private final AttributeModifier.Operation operation;
-    private final Map<ItemEnchantments, AttributeInstance> instance = new WeakHashMap<>(32);
+    private final Map<Enchantment, Map<ItemEnchantments, AttributeInstance>> instance = new WeakHashMap<>(32);
 
     public ModifierVariable(Field<Number, Number> base, Field<Number, Number> modifier, AttributeModifier.Operation operation) {
         this.base = base;
@@ -60,14 +60,13 @@ public class ModifierVariable implements SingleTypedVariable<Number> {
 
     @Override
     public Number getValue(Enchantment enchantment, ItemStack stack, Number original) {
-        if (!instance.containsKey(stack.getEnchantments())) {
-            // Use attribute as
+        if (!instance.containsKey(enchantment) || !instance.get(enchantment).containsKey(stack.getEnchantments())) {
             AttributeInstance instance = new AttributeInstance(Holder.Reference.createStandAlone(BuiltInRegistries.ATTRIBUTE.asLookup(), ResourceKey.create(Registries.ATTRIBUTE, EnchantmentConfigUtil.asResource("modifier_variable"))),attributeInstance -> {});
             instance.setBaseValue(base.getDouble(enchantment, stack, original));
             instance.addPermanentModifier(new AttributeModifier("Attribute for ModifierVariable", modifier.getDouble(enchantment, stack, original), operation));
-            this.instance.put(stack.getEnchantments(), instance);
+            this.instance.computeIfAbsent(enchantment, enchantment1 -> new WeakHashMap<>(32)).put(stack.getEnchantments(), instance);
         }
-        return instance.get(stack.getEnchantments()).getValue();
+        return instance.get(enchantment).get(stack.getEnchantments()).getValue();
     }
 
     public Field<Number, Number> base() {
