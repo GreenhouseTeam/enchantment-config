@@ -56,10 +56,6 @@ public class ExcludableHolderSet<T> extends HolderSet.ListBacked<T> {
         return contents().contains(holder) || context && !exclusions().contains(holder);
     }
 
-    public boolean inverseContains(Holder<T> holder) {
-        return exclusions().contains(holder) || context && !contents().contains(holder);
-    }
-
     @Override
     public Optional<TagKey<T>> unwrapKey() {
         return Optional.empty();

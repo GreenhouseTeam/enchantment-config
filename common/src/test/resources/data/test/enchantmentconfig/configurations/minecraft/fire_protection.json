@@ -1,5 +1,5 @@
 {
-  "incompatibilities": [
-    "-minecraft:blast_protection"
+  "compatibilities": [
+    "#c:entity_defense_enhancements"
   ]
 }

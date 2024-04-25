@@ -42,11 +42,13 @@ public abstract class ItemEnchantmentsMixin implements ItemEnchantmentsAccess {
                     if (!entry.getKey().is(EnchantmentConfigUtil.DISABLED_ENCHANTMENT_TAG))
                         potentialNewMap.addTo(entry.getKey(), entry.getIntValue());
                     else if (entry.getKey().isBound() && EnchantmentConfigGetter.INSTANCE.getConfig(entry.getKey().value()) != null && EnchantmentConfigGetter.INSTANCE.getConfig(entry.getKey().value()).getGlobalFields().replacement().isPresent()) {
-                        potentialNewMap.addTo(EnchantmentConfigGetter.INSTANCE.getConfig(entry.getKey().value()).getGlobalFields().replacement().get(), entry.getIntValue());
+                        potentialNewMap.addTo(EnchantmentConfigGetter.INSTANCE.getConfig(entry.getKey().value()).getGlobalFields().replacement().get(), Math.min(EnchantmentConfigGetter.INSTANCE.getConfig(entry.getKey().value()).getGlobalFields().replacement().get().value().getMaxLevel(), entry.getIntValue()));
                         disabledHolders.remove(entry.getKey());
                     }
                 }
                 var newItemEnchantments = new ItemEnchantments(potentialNewMap, ((ItemEnchantmentsMixin) (Object) itemEnchantments).enchantmentconfig$getShowInTooltip());
+                if (disabledHolders.isEmpty())
+                    return DataResult.success(newItemEnchantments);
                 if (disabledHolders.size() == 1)
                     return DataResult.error(() -> "Enchantment " + disabledHolders.getFirst().getRegisteredName() + " has been disabled via the enchantmentconfig:disabled enchantment tag.", newItemEnchantments);
                 StringBuilder builder = new StringBuilder();
@@ -57,7 +59,7 @@ public abstract class ItemEnchantmentsMixin implements ItemEnchantmentsAccess {
                     if (i < disabledHolders.size() - 1)
                         builder.append(", ");
                 }
-                return DataResult.error(() -> "Enchantments " + builder.toString() + " have been disabled via the enchantmentconfig:disabled enchantment tag.");
+                return DataResult.error(() -> "Enchantments " + builder.toString() + " have been disabled via the enchantmentconfig:disabled enchantment tag.", newItemEnchantments);
             }
             return DataResult.success(itemEnchantments);
         }, DataResult::success);

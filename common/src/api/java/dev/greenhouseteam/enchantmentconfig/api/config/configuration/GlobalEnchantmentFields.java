@@ -31,9 +31,9 @@ import java.util.Optional;
  *                                  For example, you may want to set an enchantment
  *                                  to be at max level prior to it.
  *                                  Leaving this empty results in default behavior.
- * @param incompatibilities         Incompatibilities with other enchantments,
- *                                  can add or remove incompatibilities by
- *                                  specifying/not specifying them respectively.
+ * @param compatibilities           Compatibilities with other enchantments.
+ *                                  Can add or remove compatibilities using
+ *                                  the {@link ExcludableHolderSet} logic.
  *                                  Leaving this empty results in default behavior.
  * @param enchantingTableWeight     Items of which this enchantment will show up for
  *                                  inside the enchanting table. Additionally, supports
@@ -41,6 +41,9 @@ import java.util.Optional;
  *                                  match them to get the table.
  *                                  an NBT check before it can be enchanted.
  *                                  Leaving this empty results in default behavior.
+ * @param applicableItems           The items that this enchantment can be applied to.
+ *                                  Can add or remove items using the {@link ExcludableHolderSet}
+ *                                  logic.
  * @param tradeable                 Whether this enchantment is tradeable by
  *                                  villagers.
  *                                  Leaving this empty results in default behavior.
@@ -49,7 +52,7 @@ import java.util.Optional;
  */
 public record GlobalEnchantmentFields(Optional<Integer> maxLevel,
                                       Map<Integer, Field<Integer, Integer>> effectivenessOverrides,
-                                      Optional<ExcludableHolderSet<Enchantment>> incompatibilities,
+                                      Optional<ExcludableHolderSet<Enchantment>> compatibilities,
                                       Map<ItemPredicate, Integer> enchantingTableWeight,
                                       Optional<ExcludableHolderSet<Item>> applicableItems,
                                       Optional<Boolean> tradeable,
@@ -59,7 +62,7 @@ public record GlobalEnchantmentFields(Optional<Integer> maxLevel,
     public static final MapCodec<GlobalEnchantmentFields> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
             EnchantmentConfigCodecs.defaultableCodec("max_level", Codec.INT).forGetter(GlobalEnchantmentFields::maxLevel),
             EnchantmentConfigCodecs.rangeAllowedIntegerCodec("base_value", "new_value", EnchantmentConfigCodecs.fieldCodec(VariableTypes.INT)).optionalFieldOf("effectiveness_overrides",Map.of()).forGetter(GlobalEnchantmentFields::effectivenessOverrides),
-            EnchantmentConfigCodecs.defaultableCodec("incompatibilities", EnchantmentConfigCodecs.excludableHolderSetCodec(Registries.ENCHANTMENT)).forGetter(GlobalEnchantmentFields::incompatibilities),
+            EnchantmentConfigCodecs.defaultableCodec("compatibilities", EnchantmentConfigCodecs.excludableHolderSetCodec(Registries.ENCHANTMENT)).forGetter(GlobalEnchantmentFields::compatibilities),
             EnchantmentConfigCodecs.mapCollectionCodec("item_predicate", "weight", ItemPredicate.CODEC, Codec.INT).optionalFieldOf("enchanting_table_weight", Map.of()).forGetter(GlobalEnchantmentFields::enchantingTableWeight),
             EnchantmentConfigCodecs.defaultableCodec("applicable_items", EnchantmentConfigCodecs.excludableHolderSetCodec(Registries.ITEM)).forGetter(GlobalEnchantmentFields::applicableItems),
             // TODO: Expand on tradeable field by utilising predicates and other stuff.
@@ -79,9 +82,9 @@ public record GlobalEnchantmentFields(Optional<Integer> maxLevel,
         if (configured == null)
             return Optional.empty();
 
-        if (configured.getGlobalFields().incompatibilities().isPresent()) {
-            configured.getGlobalFields().incompatibilities().get().setContext(original);
-            return Optional.of(configured.getGlobalFields().incompatibilities().get().inverseContains(other.builtInRegistryHolder()));
+        if (configured.getGlobalFields().compatibilities().isPresent()) {
+            configured.getGlobalFields().compatibilities().get().setContext(original);
+            return Optional.of(configured.getGlobalFields().compatibilities().get().contains(other.builtInRegistryHolder()));
         }
         return Optional.empty();
     }
@@ -139,7 +142,7 @@ public record GlobalEnchantmentFields(Optional<Integer> maxLevel,
 
         // TODO: Merge ExcludableHolderSets.
 
-        Optional<ExcludableHolderSet<Enchantment>> incompatibilities = MergeUtil.mergePrimitiveOptional(incompatibilities(), oldConfiguration.flatMap(GlobalEnchantmentFields::incompatibilities), globalConfiguration.flatMap(GlobalEnchantmentFields::incompatibilities));
+        Optional<ExcludableHolderSet<Enchantment>> compatibilities = MergeUtil.mergePrimitiveOptional(compatibilities(), oldConfiguration.flatMap(GlobalEnchantmentFields::compatibilities), globalConfiguration.flatMap(GlobalEnchantmentFields::compatibilities));
 
         Map<ItemPredicate, Integer> enchantingTableWeight = MergeUtil.mergeMap(enchantingTableWeight(), oldConfiguration.map(GlobalEnchantmentFields::enchantingTableWeight), globalConfiguration.map(GlobalEnchantmentFields::enchantingTableWeight));
 
@@ -150,6 +153,6 @@ public record GlobalEnchantmentFields(Optional<Integer> maxLevel,
 
         Optional<Holder<Enchantment>> replacement = MergeUtil.mergePrimitiveOptional(replacement(), oldConfiguration.flatMap(GlobalEnchantmentFields::replacement), globalConfiguration.flatMap(GlobalEnchantmentFields::replacement));
 
-        return new GlobalEnchantmentFields(maxLevel, effectivenessOverrides, incompatibilities, enchantingTableWeight, applicablePredicates, tradeable, treasure, replacement);
+        return new GlobalEnchantmentFields(maxLevel, effectivenessOverrides, compatibilities, enchantingTableWeight, applicablePredicates, tradeable, treasure, replacement);
     }
 }
