@@ -28,7 +28,7 @@ public class EnchantmentConfigNeoForge {
     public static class GameBusEvents {
         @SubscribeEvent
         public static void modifyEnchantmentLevels(GetEnchantmentLevelEvent event) {
-            if (EnchantmentConfig.getAndClearModificationType() == ModificationType.NO_CONFIGS && event.getTargetEnchant() != null)
+            if (EnchantmentConfig.getAndClearModificationType() == ModificationType.NO_CONFIGS)
                 return;
 
             if (event.getTargetEnchant() != null) {
