@@ -12,8 +12,7 @@ import dev.greenhouseteam.enchantmentconfig.api.config.variable.type.LongVariabl
 import dev.greenhouseteam.enchantmentconfig.api.config.variable.type.VariableType;
 import dev.greenhouseteam.enchantmentconfig.api.registries.EnchantmentConfigRegistries;
 import net.minecraft.core.HolderLookup;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class EnchantmentConfig {
     private static HolderLookup.Provider registries;

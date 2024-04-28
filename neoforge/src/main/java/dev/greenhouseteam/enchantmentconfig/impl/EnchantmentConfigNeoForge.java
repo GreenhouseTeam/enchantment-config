@@ -49,7 +49,6 @@ public class EnchantmentConfigNeoForge {
             if (configured == null) return;
             int originalLevel = enchantments.getLevel(enchantment);
             enchantments.set(enchantment, configured.getGlobalFields().getOverrideLevel(originalLevel, enchantment, stack));
-
         }
 
         @SubscribeEvent

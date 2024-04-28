@@ -7,12 +7,12 @@ import dev.greenhouseteam.enchantmentconfig.api.config.configuration.DamageEncha
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.enchantment.DamageEnchantment;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 
-import javax.annotation.Nullable;
 import java.util.Optional;
 
 @Mixin(DamageEnchantment.class)

@@ -14,7 +14,6 @@ import net.fabricmc.fabric.api.util.TriState;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
 import net.minecraft.server.packs.PackType;
-import net.minecraft.world.item.ItemStack;
 
 import java.util.Optional;
 
