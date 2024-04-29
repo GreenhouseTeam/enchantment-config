@@ -1,7 +1,7 @@
 package dev.greenhouseteam.enchantmentconfig.mixin.fabric;
 
+import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigApi;
 import dev.greenhouseteam.enchantmentconfig.api.config.ModificationType;
-import dev.greenhouseteam.enchantmentconfig.impl.EnchantmentConfig;
 import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 public class EnchantmentHelperMixin {
     @ModifyReturnValue(method = "getItemEnchantmentLevel", at = @At("RETURN"))
     private static int enchantmentconfig$getEnchantmentLevelOverrides(int original, Enchantment enchantment, ItemStack stack) {
-        if (EnchantmentConfig.getAndClearModificationType() == ModificationType.NO_CONFIGS)
+        if (EnchantmentConfigApi.getAndClearModificationType() == ModificationType.NO_CONFIGS)
             return original;
 
         ConfiguredEnchantment<?, ?> configured = EnchantmentConfigGetter.INSTANCE.getConfig(enchantment);
