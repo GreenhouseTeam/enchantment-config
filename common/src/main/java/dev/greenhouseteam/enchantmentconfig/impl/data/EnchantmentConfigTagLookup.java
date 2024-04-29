@@ -37,6 +37,8 @@ public class EnchantmentConfigTagLookup<T> implements HolderLookup.RegistryLooku
     @Override
     public HolderSet.Named<T> getOrThrow(TagKey<T> tagKey) {
         HolderSet.Named<T> named = registry.getOrCreateTag(tagKey);
+        if (EnchantmentConfig.getTags() == null)
+            return named;
         var optional = EnchantmentConfig.getTags().stream().filter(loadResult -> loadResult.tags().getOrDefault(tagKey.location(), null) != null).findAny();
         if (optional.isEmpty())
             return named;
