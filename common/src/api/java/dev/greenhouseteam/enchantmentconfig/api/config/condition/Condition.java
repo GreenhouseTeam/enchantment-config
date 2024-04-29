@@ -5,7 +5,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
 import dev.greenhouseteam.enchantmentconfig.api.registries.EnchantmentConfigRegistries;
-import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
+import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigApi;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -20,7 +20,7 @@ public interface Condition {
     MapCodec<? extends Condition> codec();
 
     record And(List<Condition> conditions) implements Condition {
-        public static final ResourceLocation ID = EnchantmentConfigUtil.asResource("and");
+        public static final ResourceLocation ID = EnchantmentConfigApi.asResource("and");
 
         public static final MapCodec<And> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
                 Condition.CODEC.listOf(1, Integer.MAX_VALUE).fieldOf("conditions").forGetter(And::conditions)
@@ -36,7 +36,7 @@ public interface Condition {
     }
 
     record Or(List<Condition> conditions) implements Condition {
-        public static final ResourceLocation ID = EnchantmentConfigUtil.asResource("or");
+        public static final ResourceLocation ID = EnchantmentConfigApi.asResource("or");
 
         public static final MapCodec<Or> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
                 Condition.CODEC.listOf(1, Integer.MAX_VALUE).fieldOf("conditions").forGetter(Or::conditions)
@@ -52,7 +52,7 @@ public interface Condition {
     }
 
     record Variable<I, O>(FieldPair<I, O> fieldPair, Comparison comparison) implements Condition {
-        public static final ResourceLocation ID = EnchantmentConfigUtil.asResource("variable");
+        public static final ResourceLocation ID = EnchantmentConfigApi.asResource("variable");
 
         public static final MapCodec<Variable<Object, Object>> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
                 new FieldPair.Codec("value", "compare_to").xmap(pair -> {

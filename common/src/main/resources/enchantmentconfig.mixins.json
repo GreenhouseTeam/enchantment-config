@@ -12,7 +12,6 @@
     "EnchantRandomlyFunctionMixin",
     "ItemEnchantmentsMixin",
     "ItemEnchantmentsMutableMixin",
-    "ItemEnchantmentsPredicateMixin",
     "MappedRegistryMixin",
     "ReloadableServerResourcesMixin",
     "ResourceArgumentMixin",

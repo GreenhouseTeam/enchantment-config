@@ -3,7 +3,7 @@ import org.apache.tools.ant.filters.LineContains
 
 plugins {
     id("enchantmentconfig.loader")
-    id("net.neoforged.gradle.userdev") version "7.0.115"
+    id("net.neoforged.gradle.userdev") version "7.0.116"
 }
 jarJar.enable()
 
@@ -20,6 +20,7 @@ runs {
         modSource(sourceSets["main"])
         modSource(sourceSets["test"])
         systemProperty("neoforge.enabledGameTestNamespaces", mod_id)
+        jvmArguments("-Dmixin.debug.verbose=true", "-Dmixin.debug.export=true")
         extensions.configure<IdeaRunExtension>("idea") {
             primarySourceSet = sourceSets["test"]
         }

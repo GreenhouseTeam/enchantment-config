@@ -39,6 +39,7 @@ loom {
             setConfigName("Fabric Client")
             setSource(sourceSets["test"])
             ideConfigGenerated(true)
+            vmArgs("-Dmixin.debug.verbose=true", "-Dmixin.debug.export=true")
             runDir("run")
         }
         named("server") {
@@ -46,6 +47,7 @@ loom {
             setConfigName("Fabric Server")
             setSource(sourceSets["test"])
             ideConfigGenerated(true)
+            vmArgs("-Dmixin.debug.verbose=true", "-Dmixin.debug.export=true")
             runDir("run")
         }
     }

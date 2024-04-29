@@ -1,6 +1,7 @@
 package dev.greenhouseteam.enchantmentconfig.impl;
 
 import com.mojang.serialization.MapCodec;
+import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigApi;
 import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigAssigner;
 import dev.greenhouseteam.enchantmentconfig.api.config.condition.Condition;
 import dev.greenhouseteam.enchantmentconfig.api.config.configuration.NoneEnchantmentConfiguration;
@@ -11,7 +12,6 @@ import dev.greenhouseteam.enchantmentconfig.api.config.configuration.Enchantment
 import dev.greenhouseteam.enchantmentconfig.api.config.field.ExtraFieldType;
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
 import dev.greenhouseteam.enchantmentconfig.api.registries.EnchantmentConfigRegistries;
-import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -89,17 +89,17 @@ public class EnchantmentConfigAssignerImpl implements EnchantmentConfigAssigner 
             registerEnchantmentType(new EnchantmentType<>(NoneEnchantmentConfiguration.CODEC, ResourceKey.create(Registries.ENCHANTMENT, entry)));
             unregisteredEnchantments.add(entry);
         }
-        if (EnchantmentConfigUtil.getHelper().isDevelopmentEnvironment()) {
-            EnchantmentConfigUtil.LOGGER.warn("Enchantment Types have not been registered for enchantments:");
+        if (EnchantmentConfigApi.getHelper().isDevelopmentEnvironment()) {
+            EnchantmentConfigApi.LOGGER.warn("Enchantment Types have not been registered for enchantments:");
             for (int i = 0; i < unregisteredEnchantments.size(); ++i) {
                 StringBuilder builder = new StringBuilder();
                 builder.append("\t").append(unregisteredEnchantments.get(i));
                 if (i < unregisteredEnchantments.size() - 1)
                     builder.append(",");
-                EnchantmentConfigUtil.LOGGER.warn(builder.toString());
+                EnchantmentConfigApi.LOGGER.warn(builder.toString());
             }
-            EnchantmentConfigUtil.LOGGER.warn("These will still work with global fields, but your integration should include all enchantments.");
-            EnchantmentConfigUtil.LOGGER.warn("This will not be displayed to the end user, if this does, please report this as a bug.");
+            EnchantmentConfigApi.LOGGER.warn("These will still work with global fields, but your integration should include all enchantments.");
+            EnchantmentConfigApi.LOGGER.warn("This will not be displayed to the end user, if this does, please report this as a bug.");
         }
     }
 }

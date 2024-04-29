@@ -6,13 +6,13 @@ import dev.greenhouseteam.enchantmentconfig.api.config.variable.SingleTypedVaria
 import dev.greenhouseteam.enchantmentconfig.api.config.variable.Variable;
 import dev.greenhouseteam.enchantmentconfig.api.config.variable.VariableSerializer;
 import dev.greenhouseteam.enchantmentconfig.api.config.variable.type.VariableType;
-import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
+import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigApi;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 
 public record OriginalVariable<T>(VariableType<T> variableType) implements SingleTypedVariable<T> {
-    public static final ResourceLocation ID = EnchantmentConfigUtil.asResource("original");
+    public static final ResourceLocation ID = EnchantmentConfigApi.asResource("original");
     public static final Serializer SERIALIZER = new Serializer();
 
     public static MapCodec<OriginalVariable<Object>> staticCodec(VariableType<Object> variableType) {

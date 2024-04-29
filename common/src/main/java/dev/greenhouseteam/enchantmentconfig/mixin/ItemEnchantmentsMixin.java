@@ -4,7 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigGetter;
 import dev.greenhouseteam.enchantmentconfig.api.config.ConfiguredEnchantment;
-import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
+import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigApi;
 import dev.greenhouseteam.enchantmentconfig.impl.access.ItemEnchantmentsAccess;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -36,11 +36,11 @@ public abstract class ItemEnchantmentsMixin implements ItemEnchantmentsAccess {
     @Inject(method = "<clinit>", at = @At("TAIL"))
     private static void enchantmentconfig$validateEnchantmentsInCodec(CallbackInfo ci) {
         CODEC = CODEC.flatXmap(itemEnchantments -> {
-            List<Holder<Enchantment>> disabledHolders = new ArrayList<>(itemEnchantments.keySet().stream().filter(holder -> holder.is(EnchantmentConfigUtil.DISABLED_ENCHANTMENT_TAG)).toList());
+            List<Holder<Enchantment>> disabledHolders = new ArrayList<>(itemEnchantments.keySet().stream().filter(holder -> holder.is(EnchantmentConfigApi.DISABLED_ENCHANTMENT_TAG)).toList());
             if (!disabledHolders.isEmpty()) {
                 Object2IntOpenHashMap<Holder<Enchantment>> potentialNewMap = new Object2IntOpenHashMap<>();
                 for (Object2IntMap.Entry<Holder<Enchantment>> entry : itemEnchantments.entrySet()) {
-                    if (!entry.getKey().is(EnchantmentConfigUtil.DISABLED_ENCHANTMENT_TAG))
+                    if (!entry.getKey().is(EnchantmentConfigApi.DISABLED_ENCHANTMENT_TAG))
                         potentialNewMap.addTo(entry.getKey(), entry.getIntValue());
                     else if (entry.getKey().isBound()) {
                         ConfiguredEnchantment<?, ?> configured = EnchantmentConfigGetter.INSTANCE.getConfig(entry.getKey().value());
@@ -72,8 +72,8 @@ public abstract class ItemEnchantmentsMixin implements ItemEnchantmentsAccess {
     @Override
     public void enchantmentconfig$validate() {
         for (Object2IntMap.Entry<Holder<Enchantment>> entry : this.enchantments.object2IntEntrySet()) {
-            if (entry.getKey().is(EnchantmentConfigUtil.DISABLED_ENCHANTMENT_TAG)) {
-                EnchantmentConfigUtil.LOGGER.info("Removed enchantment {} from \"minecraft:enchantments\" component", entry.getKey().getRegisteredName());
+            if (entry.getKey().is(EnchantmentConfigApi.DISABLED_ENCHANTMENT_TAG)) {
+                EnchantmentConfigApi.LOGGER.info("Removed enchantment {} from \"minecraft:enchantments\" component", entry.getKey().getRegisteredName());
                 this.enchantments.remove(entry, entry.getIntValue());
                 if (entry.getKey().isBound()) {
                     ConfiguredEnchantment<?, ?> configured = EnchantmentConfigGetter.INSTANCE.getConfig(entry.getKey().value());

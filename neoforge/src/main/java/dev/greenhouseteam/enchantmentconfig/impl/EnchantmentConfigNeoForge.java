@@ -1,6 +1,6 @@
 package dev.greenhouseteam.enchantmentconfig.impl;
 
-import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigAssigner;
+import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigApi;
 import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigEntrypoint;
 import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigGetter;
 import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigPlugin;
@@ -9,7 +9,6 @@ import dev.greenhouseteam.enchantmentconfig.api.config.ModificationType;
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
 import dev.greenhouseteam.enchantmentconfig.api.registries.EnchantmentConfigRegistries;
 import dev.greenhouseteam.enchantmentconfig.api.registries.EnchantmentConfigRegistryKeys;
-import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
 import dev.greenhouseteam.enchantmentconfig.impl.data.EnchantmentConfigLoader;
 import dev.greenhouseteam.enchantmentconfig.platform.EnchantmentConfigPlatformHelperNeoForge;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -35,12 +34,12 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
-@Mod(EnchantmentConfigUtil.MOD_ID)
+@Mod(EnchantmentConfigApi.MOD_ID)
 public class EnchantmentConfigNeoForge {
     private static final EnchantmentConfigAssignerImpl ASSIGNER = new EnchantmentConfigAssignerImpl();
 
     public EnchantmentConfigNeoForge(IEventBus eventBus) {
-        EnchantmentConfigUtil.init(new EnchantmentConfigPlatformHelperNeoForge());
+        EnchantmentConfigApi.init(new EnchantmentConfigPlatformHelperNeoForge());
         getPlugins().forEach(plugin -> plugin.register(ASSIGNER));
         ASSIGNER.registerUnregisteredEnchantments();
     }
@@ -87,13 +86,13 @@ public class EnchantmentConfigNeoForge {
                 EnchantmentConfigPlugin plugin = constructor.newInstance();
                 plugins.add(plugin);
             } catch (ReflectiveOperationException | LinkageError e) {
-                EnchantmentConfigUtil.LOGGER.error("Failed to load EnchantmentConfigEntrypoint: {}", className, e);
+                EnchantmentConfigApi.LOGGER.error("Failed to load EnchantmentConfigEntrypoint: {}", className, e);
             }
         }
         return plugins;
     }
 
-    @EventBusSubscriber(modid = EnchantmentConfigUtil.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber(modid = EnchantmentConfigApi.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
     public static class ModBusEvents {
         @SubscribeEvent
         public static void registerRegistries(NewRegistryEvent event) {
@@ -120,11 +119,11 @@ public class EnchantmentConfigNeoForge {
         }
     }
 
-    @EventBusSubscriber(modid = EnchantmentConfigUtil.MOD_ID)
+    @EventBusSubscriber(modid = EnchantmentConfigApi.MOD_ID)
     public static class GameBusEvents {
         @SubscribeEvent
         public static void modifyEnchantmentLevels(GetEnchantmentLevelEvent event) {
-            if (EnchantmentConfig.getAndClearModificationType() == ModificationType.NO_CONFIGS)
+            if (EnchantmentConfigApi.getAndClearModificationType() == ModificationType.NO_CONFIGS)
                 return;
 
             if (event.getTargetEnchant() != null) {

@@ -1,11 +1,11 @@
 package dev.greenhouseteam.enchantmentconfig.api.config.variable.type;
 
 import com.mojang.serialization.Codec;
-import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
+import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigApi;
 import net.minecraft.resources.ResourceLocation;
 
 public class BooleanVariableType implements VariableType<Boolean> {
-    public static final ResourceLocation ID = EnchantmentConfigUtil.asResource("boolean");
+    public static final ResourceLocation ID = EnchantmentConfigApi.asResource("boolean");
 
     public Boolean getDefaultComparisonValue() {
         return true;

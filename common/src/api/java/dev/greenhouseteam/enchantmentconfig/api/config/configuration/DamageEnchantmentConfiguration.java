@@ -4,11 +4,10 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.greenhouseteam.enchantmentconfig.api.codec.EnchantmentConfigCodecs;
-import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
+import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigApi;
 import dev.greenhouseteam.enchantmentconfig.api.util.MergeUtil;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 
@@ -24,7 +23,7 @@ public record DamageEnchantmentConfiguration(Optional<List<HolderSet<EntityType<
     ).apply(inst, DamageEnchantmentConfiguration::new));
 
     public float getBonusDamageAmount(int level, float original) {
-        return EnchantmentConfigUtil.getFloatFromLevel(level, original, this.damage());
+        return EnchantmentConfigApi.getFloatFromLevel(level, original, this.damage());
     }
 
     @Override

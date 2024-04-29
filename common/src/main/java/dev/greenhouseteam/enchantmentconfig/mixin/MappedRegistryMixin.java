@@ -1,7 +1,7 @@
 package dev.greenhouseteam.enchantmentconfig.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
+import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigApi;
 import net.minecraft.core.Holder;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
@@ -45,9 +45,7 @@ public abstract class MappedRegistryMixin<T> {
 
         return original.stream().filter(t -> {
             var optionalHolder = this.getHolder(t);
-            if (optionalHolder.isPresent() && optionalHolder.get().is((TagKey<T>) EnchantmentConfigUtil.DISABLED_ENCHANTMENT_TAG))
-                return false;
-            return true;
+            return optionalHolder.isEmpty() || !optionalHolder.get().is((TagKey<T>) EnchantmentConfigApi.DISABLED_ENCHANTMENT_TAG);
         }).collect(Collectors.toSet());
     }
 
@@ -58,9 +56,7 @@ public abstract class MappedRegistryMixin<T> {
 
         return original.stream().filter(t -> {
             var optionalHolder = this.getHolder(t);
-            if (optionalHolder.isPresent() && optionalHolder.get().is((TagKey<T>) EnchantmentConfigUtil.DISABLED_ENCHANTMENT_TAG))
-                return false;
-            return true;
+            return optionalHolder.isEmpty() || !optionalHolder.get().is((TagKey<T>) EnchantmentConfigApi.DISABLED_ENCHANTMENT_TAG);
         }).collect(Collectors.toSet());
     }
 
@@ -69,12 +65,13 @@ public abstract class MappedRegistryMixin<T> {
         if (this.key() != (ResourceKey<? extends Registry<?>>) Registries.ENCHANTMENT)
             return original;
 
-        return original.entrySet().stream().filter(entry -> entry.getValue().is((TagKey<T>) EnchantmentConfigUtil.DISABLED_ENCHANTMENT_TAG)).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        return original.entrySet().stream().filter(entry -> entry.getValue().is((TagKey<T>) EnchantmentConfigApi.DISABLED_ENCHANTMENT_TAG)).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     @ModifyReturnValue(method = "holders", at = @At("RETURN"))
     private Stream<Holder.Reference<T>> enchantmentconfig$disableFromHolders(Stream<Holder.Reference<T>> original) {
-        return original.filter(ref -> !ref.key().isFor(Registries.ENCHANTMENT) || !ref.is((TagKey<T>) EnchantmentConfigUtil.DISABLED_ENCHANTMENT_TAG));
+        // ref can be null on NeoForge. No clue how it happens, but hey, we have to compensate sometimes.
+        return original.filter(ref -> ref != null && (!ref.key().isFor(Registries.ENCHANTMENT) || !ref.is((TagKey<T>) EnchantmentConfigApi.DISABLED_ENCHANTMENT_TAG)));
     }
 
     @ModifyArg(method = "iterator", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/Iterators;transform(Ljava/util/Iterator;Lcom/google/common/base/Function;)Ljava/util/Iterator;"))
@@ -86,7 +83,7 @@ public abstract class MappedRegistryMixin<T> {
         List<T> list = new ArrayList<>();
         while (original.hasNext()) {
             T it = original.next();
-            if (it instanceof Holder.Reference<?> reference && reference.key().isFor(Registries.ENCHANTMENT) && !reference.is((TagKey)EnchantmentConfigUtil.DISABLED_ENCHANTMENT_TAG))
+            if (it instanceof Holder.Reference<?> reference && reference.key().isFor(Registries.ENCHANTMENT) && !reference.is((TagKey) EnchantmentConfigApi.DISABLED_ENCHANTMENT_TAG))
                 list.add(it);
         }
         return list.iterator();

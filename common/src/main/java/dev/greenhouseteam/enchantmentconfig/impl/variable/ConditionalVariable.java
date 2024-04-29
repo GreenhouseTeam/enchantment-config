@@ -9,13 +9,13 @@ import dev.greenhouseteam.enchantmentconfig.api.config.variable.VariableSerializ
 import dev.greenhouseteam.enchantmentconfig.api.config.variable.VariableTypes;
 import dev.greenhouseteam.enchantmentconfig.api.config.variable.type.VariableType;
 import dev.greenhouseteam.enchantmentconfig.api.registries.EnchantmentConfigRegistries;
-import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
+import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigApi;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 
 public class ConditionalVariable<I, O> implements Variable<I, Boolean> {
-    public static final ResourceLocation ID = EnchantmentConfigUtil.asResource("conditional");
+    public static final ResourceLocation ID = EnchantmentConfigApi.asResource("conditional");
     public static final Serializer SERIALIZER = new Serializer();
     public static final MapCodec<ConditionalVariable<Object, Object>> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
             new FieldPair.Codec("value", "compare_to").forGetter(variable -> variable.fieldPair),
@@ -37,7 +37,7 @@ public class ConditionalVariable<I, O> implements Variable<I, Boolean> {
             return comparison.compare(fieldPair.left().get(enchantment, stack, original), fieldPair.right().get(enchantment, stack, original));
         } catch (UnsupportedOperationException ex) {
             if (!hasLoggedError) {
-                EnchantmentConfigUtil.LOGGER.error("Could not handle {} variable with comparison {}. Returning false.", EnchantmentConfigRegistries.VARIABLE_SERIALIZER.getKey(fieldPair.left().getInnerVariable().getSerializer()), ex);
+                EnchantmentConfigApi.LOGGER.error("Could not handle {} variable with comparison {}. Returning false.", EnchantmentConfigRegistries.VARIABLE_SERIALIZER.getKey(fieldPair.left().getInnerVariable().getSerializer()), ex);
                 hasLoggedError = true;
             }
         }

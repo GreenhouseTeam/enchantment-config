@@ -8,11 +8,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
+import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigApi;
 import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigGetter;
 import dev.greenhouseteam.enchantmentconfig.api.config.ConfiguredEnchantment;
 import dev.greenhouseteam.enchantmentconfig.api.config.condition.Condition;
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
-import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
 import dev.greenhouseteam.enchantmentconfig.impl.EnchantmentConfig;
 import dev.greenhouseteam.enchantmentconfig.impl.EnchantmentConfigGetterImpl;
 import dev.greenhouseteam.enchantmentconfig.api.registries.EnchantmentConfigRegistries;
@@ -61,7 +61,7 @@ public class EnchantmentConfigLoader extends SimplePreparableReloadListener<Map<
                     JsonElement element = GsonHelper.fromJson(GSON, reader, JsonElement.class);
                     map.computeIfAbsent(fileToId, rl -> new ArrayList<>()).add(element);
                 } catch (IllegalArgumentException | IOException | JsonParseException var14) {
-                    EnchantmentConfigUtil.LOGGER.error("Couldn't parse data file {} from {}", fileToId, key, var14);
+                    EnchantmentConfigApi.LOGGER.error("Couldn't parse data file {} from {}", fileToId, key, var14);
                 }
             }
         }
@@ -70,7 +70,7 @@ public class EnchantmentConfigLoader extends SimplePreparableReloadListener<Map<
     }
 
     private boolean isGlobal(ResourceLocation key) {
-        return key.getNamespace().equals(EnchantmentConfigUtil.MOD_ID) && key.getPath().startsWith("global/");
+        return key.getNamespace().equals(EnchantmentConfigApi.MOD_ID) && key.getPath().startsWith("global/");
     }
 
     private ResourceLocation configResource(ResourceLocation key) {
@@ -137,7 +137,7 @@ public class EnchantmentConfigLoader extends SimplePreparableReloadListener<Map<
 
                     currentConfigured = Optional.of(configured);
                 } catch (Exception ex) {
-                    EnchantmentConfigUtil.LOGGER.error("Failed to decode enchantment configuration '{}'.", (fileKey != null ? fileKey : key), ex);
+                    EnchantmentConfigApi.LOGGER.error("Failed to decode enchantment configuration '{}'.", (fileKey != null ? fileKey : key), ex);
                     hasLoggedError = true;
                 }
             }

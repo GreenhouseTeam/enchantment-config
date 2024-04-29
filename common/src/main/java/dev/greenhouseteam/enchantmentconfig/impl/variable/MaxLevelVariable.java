@@ -11,7 +11,7 @@ import dev.greenhouseteam.enchantmentconfig.api.config.variable.SingleTypedVaria
 import dev.greenhouseteam.enchantmentconfig.api.config.variable.VariableSerializer;
 import dev.greenhouseteam.enchantmentconfig.api.config.variable.VariableTypes;
 import dev.greenhouseteam.enchantmentconfig.api.config.variable.type.VariableType;
-import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
+import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigApi;
 import dev.greenhouseteam.enchantmentconfig.impl.EnchantmentConfig;
 import dev.greenhouseteam.enchantmentconfig.mixin.EnchantmentAccessor;
 import net.minecraft.core.Holder;
@@ -20,12 +20,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 import java.util.Optional;
 
 public record MaxLevelVariable(Optional<Holder<Enchantment>> otherEnchantment, ModificationType modificationType, float percentage) implements SingleTypedVariable<Integer> {
-    public static final ResourceLocation ID = EnchantmentConfigUtil.asResource("max_level");
+    public static final ResourceLocation ID = EnchantmentConfigApi.asResource("max_level");
     public static final Serializer SERIALIZER = new Serializer();
     public static final MapCodec<MaxLevelVariable> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
             BuiltInRegistries.ENCHANTMENT.holderByNameCodec().optionalFieldOf("enchantment").forGetter(MaxLevelVariable::otherEnchantment),
@@ -49,7 +48,7 @@ public record MaxLevelVariable(Optional<Holder<Enchantment>> otherEnchantment, M
                 yield finalEnchantment.getMaxLevel();
             }
             case NO_CONFIGS -> {
-                EnchantmentConfig.setModificationType(ModificationType.NO_CONFIGS);
+                EnchantmentConfigApi.setModificationType(ModificationType.NO_CONFIGS);
                 yield finalEnchantment.getMaxLevel();
             }
             default -> finalEnchantment.getMaxLevel();

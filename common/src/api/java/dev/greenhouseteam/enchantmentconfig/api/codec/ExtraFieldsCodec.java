@@ -7,8 +7,8 @@ import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.MapLike;
 import com.mojang.serialization.RecordBuilder;
+import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigApi;
 import dev.greenhouseteam.enchantmentconfig.api.config.field.ExtraFieldType;
-import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Map;
@@ -31,7 +31,7 @@ public class ExtraFieldsCodec extends MapCodec<Map<String, ?>> {
             DataResult<Pair<?, T>> result = field.getValue().objectCodec().decode(ops, value).map(pair -> pair);
 
             if (result.error().isPresent()) {
-                EnchantmentConfigUtil.LOGGER.error("Failed to decode extra field '{}' inside ExtraFieldsCodec. (Skipping): {}", field.getKey(), result.error().get());
+                EnchantmentConfigApi.LOGGER.error("Failed to decode extra field '{}' inside ExtraFieldsCodec. (Skipping): {}", field.getKey(), result.error().get());
                 continue;
             }
 
@@ -47,7 +47,7 @@ public class ExtraFieldsCodec extends MapCodec<Map<String, ?>> {
 
         for (Map.Entry<String, ExtraFieldType<?>> field : fields.entrySet()) {
             DataResult<T> result = field.getValue().objectCodec().encodeStart(ops, input.get(field.getKey()));
-            result.error().ifPresent(e -> EnchantmentConfigUtil.LOGGER.error("Failed to encode extra field '{}' inside ExtraFieldsCodec. (Skipping): {}", field.getKey(), e));
+            result.error().ifPresent(e -> EnchantmentConfigApi.LOGGER.error("Failed to encode extra field '{}' inside ExtraFieldsCodec. (Skipping): {}", field.getKey(), e));
             if (result.isSuccess())
                 builder.add(field.getKey(), result);
         }

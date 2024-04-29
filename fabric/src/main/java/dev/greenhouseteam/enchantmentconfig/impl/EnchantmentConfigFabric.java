@@ -1,9 +1,9 @@
 package dev.greenhouseteam.enchantmentconfig.impl;
 
+import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigApi;
 import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigGetter;
 import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigPlugin;
 import dev.greenhouseteam.enchantmentconfig.api.config.ConfiguredEnchantment;
-import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
 import dev.greenhouseteam.enchantmentconfig.data.EnchantmentConfigLoaderFabric;
 import dev.greenhouseteam.enchantmentconfig.platform.EnchantmentConfigPlatformHelperFabric;
 import net.fabricmc.api.ModInitializer;
@@ -20,7 +20,7 @@ import java.util.Optional;
 public class EnchantmentConfigFabric implements ModInitializer {
     @Override
     public void onInitialize() {
-        EnchantmentConfigUtil.init(new EnchantmentConfigPlatformHelperFabric());
+        EnchantmentConfigApi.init(new EnchantmentConfigPlatformHelperFabric());
 
         EnchantmentConfigAssignerImpl assigner = new EnchantmentConfigAssignerImpl();
         FabricLoader.getInstance().getEntrypoints("enchantmentconfig", EnchantmentConfigPlugin.class).forEach(plugin -> plugin.register(assigner));

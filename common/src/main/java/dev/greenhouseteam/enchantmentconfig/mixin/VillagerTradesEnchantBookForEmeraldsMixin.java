@@ -2,7 +2,7 @@ package dev.greenhouseteam.enchantmentconfig.mixin;
 
 import com.google.common.collect.ImmutableList;
 import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigGetter;
-import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
+import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigApi;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -30,7 +30,7 @@ public class VillagerTradesEnchantBookForEmeraldsMixin {
     private void enchantmentconfig$disableFromVillagerTrades(int minLevel, int maxLevel, int villagerXp, Enchantment[] enchantments, CallbackInfo ci) {
         List<Enchantment> finalEnchantments = new ArrayList<>();
         for (Enchantment enchantment : enchantments) {
-            if (!enchantment.builtInRegistryHolder().is(EnchantmentConfigUtil.DISABLED_ENCHANTMENT_TAG))
+            if (!enchantment.builtInRegistryHolder().is(EnchantmentConfigApi.DISABLED_ENCHANTMENT_TAG))
                 finalEnchantments.add(enchantment);
             else if (EnchantmentConfigGetter.INSTANCE.getConfig(enchantment) != null && EnchantmentConfigGetter.INSTANCE.getConfig(enchantment).getGlobalFields().replacement().isPresent()) {
                 finalEnchantments.add(EnchantmentConfigGetter.INSTANCE.getConfig(enchantment).getGlobalFields().replacement().get().value());

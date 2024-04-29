@@ -2,6 +2,7 @@ package dev.greenhouseteam.enchantmentconfig.impl.variable;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigApi;
 import dev.greenhouseteam.enchantmentconfig.api.codec.EnchantmentConfigCodecs;
 import dev.greenhouseteam.enchantmentconfig.api.config.field.Field;
 import dev.greenhouseteam.enchantmentconfig.api.config.variable.SingleTypedSerializer;
@@ -11,7 +12,6 @@ import dev.greenhouseteam.enchantmentconfig.api.config.variable.VariableSerializ
 import dev.greenhouseteam.enchantmentconfig.api.config.variable.VariableTypes;
 import dev.greenhouseteam.enchantmentconfig.api.config.variable.type.NumberVariableType;
 import dev.greenhouseteam.enchantmentconfig.api.config.variable.type.VariableType;
-import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 public class ModifierVariable implements SingleTypedVariable<Number> {
-    public static final ResourceLocation ID = EnchantmentConfigUtil.asResource("modifier");
+    public static final ResourceLocation ID = EnchantmentConfigApi.asResource("modifier");
     public static final Serializer SERIALIZER = new Serializer();
 
     public static MapCodec<ModifierVariable> staticCodec(VariableType<Object> variableType) {
@@ -61,7 +61,7 @@ public class ModifierVariable implements SingleTypedVariable<Number> {
     @Override
     public Number getValue(Enchantment enchantment, ItemStack stack, Number original) {
         if (!instance.containsKey(enchantment) || !instance.get(enchantment).containsKey(stack.getEnchantments())) {
-            AttributeInstance instance = new AttributeInstance(Holder.Reference.createStandAlone(BuiltInRegistries.ATTRIBUTE.asLookup(), ResourceKey.create(Registries.ATTRIBUTE, EnchantmentConfigUtil.asResource("modifier_variable"))),attributeInstance -> {});
+            AttributeInstance instance = new AttributeInstance(Holder.Reference.createStandAlone(BuiltInRegistries.ATTRIBUTE.asLookup(), ResourceKey.create(Registries.ATTRIBUTE, EnchantmentConfigApi.asResource("modifier_variable"))), attributeInstance -> {});
             instance.setBaseValue(base.getDouble(enchantment, stack, original));
             instance.addPermanentModifier(new AttributeModifier("Attribute for ModifierVariable", modifier.getDouble(enchantment, stack, original), operation));
             this.instance.computeIfAbsent(enchantment, enchantment1 -> new WeakHashMap<>(32)).put(stack.getEnchantments(), instance);

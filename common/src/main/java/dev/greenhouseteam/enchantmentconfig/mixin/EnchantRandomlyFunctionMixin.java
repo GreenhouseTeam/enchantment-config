@@ -2,7 +2,7 @@ package dev.greenhouseteam.enchantmentconfig.mixin;
 
 
 import com.mojang.serialization.Codec;
-import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
+import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigApi;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -28,7 +28,7 @@ public class EnchantRandomlyFunctionMixin {
         ENCHANTMENT_SET_CODEC.xmap(holders -> {
             List<Holder<Enchantment>> enchantmentHolders = new ArrayList<>();
             for (int i = 0; i < holders.size(); ++i) {
-                if (!holders.get(i).is(EnchantmentConfigUtil.DISABLED_ENCHANTMENT_TAG))
+                if (!holders.get(i).is(EnchantmentConfigApi.DISABLED_ENCHANTMENT_TAG))
                     enchantmentHolders.add(holders.get(i));
             }
             return HolderSet.direct(enchantmentHolders);
