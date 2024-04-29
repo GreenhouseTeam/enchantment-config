@@ -20,6 +20,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -62,7 +63,7 @@ public record MaxLevelVariable(Optional<Holder<Enchantment>> otherEnchantment, M
 
     public static class Serializer extends SingleTypedSerializer<Integer> {
         @Override
-        public VariableType<Integer> type(VariableType<?> type) {
+        public VariableType<Integer> type(@Nullable VariableType<?> contextType) {
             return VariableTypes.INT;
         }
 

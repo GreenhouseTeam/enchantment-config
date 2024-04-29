@@ -17,6 +17,7 @@ import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -24,10 +25,10 @@ public class ItemPredicateVariable<I> implements Variable<I, Object> {
     public static final ResourceLocation ID = EnchantmentConfigApi.asResource("item_predicate");
     public static final Serializer SERIALIZER = new Serializer();
 
-    public static <T> MapCodec<ItemPredicateVariable<T>> staticCodec(VariableType<T> variableType) {
+    public static <T> MapCodec<ItemPredicateVariable<T>> staticCodec(@Nullable VariableType<T> contextType) {
         return RecordCodecBuilder.mapCodec(inst -> inst.group(
-                EnchantmentConfigCodecs.inputFieldCodec(variableType).fieldOf("value").forGetter(var -> var.field),
-                EnchantmentConfigCodecs.inputFieldCodec(variableType).optionalFieldOf("else").forGetter(var -> var.elseField),
+                EnchantmentConfigCodecs.inputFieldCodec(contextType).fieldOf("value").forGetter(var -> var.field),
+                EnchantmentConfigCodecs.inputFieldCodec(contextType).optionalFieldOf("else").forGetter(var -> var.elseField),
                 ItemPredicate.CODEC.fieldOf("predicate").forGetter(var -> var.predicate),
                 Comparison.CODEC.optionalFieldOf("comparison", Comparison.EQUAL).forGetter(var -> var.comparison)
         ).apply(inst, ItemPredicateVariable::new));
@@ -80,8 +81,10 @@ public class ItemPredicateVariable<I> implements Variable<I, Object> {
     public static class Serializer extends SingleTypedSerializer<Object> {
 
         @Override
-        public VariableType<Object> type(VariableType<?> inputType) {
-            return (VariableType<Object>) inputType;
+        public VariableType<Object> type(@Nullable VariableType<?> contextType) {
+            if (contextType == null)
+                return null;
+            return (VariableType<Object>) contextType;
         }
 
         @Override

@@ -14,6 +14,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
+import org.jetbrains.annotations.Nullable;
 
 public record MatchesVariable(HolderSet<Enchantment> enchantments) implements SingleTypedVariable<Boolean> {
     public static final ResourceLocation ID = EnchantmentConfigApi.asResource("matches");
@@ -34,7 +35,7 @@ public record MatchesVariable(HolderSet<Enchantment> enchantments) implements Si
 
     public static class Serializer extends SingleTypedSerializer<Boolean> {
         @Override
-        public VariableType<Boolean> type(VariableType<?> inputType) {
+        public VariableType<Boolean> type(@Nullable VariableType<?> contextType) {
             return VariableTypes.BOOLEAN;
         }
 

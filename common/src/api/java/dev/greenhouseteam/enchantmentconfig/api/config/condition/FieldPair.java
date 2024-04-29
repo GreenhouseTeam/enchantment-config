@@ -15,17 +15,20 @@ public record FieldPair<I, O>(Field<I, O> left, Field<I, O> right) {
     public static class Codec extends MapCodec<FieldPair<Object, Object>> {
         private final String leftKey;
         private final String rightKey;
+        private final VariableType<?> baseType;
         private VariableType<?> type;
 
-        public Codec(String leftKey, String rightKey, VariableType<?> type) {
+        public Codec(String leftKey, String rightKey, VariableType<?> baseType) {
             this.leftKey = leftKey;
             this.rightKey = rightKey;
-            this.type = type;
+            this.baseType = baseType;
+            this.type = baseType;
         }
 
         public Codec(String leftKey, String rightKey) {
             this.leftKey = leftKey;
             this.rightKey = rightKey;
+            this.baseType = null;
             this.type = null;
         }
 
@@ -59,7 +62,7 @@ public record FieldPair<I, O>(Field<I, O> left, Field<I, O> right) {
             if (type == null)
                 return DataResult.error(() -> "Could not resolve value type.");
             // We need to set type to null here, so it resets in static instances.
-            type = null;
+            type = baseType;
             return DataResult.success(new FieldPair<>(left, right));
         }
 

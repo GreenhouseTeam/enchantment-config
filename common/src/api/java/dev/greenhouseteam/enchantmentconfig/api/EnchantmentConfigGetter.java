@@ -12,9 +12,6 @@ import org.jetbrains.annotations.Nullable;
 public interface EnchantmentConfigGetter {
     EnchantmentConfigGetter INSTANCE = EnchantmentConfigApi.getHelper().createGetter();
 
-    @Nullable
-    <C extends EnchantmentConfiguration, T extends EnchantmentType<C>> ConfiguredEnchantment<C, T> getConfig(T type, boolean nullSafe);
-
     /**
      * Gets a configured enchantment for a specific enchantment type, or null if one has not been loaded.
      *
@@ -42,14 +39,6 @@ public interface EnchantmentConfigGetter {
     default <C extends EnchantmentConfiguration, T extends EnchantmentType<C>> ConfiguredEnchantment<C, T> getConfigOrThrow(T type) {
         return getConfig(type, false);
     }
-
-    default <C extends EnchantmentConfiguration, T extends EnchantmentType<C>> ConfiguredEnchantment<C, T> getConfig(ResourceKey<Enchantment> enchantmentKey, boolean nullSafe) {
-        return getConfig(enchantmentKey.location(), nullSafe);
-    }
-    @Nullable
-    <C extends EnchantmentConfiguration, T extends EnchantmentType<C>> ConfiguredEnchantment<C, T> getConfig(ResourceLocation resourceLocation, boolean nullSafe);
-    @Nullable
-    <C extends EnchantmentConfiguration, T extends EnchantmentType<C>> ConfiguredEnchantment<C, T> getConfig(Enchantment enchantment, boolean nullSafe);
 
     /**
      * Gets a configured enchantment for a specified enchantment, or null if one is not specified.
@@ -80,6 +69,62 @@ public interface EnchantmentConfigGetter {
     }
 
     /**
+     * Gets a configured enchantment from a {@link ResourceLocation}, or null if one is not specified.
+     *
+     * @param id    The {@link ResourceLocation} to find an enchantment from.
+     *
+     * @return      The configured enchantment associated with the {@link ResourceLocation}, or null if one is not present.
+     * @param <C>   The configuration of the configured enchantment.
+     * @param <T>   The type of the configured enchantment.
+     */
+    @Nullable
+    default <C extends EnchantmentConfiguration, T extends EnchantmentType<C>> ConfiguredEnchantment<C, T> getConfig(ResourceLocation id) {
+        return getConfig(id, true);
+    }
+
+    /**
+     * Gets a configured enchantment from a {@link ResourceLocation}.
+     *
+     * @param id                    The {@link ResourceLocation} to find an enchantment from.
+     *
+     * @return                      The configured enchantment associated with the {@link ResourceLocation}.
+     * @param <C>                   The configuration of the configured enchantment.
+     * @param <T>                   The type of the configured enchantment.
+     * @throws NullPointerException If the configured enchantment is not present.
+     */
+    default <C extends EnchantmentConfiguration, T extends EnchantmentType<C>> ConfiguredEnchantment<C, T> getConfigOrThrow(ResourceLocation id) {
+        return getConfig(id, false);
+    }
+
+    /**
+     * Gets a configured enchantment from a {@link ResourceKey}.
+     *
+     * @param key                   The {@link ResourceKey} to find an enchantment from.
+     *
+     * @return                      The configured enchantment associated with the {@link ResourceKey}.
+     * @param <C>                   The configuration of the configured enchantment.
+     * @param <T>                   The type of the configured enchantment.
+     */
+    @Nullable
+    default <C extends EnchantmentConfiguration, T extends EnchantmentType<C>> ConfiguredEnchantment<C, T> getConfig(ResourceKey<Enchantment> key) {
+        return getConfig(key.location(), true);
+    }
+
+    /**
+     * Gets a configured enchantment from a {@link ResourceKey}.
+     *
+     * @param key                   The {@link ResourceKey} to find an enchantment from.
+     *
+     * @return                      The configured enchantment associated with the {@link ResourceKey}.
+     * @param <C>                   The configuration of the configured enchantment.
+     * @param <T>                   The type of the configured enchantment.
+     * @throws NullPointerException If the configured enchantment is not present.
+     */
+    default <C extends EnchantmentConfiguration, T extends EnchantmentType<C>> ConfiguredEnchantment<C, T> getConfigOrThrow(ResourceKey<Enchantment> key) {
+        return getConfig(key.location(), false);
+    }
+
+    /**
      * Gets an extra field from the config associated with the
      * specified type and casts it to the proper type.
      *
@@ -93,4 +138,14 @@ public interface EnchantmentConfigGetter {
      */
     @Nullable
     <T> T getExtraField(EnchantmentType<?> key, ExtraFieldType<T> fieldType);
+
+    @Nullable
+    <C extends EnchantmentConfiguration, T extends EnchantmentType<C>> ConfiguredEnchantment<C, T> getConfig(T type, boolean nullSafe);
+
+    @Nullable
+    <C extends EnchantmentConfiguration, T extends EnchantmentType<C>> ConfiguredEnchantment<C, T> getConfig(ResourceLocation resourceLocation, boolean nullSafe);
+
+    @Nullable
+    <C extends EnchantmentConfiguration, T extends EnchantmentType<C>> ConfiguredEnchantment<C, T> getConfig(Enchantment enchantment, boolean nullSafe);
+
 }

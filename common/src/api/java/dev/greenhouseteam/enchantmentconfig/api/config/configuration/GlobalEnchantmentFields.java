@@ -19,6 +19,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
+import org.lwjgl.opengl.GL;
 
 import java.util.Map;
 import java.util.Optional;
@@ -52,9 +53,9 @@ import java.util.Optional;
  */
 public record GlobalEnchantmentFields(Optional<Integer> maxLevel,
                                       Map<Integer, Field<Integer, Integer>> effectivenessOverrides,
-                                      Optional<ExcludableHolderSet<Enchantment>> compatibilities,
+                                      ExcludableHolderSet<Enchantment> compatibilities,
                                       Map<ItemPredicate, Integer> enchantingTableWeight,
-                                      Optional<ExcludableHolderSet<Item>> applicableItems,
+                                      ExcludableHolderSet<Item> applicableItems,
                                       Optional<Boolean> tradeable,
                                       Optional<Boolean> treasure,
                                       Optional<Holder<Enchantment>> replacement) {
@@ -62,9 +63,9 @@ public record GlobalEnchantmentFields(Optional<Integer> maxLevel,
     public static final MapCodec<GlobalEnchantmentFields> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
             Codec.INT.optionalFieldOf("max_level").forGetter(GlobalEnchantmentFields::maxLevel),
             EnchantmentConfigCodecs.rangeAllowedIntegerCodec("base_value", "new_value", EnchantmentConfigCodecs.fieldCodec(VariableTypes.INT)).optionalFieldOf("effectiveness_overrides",Map.of()).forGetter(GlobalEnchantmentFields::effectivenessOverrides),
-            EnchantmentConfigCodecs.excludableHolderSetCodec(Registries.ENCHANTMENT).optionalFieldOf("compatibilities").forGetter(GlobalEnchantmentFields::compatibilities),
+            EnchantmentConfigCodecs.excludableHolderSetCodec(Registries.ENCHANTMENT).optionalFieldOf("compatibilities", ExcludableHolderSet.empty()).forGetter(GlobalEnchantmentFields::compatibilities),
             EnchantmentConfigCodecs.mapCollectionCodec("item_predicate", "weight", ItemPredicate.CODEC, Codec.INT).optionalFieldOf("enchanting_table_weight", Map.of()).forGetter(GlobalEnchantmentFields::enchantingTableWeight),
-            EnchantmentConfigCodecs.excludableHolderSetCodec(Registries.ITEM).optionalFieldOf("applicable_items").forGetter(GlobalEnchantmentFields::applicableItems),
+            EnchantmentConfigCodecs.excludableHolderSetCodec(Registries.ITEM).optionalFieldOf("applicable_items", ExcludableHolderSet.empty()).forGetter(GlobalEnchantmentFields::applicableItems),
             // TODO: Expand on tradeable field by utilising predicates and other stuff.
             Codec.BOOL.optionalFieldOf("tradeable").forGetter(GlobalEnchantmentFields::tradeable),
             Codec.BOOL.optionalFieldOf("treasure").forGetter(GlobalEnchantmentFields::treasure),
@@ -82,9 +83,9 @@ public record GlobalEnchantmentFields(Optional<Integer> maxLevel,
         if (configured == null)
             return Optional.empty();
 
-        if (configured.getGlobalFields().compatibilities().isPresent()) {
-            configured.getGlobalFields().compatibilities().get().setContext(original);
-            return Optional.of(configured.getGlobalFields().compatibilities().get().contains(other.builtInRegistryHolder()));
+        if (!configured.getGlobalFields().compatibilities().getBaseValues().isEmpty()) {
+            configured.getGlobalFields().compatibilities().setContext(original);
+            return Optional.of(configured.getGlobalFields().compatibilities().contains(other.builtInRegistryHolder()));
         }
         return Optional.empty();
     }
@@ -119,10 +120,10 @@ public record GlobalEnchantmentFields(Optional<Integer> maxLevel,
     }
 
     public Optional<Boolean> isApplicable(ItemStack stack, boolean original) {
-        return applicableItems.map(predicates -> {
-            predicates.setContext(original);
-            return predicates.contains(stack.getItemHolder());
-        });
+        if (applicableItems.getBaseValues().isEmpty())
+            return Optional.empty();
+        applicableItems.setContext(original);
+        return Optional.of(applicableItems.contains(stack.getItemHolder()));
     }
 
     /**
@@ -140,18 +141,17 @@ public record GlobalEnchantmentFields(Optional<Integer> maxLevel,
 
         Map<Integer, Field<Integer, Integer>> effectivenessOverrides = MergeUtil.mergeMap(effectivenessOverrides(), oldConfiguration.map(GlobalEnchantmentFields::effectivenessOverrides), globalConfiguration.map(GlobalEnchantmentFields::effectivenessOverrides));
 
-        // TODO: Merge ExcludableHolderSets.
-        Optional<ExcludableHolderSet<Enchantment>> compatibilities = MergeUtil.mergePrimitiveOptional(compatibilities(), oldConfiguration.flatMap(GlobalEnchantmentFields::compatibilities), globalConfiguration.flatMap(GlobalEnchantmentFields::compatibilities));
+        ExcludableHolderSet<Enchantment> compatibilities = compatibilities().merge(oldConfiguration.map(GlobalEnchantmentFields::compatibilities), globalConfiguration.map(GlobalEnchantmentFields::compatibilities));
 
         Map<ItemPredicate, Integer> enchantingTableWeight = MergeUtil.mergeMap(enchantingTableWeight(), oldConfiguration.map(GlobalEnchantmentFields::enchantingTableWeight), globalConfiguration.map(GlobalEnchantmentFields::enchantingTableWeight));
 
-        Optional<ExcludableHolderSet<Item>> applicablePredicates = MergeUtil.mergePrimitiveOptional(applicableItems(), oldConfiguration.flatMap(GlobalEnchantmentFields::applicableItems), globalConfiguration.flatMap(GlobalEnchantmentFields::applicableItems));
+        ExcludableHolderSet<Item> applicableItems = applicableItems().merge(oldConfiguration.map(GlobalEnchantmentFields::applicableItems), globalConfiguration.map(GlobalEnchantmentFields::applicableItems));
 
         Optional<Boolean> tradeable = MergeUtil.mergePrimitiveOptional(tradeable(), oldConfiguration.flatMap(GlobalEnchantmentFields::tradeable), globalConfiguration.flatMap(GlobalEnchantmentFields::tradeable));
         Optional<Boolean> treasure = MergeUtil.mergePrimitiveOptional(treasure(), oldConfiguration.flatMap(GlobalEnchantmentFields::treasure), globalConfiguration.flatMap(GlobalEnchantmentFields::treasure));
 
         Optional<Holder<Enchantment>> replacement = MergeUtil.mergePrimitiveOptional(replacement(), oldConfiguration.flatMap(GlobalEnchantmentFields::replacement), globalConfiguration.flatMap(GlobalEnchantmentFields::replacement));
 
-        return new GlobalEnchantmentFields(maxLevel, effectivenessOverrides, compatibilities, enchantingTableWeight, applicablePredicates, tradeable, treasure, replacement);
+        return new GlobalEnchantmentFields(maxLevel, effectivenessOverrides, compatibilities, enchantingTableWeight, applicableItems, tradeable, treasure, replacement);
     }
 }

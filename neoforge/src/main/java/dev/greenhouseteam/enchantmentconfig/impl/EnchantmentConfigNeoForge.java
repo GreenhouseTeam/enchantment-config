@@ -109,7 +109,7 @@ public class EnchantmentConfigNeoForge {
             if (event.getRegistryKey() == EnchantmentConfigRegistryKeys.VARIABLE_TYPE)
                 register(event, ASSIGNER::registerVariableTypes);
             if (event.getRegistryKey() == EnchantmentConfigRegistryKeys.VARIABLE_SERIALIZER_KEY)
-                register(event, ASSIGNER::registerSerializers);
+                register(event, ASSIGNER::registerVariableSerializers);
             if (event.getRegistryKey() == EnchantmentConfigRegistryKeys.CONDITION_CODEC_KEY)
                 register(event, ASSIGNER::registerConditionCodecs);
         }

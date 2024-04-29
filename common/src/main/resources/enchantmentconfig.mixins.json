@@ -10,11 +10,13 @@
     "EnchantmentAccessor",
     "EnchantmentMixin",
     "EnchantRandomlyFunctionMixin",
+    "HolderSetNamedAccessor",
     "ItemEnchantmentsMixin",
     "ItemEnchantmentsMutableMixin",
     "MappedRegistryMixin",
     "ReloadableServerResourcesMixin",
     "ResourceArgumentMixin",
+    "TagManagerMixin",
     "VillagerTradesEnchantBookForEmeraldsMixin"
   ],
   "client": [

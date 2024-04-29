@@ -38,15 +38,18 @@ public class VanillaEnchantmentConfigEntry implements EnchantmentConfigPlugin {
         assigner.registerVariableType(VariableTypes.INT);
         assigner.registerVariableType(VariableTypes.LONG);
 
-        assigner.registerVariable(EnchantmentLevelVariable.SERIALIZER);
-        assigner.registerVariable(ItemPredicateVariable.SERIALIZER);
-        assigner.registerVariable(MatchesVariable.SERIALIZER);
-        assigner.registerVariable(MaxLevelVariable.SERIALIZER);
-        assigner.registerVariable(ModifierVariable.SERIALIZER);
-        assigner.registerVariable(OriginalVariable.SERIALIZER);
+        assigner.registerVariableSerializer(EnchantmentLevelVariable.SERIALIZER);
+        assigner.registerVariableSerializer(ItemPredicateVariable.SERIALIZER);
+        assigner.registerVariableSerializer(MatchesVariable.SERIALIZER);
+        assigner.registerVariableSerializer(MaxLevelVariable.SERIALIZER);
+        assigner.registerVariableSerializer(ModifierVariable.SERIALIZER);
+        assigner.registerVariableSerializer(OriginalVariable.SERIALIZER);
 
         assigner.registerConditionCodec(Condition.And.ID, Condition.And.CODEC);
         assigner.registerConditionCodec(Condition.Or.ID, Condition.Or.CODEC);
+        assigner.registerConditionCodec(Condition.Xor.ID, Condition.Xor.CODEC);
+        assigner.registerConditionCodec(Condition.CountIf.ID, Condition.CountIf.CODEC);
+        assigner.registerConditionCodec(Condition.Not.ID, Condition.Not.CODEC);
         assigner.registerConditionCodec(Condition.Variable.ID, Condition.Variable.CODEC);
     }
 }

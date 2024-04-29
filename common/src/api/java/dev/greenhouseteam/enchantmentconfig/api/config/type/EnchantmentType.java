@@ -13,14 +13,13 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.enchantment.Enchantment;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
 public class EnchantmentType<T extends EnchantmentConfiguration> {
     private final MapCodec<T> codec;
     private final ResourceLocation path;
-    private final @Nullable ResourceKey<Enchantment> enchantment;
+    private final ResourceKey<Enchantment> enchantment;
     private final Map<String, ExtraFieldType<?>> extraFieldTypes = Maps.newHashMap();
 
     /**
@@ -37,32 +36,16 @@ public class EnchantmentType<T extends EnchantmentConfiguration> {
         this.path = enchantment.location();
     }
 
-    /**
-     * Constructs an EnchantmentType with a specific path, but no associated
-     * enchantment.
-     *
-     * @param codec The codec for this EnchantmentType's associated config.
-     * @param path  The path for this type for data packs.
-     */
-    public EnchantmentType(MapCodec<T> codec, ResourceLocation path) {
-        this.codec = codec;
-        this.enchantment = null;
-        this.path = path;
-    }
-
     public ResourceLocation getPath() {
         return this.path;
     }
 
     /**
      * Gets the associated enchantment's {@link ResourceKey}, or null if it doesn't have one.
-     * This should only be null if this EnchantmentType is on a global level.
-     * (Such as enchantmentconfig:global).
      *
-     * @return  The enchantment {@link ResourceKey} or null if this
-     *          enchantment doesn't have one.
+     * @return  The enchantment {@link ResourceKey}.
      */
-    @Nullable public ResourceKey<Enchantment> getEnchantment() {
+    public ResourceKey<Enchantment> getEnchantment() {
         return this.enchantment;
     }
 

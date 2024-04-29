@@ -1,0 +1,10 @@
+{
+  "condition": {
+    "value": {
+      "type": "enchantmentconfig:matches",
+      "enchantments": "#test:enchancements"
+    },
+    "compare_to": false,
+    "comparison": ">"
+  }
+}

@@ -14,10 +14,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ReloadableServerResources.class)
 public class ReloadableServerResourcesMixin {
-    @Shadow @Final private ReloadableServerResources.ConfigurableRegistryLookup registryLookup;
-
     @Inject(method = "<init>", at = @At("TAIL"))
     private void enchantmentconfig$setServer(RegistryAccess.Frozen frozen, FeatureFlagSet featureFlagSet, Commands.CommandSelection commandSelection, int i, CallbackInfo ci) {
-        EnchantmentConfig.setRegistryLookup(this.registryLookup);
+        EnchantmentConfig.setRegistryLookup(frozen);
     }
 }

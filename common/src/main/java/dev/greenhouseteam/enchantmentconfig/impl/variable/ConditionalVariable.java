@@ -13,14 +13,17 @@ import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigApi;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
+import org.jetbrains.annotations.Nullable;
 
 public class ConditionalVariable<I, O> implements Variable<I, Boolean> {
     public static final ResourceLocation ID = EnchantmentConfigApi.asResource("conditional");
     public static final Serializer SERIALIZER = new Serializer();
-    public static final MapCodec<ConditionalVariable<Object, Object>> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
-            new FieldPair.Codec("value", "compare_to").forGetter(variable -> variable.fieldPair),
-            Comparison.CODEC.optionalFieldOf("comparison", Comparison.EQUAL).forGetter(variable -> variable.comparison)
-    ).apply(inst, ConditionalVariable::new));
+    public static MapCodec<ConditionalVariable<Object, Object>> staticCodec(@Nullable VariableType<Object> contextType) {
+        return RecordCodecBuilder.mapCodec(inst -> inst.group(
+                new FieldPair.Codec("value", "compare_to", contextType).forGetter(variable -> variable.fieldPair),
+                Comparison.CODEC.optionalFieldOf("comparison", Comparison.EQUAL).forGetter(variable -> variable.comparison)
+        ).apply(inst, ConditionalVariable::new));
+    }
 
     private final FieldPair<I, O> fieldPair;
     private final Comparison comparison;
@@ -45,7 +48,7 @@ public class ConditionalVariable<I, O> implements Variable<I, Boolean> {
     }
 
     public boolean allowedInRootCondition() {
-        return false;
+        return (fieldPair.left().getInnerVariable() == null || fieldPair.left().getInnerVariable().allowedInRootCondition()) && (fieldPair.right().getInnerVariable() == null || fieldPair.right().getInnerVariable().allowedInRootCondition());
     }
 
     @Override
@@ -55,18 +58,20 @@ public class ConditionalVariable<I, O> implements Variable<I, Boolean> {
 
     public static class Serializer extends VariableSerializer<Object, Boolean> {
         @Override
-        public VariableType<Object> inputType(VariableType<?> type) {
-            return (VariableType<Object>) type;
+        public VariableType<Object> inputType(@Nullable VariableType<?> contextType) {
+            if (contextType == null)
+                return null;
+            return (VariableType<Object>) contextType;
         }
 
         @Override
-        public VariableType<Boolean> outputType(VariableType<?> type) {
+        public VariableType<Boolean> outputType(@Nullable VariableType<?> contextType) {
             return VariableTypes.BOOLEAN;
         }
 
         @Override
         public MapCodec<ConditionalVariable<Object, Object>> codec(VariableType<Object> variableType) {
-            return CODEC;
+            return staticCodec(variableType);
         }
 
         @Override

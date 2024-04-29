@@ -12,6 +12,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 
+import java.util.Objects;
+
 public record RemovableHolderValue<T>(Either<TagKey<T>, Holder<T>> either, boolean excluded) {
     public static <E> Codec<RemovableHolderValue<E>> codec(ResourceKey<? extends Registry<E>> registryKey, Codec<Holder<E>> codec) {
         return new Codec<>() {
@@ -45,5 +47,19 @@ public record RemovableHolderValue<T>(Either<TagKey<T>, Holder<T>> either, boole
                 return DataResult.success(ops.createString(stringBuilder.toString()));
             }
         };
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null)
+            return false;
+        if (!(obj instanceof RemovableHolderValue<?> removable))
+            return false;
+        return removable.excluded == excluded && either.map(tagKey -> removable.either.left().isPresent() && removable.either.left().get().equals(tagKey), holder -> removable.either.right().isPresent() && holder == removable.either.right().get());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(either, excluded);
     }
 }

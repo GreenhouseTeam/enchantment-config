@@ -1,6 +1,5 @@
 package dev.greenhouseteam.enchantmentconfig.api.util;
 
-import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
@@ -8,10 +7,10 @@ import net.minecraft.core.HolderOwner;
 import net.minecraft.core.HolderSet;
 import net.minecraft.tags.TagKey;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
-
 
 public class ExcludableHolderSet<T> extends HolderSet.ListBacked<T> {
     private final HolderOwner<T> owner;
@@ -25,6 +24,10 @@ public class ExcludableHolderSet<T> extends HolderSet.ListBacked<T> {
         this.owner = owner;
         this.getter = getter;
         this.baseValues = baseValues;
+    }
+
+    public static <T> ExcludableHolderSet<T> empty() {
+        return new ExcludableHolderSet<>(null, null, List.of());
     }
 
     public void setContext(boolean value) {
@@ -56,6 +59,23 @@ public class ExcludableHolderSet<T> extends HolderSet.ListBacked<T> {
         return contents().contains(holder) || context && !exclusions().contains(holder);
     }
 
+    public ExcludableHolderSet<T> merge(Optional<ExcludableHolderSet<T>> old) {
+        return merge(old, Optional.empty());
+    }
+
+    public ExcludableHolderSet<T> merge(Optional<ExcludableHolderSet<T>> old, Optional<ExcludableHolderSet<T>> global) {
+        List<RemovableHolderValue<T>> newBase = new ArrayList<>();
+        global.ifPresent(holders -> newBase.addAll(holders.baseValues));
+        if (old.isPresent()) {
+            newBase.removeIf(value -> value.excluded() && old.get().baseValues.stream().anyMatch(value1 -> !value1.excluded() && value1.either().equals(value.either())));
+            newBase.addAll(old.get().baseValues);
+        }
+        newBase.removeIf(value -> value.excluded() && baseValues.stream().anyMatch(value1 -> !value1.excluded() && value1.either().equals(value.either())));
+        newBase.addAll(baseValues);
+        baseValues = newBase;
+        return this;
+    }
+
     @Override
     public Optional<TagKey<T>> unwrapKey() {
         return Optional.empty();
@@ -66,6 +86,8 @@ public class ExcludableHolderSet<T> extends HolderSet.ListBacked<T> {
     }
 
     public boolean canSerializeIn(HolderOwner<T> owner) {
+        if (this.owner == null)
+            return true;
         return this.owner.canSerializeIn(owner);
     }
 }

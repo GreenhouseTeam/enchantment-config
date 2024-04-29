@@ -2,7 +2,6 @@ package dev.greenhouseteam.enchantmentconfig.impl.data;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -16,6 +15,8 @@ import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
 import dev.greenhouseteam.enchantmentconfig.impl.EnchantmentConfig;
 import dev.greenhouseteam.enchantmentconfig.impl.EnchantmentConfigGetterImpl;
 import dev.greenhouseteam.enchantmentconfig.api.registries.EnchantmentConfigRegistries;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -37,53 +38,64 @@ import java.util.Optional;
 public class EnchantmentConfigLoader extends SimplePreparableReloadListener<Map<ResourceLocation, List<JsonElement>>> {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static boolean hasLoggedError = false;
+    private static Map<RegistryAccess.RegistryEntry<?>, EnchantmentConfigTagLookup<?>> lookups = new HashMap<>();
 
     public EnchantmentConfigLoader() {
     }
 
     @Override
     protected Map<ResourceLocation, List<JsonElement>> prepare(ResourceManager manager, ProfilerFiller filler) {
-        Map<ResourceLocation, List<JsonElement>> map = new HashMap<>();
+        Map<ResourceLocation, List<JsonElement>> jsonMap = new HashMap<>();
 
-        for(Map.Entry<ResourceLocation, List<Resource>> entry : manager.listResourceStacks("enchantmentconfig/configurations", key -> {
-            if (!key.getPath().endsWith(".json"))
-                return false;
-            if (isGlobal(configResource(key)))
-                return true;
-            Optional<EnchantmentType<?>> enchantmentType = EnchantmentConfigRegistries.ENCHANTMENT_TYPE.getOptional(configResource(key));
-            return enchantmentType.isPresent();
-        }).entrySet()) {
-            ResourceLocation key = entry.getKey();
-            ResourceLocation fileToId = configResource(key);
-
-            for (Resource resource : entry.getValue()) {
-                try (Reader reader = resource.openAsReader()) {
-                    JsonElement element = GsonHelper.fromJson(GSON, reader, JsonElement.class);
-                    map.computeIfAbsent(fileToId, rl -> new ArrayList<>()).add(element);
-                } catch (IllegalArgumentException | IOException | JsonParseException var14) {
-                    EnchantmentConfigApi.LOGGER.error("Couldn't parse data file {} from {}", fileToId, key, var14);
-                }
-            }
+        for(Map.Entry<ResourceLocation, List<Resource>> entry : manager.listResourceStacks("enchantmentconfig/global_configs", key ->
+                key.getPath().endsWith(".json")).entrySet()) {
+            prepareFile(entry, jsonMap, true);
         }
 
-        return map;
+        for(Map.Entry<ResourceLocation, List<Resource>> entry : manager.listResourceStacks("enchantmentconfig/configs", key -> {
+            if (!key.getPath().endsWith(".json"))
+                return false;
+            Optional<EnchantmentType<?>> enchantmentType = EnchantmentConfigRegistries.ENCHANTMENT_TYPE.getOptional(configResource(key, false));
+            return enchantmentType.isPresent();
+        }).entrySet()) {
+            prepareFile(entry, jsonMap, false);
+        }
+
+        return jsonMap;
+    }
+
+    private void prepareFile(Map.Entry<ResourceLocation, List<Resource>> entry, Map<ResourceLocation, List<JsonElement>> jsonMap, boolean global) {
+        ResourceLocation key = entry.getKey();
+        ResourceLocation fileToId = configResource(key, global);
+
+        for (Resource resource : entry.getValue()) {
+            try (Reader reader = resource.openAsReader()) {
+                JsonElement element = GsonHelper.fromJson(GSON, reader, JsonElement.class);
+                jsonMap.computeIfAbsent(fileToId, rl -> new ArrayList<>()).add(element);
+            } catch (IllegalArgumentException | IOException | JsonParseException var14) {
+                EnchantmentConfigApi.LOGGER.error("Couldn't parse data file {} from {}", fileToId, key, var14);
+            }
+        }
     }
 
     private boolean isGlobal(ResourceLocation key) {
-        return key.getNamespace().equals(EnchantmentConfigApi.MOD_ID) && key.getPath().startsWith("global/");
+        // Use / here as it cannot be a file name starter on both Windows and Unix systems.
+        return key.getPath().startsWith("/global_configs/");
     }
 
-    private ResourceLocation configResource(ResourceLocation key) {
-        String namespace = key.getPath().split("/", 4)[2];
-        String path = key.getPath().split("/", 4)[3];
-        return new ResourceLocation(namespace, path.substring(0, path.length() - 5));
+    private ResourceLocation configResource(ResourceLocation key, boolean global) {
+        String namespace = global ? key.getNamespace() : key.getPath().split("/", 4)[2];
+        String path = global ? key.getPath().split("/", 3)[2] : key.getPath().split("/", 4)[3];
+        return new ResourceLocation(namespace, (global ? "/global_configs/" : "") + path.substring(0, path.length() - 5));
     }
+
+
 
     @Override
     protected void apply(Map<ResourceLocation, List<JsonElement>> map, ResourceManager manager, ProfilerFiller filler) {
         ((EnchantmentConfigGetterImpl) EnchantmentConfigGetter.INSTANCE).clear();
 
-        DynamicOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, EnchantmentConfig.getRegistryLookup());
+        RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, createContext(EnchantmentConfig.getRegistryLookup()));
         Map<ResourceLocation, ConfiguredEnchantment<?, ?>> globalConfigured = new HashMap<>();
         for (Map.Entry<ResourceLocation, List<JsonElement>> entry : map.entrySet().stream().filter(entry -> isGlobal(entry.getKey())).toList()) {
             for (Map.Entry<ResourceKey<EnchantmentType<?>>, EnchantmentType<?>> type : EnchantmentConfigRegistries.ENCHANTMENT_TYPE.entrySet()) {
@@ -94,10 +106,29 @@ public class EnchantmentConfigLoader extends SimplePreparableReloadListener<Map<
             hasLoggedError = false;
         }
         for (Map.Entry<ResourceLocation, List<JsonElement>> entry : map.entrySet().stream().filter(entry -> !isGlobal(entry.getKey())).toList()) {
-            handleJson(entry.getKey(), ops, entry.getValue(), Optional.ofNullable(globalConfigured.getOrDefault(entry.getKey(), null)), null);
+            handleJson(entry.getKey(), ops, entry.getValue(),
+                    Optional.ofNullable(globalConfigured.getOrDefault(entry.getKey(), null)),
+                    null);
             hasLoggedError = false;
         }
         EnchantmentConfig.setRegistryLookup(null);
+        EnchantmentConfig.setTags(null);
+        lookups.values().forEach(EnchantmentConfigTagLookup::resetHolders);
+    }
+
+    private static RegistryOps.RegistryInfoLookup createContext(RegistryAccess access) {
+        final Map<ResourceKey<? extends Registry<?>>, RegistryOps.RegistryInfo<?>> map = new HashMap<>();
+        access.registries().forEach(registry -> {
+            if (!lookups.containsKey(registry))
+                lookups.put(registry, new EnchantmentConfigTagLookup<>(registry.value()));;
+            map.put(registry.key(), new RegistryOps.RegistryInfo(registry.value().asLookup(), lookups.get(registry), registry.value().registryLifecycle()));
+        });
+        return new RegistryOps.RegistryInfoLookup() {
+            @Override
+            public <T> Optional<RegistryOps.RegistryInfo<T>> lookup(ResourceKey<? extends Registry<? extends T>> key) {
+                return Optional.ofNullable((RegistryOps.RegistryInfo<T>)map.get(key));
+            }
+        };
     }
 
     private ConfiguredEnchantment<?, ?> handleJson(ResourceLocation key, DynamicOps<JsonElement> ops, List<JsonElement> elements, Optional<ConfiguredEnchantment<?, ?>> global, @Nullable ResourceLocation fileKey) {
@@ -108,30 +139,16 @@ public class EnchantmentConfigLoader extends SimplePreparableReloadListener<Map<
             for (JsonElement json : elements) {
                 try {
                     ConfiguredEnchantment<?, ?> configured = EnchantmentConfigRegistries.ENCHANTMENT_TYPE.get(key).codec().decode(ops, json).getOrThrow().getFirst();
-                    JsonElement conditionsJson = ((JsonObject) json).get("conditions");
-                    if (((JsonObject) json).has("conditions")) {
-                        List<Condition> conditions = new ArrayList<>();
-                        if (conditionsJson.isJsonArray()) {
-                            JsonArray array = conditionsJson.getAsJsonArray();
-                            for (int i = 0; i < array.size(); ++i) {
-                                JsonElement element = array.get(i);
-                                if (!(element.isJsonObject()))
-                                    throw new IllegalStateException("JSON in 'conditions' array at index [" + i + "] is not an object.");
-                                JsonObject object = element.getAsJsonObject();
-                                conditions.add(Condition.CODEC.decode(ops, object).getOrThrow(s -> new IllegalStateException("Failed to decode enchantment condition: " + s)).getFirst());
-                            }
-                        } else {
-                            JsonObject object = conditionsJson.getAsJsonObject();
-                            conditions.add(Condition.CODEC.decode(ops, object).getOrThrow(s -> new IllegalStateException("Failed to decode enchantment condition: " + s)).getFirst());
-                        }
+                    Optional<Condition> condition = Condition.CODEC.optionalFieldOf("condition").decode(ops, ops.getMap(json).getOrThrow()).getOrThrow(s -> new IllegalStateException("Failed to decode enchantment condition: " + s));
+                    if (condition.isPresent()) {
                         try {
-                            ConfiguredEnchantment<?, ?> finalConfigured = configured;
-                            if (!conditions.stream().allMatch(c -> c.compare(finalConfigured.getType())))
+                            if (!condition.get().compare(configured.getType()))
                                 continue;
                         } catch (UnsupportedOperationException ex) {
                             throw new IllegalStateException("Failed to compare variable based condition: " + ex.getMessage());
                         }
                     }
+
                     if (currentConfigured.isPresent() || global.isPresent())
                         configured = configured.merge(currentConfigured, global);
 

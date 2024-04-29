@@ -16,6 +16,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.enchantment.Enchantment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,7 +31,7 @@ public class EnchantmentConfigAssignerImpl implements EnchantmentConfigAssigner 
     private static final Map<ResourceKey<EnchantmentType<?>>, List<ExtraFieldType<?>>> EXTRA_FIELD_MAP = new HashMap<>();
 
     public <T extends EnchantmentType<C>, C extends EnchantmentConfiguration> void registerEnchantmentType(T enchantmentType) {
-        ENCHANTMENT_TYPE_MAP.put(ResourceKey.create(EnchantmentConfigRegistryKeys.ENCHANTMENT_TYPE_KEY, enchantmentType.getPath()), enchantmentType);
+        ENCHANTMENT_TYPE_MAP.put(ResourceKey.create(EnchantmentConfigRegistryKeys.ENCHANTMENT_TYPE_KEY, enchantmentType.getEnchantment().location()), enchantmentType);
     }
 
     @Override
@@ -39,18 +40,18 @@ public class EnchantmentConfigAssignerImpl implements EnchantmentConfigAssigner 
     }
 
     @Override
-    public <I, O> void registerVariable(VariableSerializer<I, O> serializer) {
+    public <I, O> void registerVariableSerializer(VariableSerializer<I, O> serializer) {
         VARIABLE_SERIALIZER_MAP.put(serializer.id(), serializer);
     }
 
     @Override
-    public void addExtraField(ResourceKey<EnchantmentType<?>> enchantmentType, ExtraFieldType<?> extraFieldType) {
-        EXTRA_FIELD_MAP.computeIfAbsent(enchantmentType, enchantmentTypeResourceKey -> new ArrayList<>()).add(extraFieldType);
+    public void addExtraField(ResourceKey<Enchantment> enchantmentKey, ExtraFieldType<?> extraFieldType) {
+        EXTRA_FIELD_MAP.computeIfAbsent(ResourceKey.create(EnchantmentConfigRegistryKeys.ENCHANTMENT_TYPE_KEY, enchantmentKey.location()), enchantmentTypeResourceKey -> new ArrayList<>()).add(extraFieldType);
     }
 
     @Override
-    public <T extends Condition> void registerConditionCodec(ResourceLocation id, MapCodec<T> condition) {
-        CONDITION_CODEC_MAP.put(id, condition);
+    public <T extends Condition> void registerConditionCodec(ResourceLocation id, MapCodec<T> codec) {
+        CONDITION_CODEC_MAP.put(id, codec);
     }
 
     protected void registerTypes(RegistrationCallback<EnchantmentType<?>> callback) {
@@ -73,7 +74,7 @@ public class EnchantmentConfigAssignerImpl implements EnchantmentConfigAssigner 
         VARIABLE_TYPE_MAP.clear();
     }
 
-    protected void registerSerializers(RegistrationCallback<VariableSerializer<?, ?>> callback) {
+    protected void registerVariableSerializers(RegistrationCallback<VariableSerializer<?, ?>> callback) {
         VARIABLE_SERIALIZER_MAP.forEach((id, serializer) -> callback.register(EnchantmentConfigRegistries.VARIABLE_SERIALIZER, id, serializer));
         VARIABLE_SERIALIZER_MAP.clear();
     }

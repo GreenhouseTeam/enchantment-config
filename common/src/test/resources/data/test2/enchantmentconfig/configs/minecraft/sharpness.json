@@ -1,0 +1,6 @@
+{
+  "load_priority": 1,
+  "compatibilities": [
+    "minecraft:fire_aspect"
+  ]
+}

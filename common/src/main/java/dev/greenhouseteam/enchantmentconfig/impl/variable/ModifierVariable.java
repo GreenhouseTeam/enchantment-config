@@ -22,20 +22,22 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.WeakHashMap;
 
 public class ModifierVariable implements SingleTypedVariable<Number> {
     public static final ResourceLocation ID = EnchantmentConfigApi.asResource("modifier");
     public static final Serializer SERIALIZER = new Serializer();
 
-    public static MapCodec<ModifierVariable> staticCodec(VariableType<Object> variableType) {
-        if (variableType == null) {
-            variableType = (VariableType<Object>)(Object)VariableTypes.DOUBLE;
-        } else if (!((VariableType<?>)variableType instanceof NumberVariableType<?>))
+    public static MapCodec<ModifierVariable> staticCodec(VariableType<Object> contextType) {
+        if (contextType == null) {
+            contextType = (VariableType<Object>)(Object)VariableTypes.DOUBLE;
+        } else if (!((VariableType<?>)contextType instanceof NumberVariableType<?>))
             throw new UnsupportedOperationException("Could not use non number variabletype for ModifierVariable.");
-        VariableType<Number> finalVariableType = (VariableType<Number>)(Object)variableType;
+        VariableType<Number> finalVariableType = (VariableType<Number>)(Object)contextType;
         return RecordCodecBuilder.mapCodec(inst -> inst.group(
                 EnchantmentConfigCodecs.fieldCodec(finalVariableType).optionalFieldOf("base", getDefaultBaseField(finalVariableType)).forGetter(ModifierVariable::base),
                 EnchantmentConfigCodecs.fieldCodec(finalVariableType).fieldOf("value").xmap(field -> field, field -> field).forGetter(ModifierVariable::modifier),
@@ -82,7 +84,7 @@ public class ModifierVariable implements SingleTypedVariable<Number> {
     }
 
     public boolean allowedInRootCondition() {
-        return base.getInnerVariable().allowedInRootCondition() && modifier.getInnerVariable().allowedInRootCondition();
+        return (base.getInnerVariable() == null || base.getInnerVariable().allowedInRootCondition()) && (modifier.getInnerVariable() == null || modifier.getInnerVariable().allowedInRootCondition());
     }
 
     @Override
@@ -93,8 +95,8 @@ public class ModifierVariable implements SingleTypedVariable<Number> {
     public static class Serializer extends SingleTypedSerializer<Number> {
 
         @Override
-        public VariableType<Number> type(VariableType<?> inputType) {
-            return (VariableType<Number>) inputType;
+        public VariableType<Number> type(@Nullable VariableType<?> contextType) {
+            return (VariableType<Number>) Objects.requireNonNullElseGet(contextType, () -> (Object) VariableTypes.DOUBLE);
         }
 
         @Override

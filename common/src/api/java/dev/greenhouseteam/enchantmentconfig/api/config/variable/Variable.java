@@ -12,8 +12,25 @@ public interface Variable<I, O> {
         return EnchantmentConfigRegistries.VARIABLE_SERIALIZER.byNameCodec().dispatch(Variable::getSerializer, variableSerializer -> variableSerializer.codec((VariableType<Object>) variableSerializer.inputType(type)));
     }
 
+    /**
+     * Gets the output value of this variable.
+     *
+     * @param enchantment   The {@link  Enchantment} to work with.
+     * @param stack         The {@link ItemStack} to work with.
+     * @param original      The input value called by this variable.
+     * @return              An output value.
+     *
+     * @see dev.greenhouseteam.enchantmentconfig.api.config.field.Field
+     */
     O getValue(Enchantment enchantment, ItemStack stack, I original);
 
+    /**
+     * Whether this variable is allowed within root conditions.
+     * Typically, you want to set this to false if you are utilising
+     * an {@link ItemStack} or an original value.
+     *
+     * @return Whether this variable is allowed within root conditions.
+     */
     default boolean allowedInRootCondition() {
         return true;
     }

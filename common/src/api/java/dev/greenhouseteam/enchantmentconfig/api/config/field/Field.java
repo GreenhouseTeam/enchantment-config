@@ -5,6 +5,7 @@ import dev.greenhouseteam.enchantmentconfig.api.config.variable.type.NumberVaria
 import dev.greenhouseteam.enchantmentconfig.api.config.variable.type.VariableType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
@@ -80,6 +81,7 @@ public class Field<I, O> {
         throw NOT_A_NUMBER_EXCEPTION.get();
     }
 
+    @Nullable
     public Variable<I, O> getInnerVariable() {
         return variable;
     }

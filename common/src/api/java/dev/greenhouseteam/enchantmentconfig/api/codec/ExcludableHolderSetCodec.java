@@ -50,9 +50,9 @@ public class ExcludableHolderSetCodec<T> implements Codec<ExcludableHolderSet<T>
                         );
             }
         }
-
         throw new UnsupportedOperationException("Could not decode ExcludableHolderSet without RegistryOps.");
     }
+
     private static <T> DataResult<ExcludableHolderSet<T>> lookup(HolderOwner<T> owner, HolderGetter<T> getter, List<RemovableHolderValue<T>> values) {
         return DataResult.success(new ExcludableHolderSet<>(owner, getter, values));
     }

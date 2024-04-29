@@ -19,6 +19,7 @@ import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import org.jetbrains.annotations.Nullable;
 
 public record EnchantmentLevelVariable(Holder<Enchantment> otherEnchantment, ModificationType modificationType) implements SingleTypedVariable<Integer> {
     public static final ResourceLocation ID = EnchantmentConfigApi.asResource("enchantment_level");
@@ -61,7 +62,7 @@ public record EnchantmentLevelVariable(Holder<Enchantment> otherEnchantment, Mod
 
     public static class Serializer extends SingleTypedSerializer<Integer> {
         @Override
-        public VariableType<Integer> type(VariableType<?> inputType) {
+        public VariableType<Integer> type(@Nullable VariableType<?> contextType) {
             return VariableTypes.INT;
         }
 

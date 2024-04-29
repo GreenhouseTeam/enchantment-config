@@ -28,7 +28,7 @@ public class EnchantmentConfigFabric implements ModInitializer {
 
         assigner.registerTypes(Registry::register);
         assigner.registerVariableTypes(Registry::register);
-        assigner.registerSerializers(Registry::register);
+        assigner.registerVariableSerializers(Registry::register);
         assigner.registerConditionCodecs(Registry::register);
         registerEvents();
 
