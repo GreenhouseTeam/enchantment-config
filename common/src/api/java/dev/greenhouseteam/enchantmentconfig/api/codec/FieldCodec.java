@@ -12,7 +12,6 @@ import dev.greenhouseteam.enchantmentconfig.api.registries.EnchantmentConfigRegi
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-@ApiStatus.Internal
 public class FieldCodec<I, O> implements Codec<Field<I, O>> {
     @Nullable
     private VariableType<I> inputType;

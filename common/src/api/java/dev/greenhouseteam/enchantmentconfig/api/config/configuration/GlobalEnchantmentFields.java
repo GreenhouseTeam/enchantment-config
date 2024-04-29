@@ -60,14 +60,14 @@ public record GlobalEnchantmentFields(Optional<Integer> maxLevel,
                                       Optional<Holder<Enchantment>> replacement) {
 
     public static final MapCodec<GlobalEnchantmentFields> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
-            EnchantmentConfigCodecs.defaultableCodec("max_level", Codec.INT).forGetter(GlobalEnchantmentFields::maxLevel),
+            Codec.INT.optionalFieldOf("max_level").forGetter(GlobalEnchantmentFields::maxLevel),
             EnchantmentConfigCodecs.rangeAllowedIntegerCodec("base_value", "new_value", EnchantmentConfigCodecs.fieldCodec(VariableTypes.INT)).optionalFieldOf("effectiveness_overrides",Map.of()).forGetter(GlobalEnchantmentFields::effectivenessOverrides),
-            EnchantmentConfigCodecs.defaultableCodec("compatibilities", EnchantmentConfigCodecs.excludableHolderSetCodec(Registries.ENCHANTMENT)).forGetter(GlobalEnchantmentFields::compatibilities),
+            EnchantmentConfigCodecs.excludableHolderSetCodec(Registries.ENCHANTMENT).optionalFieldOf("compatibilities").forGetter(GlobalEnchantmentFields::compatibilities),
             EnchantmentConfigCodecs.mapCollectionCodec("item_predicate", "weight", ItemPredicate.CODEC, Codec.INT).optionalFieldOf("enchanting_table_weight", Map.of()).forGetter(GlobalEnchantmentFields::enchantingTableWeight),
-            EnchantmentConfigCodecs.defaultableCodec("applicable_items", EnchantmentConfigCodecs.excludableHolderSetCodec(Registries.ITEM)).forGetter(GlobalEnchantmentFields::applicableItems),
+            EnchantmentConfigCodecs.excludableHolderSetCodec(Registries.ITEM).optionalFieldOf("applicable_items").forGetter(GlobalEnchantmentFields::applicableItems),
             // TODO: Expand on tradeable field by utilising predicates and other stuff.
-            EnchantmentConfigCodecs.defaultableCodec("tradeable", Codec.BOOL).forGetter(GlobalEnchantmentFields::tradeable),
-            EnchantmentConfigCodecs.defaultableCodec("treasure", Codec.BOOL).forGetter(GlobalEnchantmentFields::treasure),
+            Codec.BOOL.optionalFieldOf("tradeable").forGetter(GlobalEnchantmentFields::tradeable),
+            Codec.BOOL.optionalFieldOf("treasure").forGetter(GlobalEnchantmentFields::treasure),
             BuiltInRegistries.ENCHANTMENT.holderByNameCodec().optionalFieldOf("replacement").forGetter(GlobalEnchantmentFields::replacement)
     ).apply(inst, GlobalEnchantmentFields::new));
 
@@ -141,7 +141,6 @@ public record GlobalEnchantmentFields(Optional<Integer> maxLevel,
         Map<Integer, Field<Integer, Integer>> effectivenessOverrides = MergeUtil.mergeMap(effectivenessOverrides(), oldConfiguration.map(GlobalEnchantmentFields::effectivenessOverrides), globalConfiguration.map(GlobalEnchantmentFields::effectivenessOverrides));
 
         // TODO: Merge ExcludableHolderSets.
-
         Optional<ExcludableHolderSet<Enchantment>> compatibilities = MergeUtil.mergePrimitiveOptional(compatibilities(), oldConfiguration.flatMap(GlobalEnchantmentFields::compatibilities), globalConfiguration.flatMap(GlobalEnchantmentFields::compatibilities));
 
         Map<ItemPredicate, Integer> enchantingTableWeight = MergeUtil.mergeMap(enchantingTableWeight(), oldConfiguration.map(GlobalEnchantmentFields::enchantingTableWeight), globalConfiguration.map(GlobalEnchantmentFields::enchantingTableWeight));

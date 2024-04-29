@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
-@ApiStatus.Internal
 public class MapCollectionCodec<K, V> implements Codec<Map<K, V>> {
     protected final String keyName;
     protected final String valueName;

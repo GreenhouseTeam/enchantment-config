@@ -11,20 +11,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
+// TODO: Document this class.
 public class EnchantmentConfigCodecs {
-    /**
-     * A codec that allows specifying 'DEFAULT' (case-insensitive)
-     * to return {@link Optional#empty()}.
-     *
-     * @param fieldName The name of the field for parsing.
-     * @param codec     The codec to use outside the default.
-     * @return          A new {@link DefaultableCodec}
-     * @param <T>       The type of the codec.
-     */
-    public static <T> MapCodec<Optional<T>> defaultableCodec(String fieldName, Codec<T> codec) {
-        return new DefaultableCodec<>(fieldName, codec);
-    }
-
     public static <K, V> MapCollectionCodec<K, V> mapCollectionCodec(String keyName, String valueName, Codec<K> keyCodec, Codec<V> valueCodec) {
         return new MapCollectionCodec<>(keyName, valueName, keyCodec, valueCodec);
     }
@@ -41,7 +29,7 @@ public class EnchantmentConfigCodecs {
         return new FieldCodec<>(type, null);
     }
 
-    public static <I, O> FieldCodec<I, O> outputFieldCodec(@Nullable VariableType<I> type, @Nullable VariableType<O> outputType) {
+    public static <O> FieldCodec<Object, O> outputFieldCodec(@Nullable VariableType<O> outputType) {
         return new FieldCodec<>(null, outputType);
     }
 
