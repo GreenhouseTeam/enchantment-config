@@ -14,4 +14,9 @@ public class BooleanVariableType implements VariableType<Boolean> {
     public Codec<Boolean> getValueCodec() {
         return Codec.BOOL;
     }
+
+    @Override
+    public ResourceLocation id() {
+        return ID;
+    }
 }

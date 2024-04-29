@@ -3,6 +3,7 @@ package dev.greenhouseteam.enchantmentconfig.mixin;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigGetter;
+import dev.greenhouseteam.enchantmentconfig.api.config.ConfiguredEnchantment;
 import dev.greenhouseteam.enchantmentconfig.api.util.EnchantmentConfigUtil;
 import dev.greenhouseteam.enchantmentconfig.impl.access.ItemEnchantmentsAccess;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
@@ -41,9 +42,12 @@ public abstract class ItemEnchantmentsMixin implements ItemEnchantmentsAccess {
                 for (Object2IntMap.Entry<Holder<Enchantment>> entry : itemEnchantments.entrySet()) {
                     if (!entry.getKey().is(EnchantmentConfigUtil.DISABLED_ENCHANTMENT_TAG))
                         potentialNewMap.addTo(entry.getKey(), entry.getIntValue());
-                    else if (entry.getKey().isBound() && EnchantmentConfigGetter.INSTANCE.getConfig(entry.getKey().value()) != null && EnchantmentConfigGetter.INSTANCE.getConfig(entry.getKey().value()).getGlobalFields().replacement().isPresent()) {
-                        potentialNewMap.addTo(EnchantmentConfigGetter.INSTANCE.getConfig(entry.getKey().value()).getGlobalFields().replacement().get(), Math.min(EnchantmentConfigGetter.INSTANCE.getConfig(entry.getKey().value()).getGlobalFields().replacement().get().value().getMaxLevel(), entry.getIntValue()));
-                        disabledHolders.remove(entry.getKey());
+                    else if (entry.getKey().isBound()) {
+                        ConfiguredEnchantment<?, ?> configured = EnchantmentConfigGetter.INSTANCE.getConfig(entry.getKey().value());
+                        if (configured != null && configured.getGlobalFields().replacement().isPresent()) {
+                            potentialNewMap.addTo(configured.getGlobalFields().replacement().get(), Math.min(configured.getGlobalFields().replacement().get().value().getMaxLevel(), entry.getIntValue()));
+                            disabledHolders.remove(entry.getKey());
+                        }
                     }
                 }
                 var newItemEnchantments = new ItemEnchantments(potentialNewMap, ((ItemEnchantmentsMixin) (Object) itemEnchantments).enchantmentconfig$getShowInTooltip());
@@ -71,8 +75,11 @@ public abstract class ItemEnchantmentsMixin implements ItemEnchantmentsAccess {
             if (entry.getKey().is(EnchantmentConfigUtil.DISABLED_ENCHANTMENT_TAG)) {
                 EnchantmentConfigUtil.LOGGER.info("Removed enchantment {} from \"minecraft:enchantments\" component", entry.getKey().getRegisteredName());
                 this.enchantments.remove(entry, entry.getIntValue());
-                if (entry.getKey().isBound() && EnchantmentConfigGetter.INSTANCE.getConfig(entry.getKey().value()).getGlobalFields().replacement().isPresent()) {
-                    this.enchantments.addTo(EnchantmentConfigGetter.INSTANCE.getConfig(entry.getKey().value()).getGlobalFields().replacement().get(), entry.getIntValue());
+                if (entry.getKey().isBound()) {
+                    ConfiguredEnchantment<?, ?> configured = EnchantmentConfigGetter.INSTANCE.getConfig(entry.getKey().value());
+                    if (configured != null && configured.getGlobalFields().replacement().isPresent()) {
+                        this.enchantments.addTo(configured.getGlobalFields().replacement().get(), entry.getIntValue());
+                    }
                 }
             }
         }

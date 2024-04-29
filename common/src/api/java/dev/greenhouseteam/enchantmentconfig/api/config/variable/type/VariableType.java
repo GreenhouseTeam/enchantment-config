@@ -1,6 +1,7 @@
 package dev.greenhouseteam.enchantmentconfig.api.config.variable.type;
 
 import com.mojang.serialization.Codec;
+import net.minecraft.resources.ResourceLocation;
 
 public interface VariableType<T> {
     default T getDefaultComparisonValue() {
@@ -8,4 +9,6 @@ public interface VariableType<T> {
     }
 
     Codec<T> getValueCodec();
+
+    ResourceLocation id();
 }

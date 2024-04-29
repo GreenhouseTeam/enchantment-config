@@ -3,9 +3,11 @@ package dev.greenhouseteam.enchantmentconfig.impl.vanilla;
 import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigAssigner;
 import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigEntrypoint;
 import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigPlugin;
+import dev.greenhouseteam.enchantmentconfig.api.config.condition.Condition;
 import dev.greenhouseteam.enchantmentconfig.api.config.configuration.DamageEnchantmentConfiguration;
 import dev.greenhouseteam.enchantmentconfig.api.config.configuration.NoneEnchantmentConfiguration;
 import dev.greenhouseteam.enchantmentconfig.api.config.type.EnchantmentType;
+import dev.greenhouseteam.enchantmentconfig.api.config.variable.VariableTypes;
 import dev.greenhouseteam.enchantmentconfig.api.util.VanillaEnchantmentResourceKeys;
 import dev.greenhouseteam.enchantmentconfig.impl.variable.EnchantmentLevelVariable;
 import dev.greenhouseteam.enchantmentconfig.impl.variable.ItemPredicateVariable;
@@ -30,11 +32,21 @@ public class VanillaEnchantmentConfigEntry implements EnchantmentConfigPlugin {
         assigner.registerEnchantmentType(BANE_OF_ARTHROPODS);
         assigner.registerEnchantmentType(SMITE);
 
+        assigner.registerVariableType(VariableTypes.BOOLEAN);
+        assigner.registerVariableType(VariableTypes.DOUBLE);
+        assigner.registerVariableType(VariableTypes.FLOAT);
+        assigner.registerVariableType(VariableTypes.INT);
+        assigner.registerVariableType(VariableTypes.LONG);
+
         assigner.registerVariable(EnchantmentLevelVariable.SERIALIZER);
         assigner.registerVariable(ItemPredicateVariable.SERIALIZER);
         assigner.registerVariable(MatchesVariable.SERIALIZER);
         assigner.registerVariable(MaxLevelVariable.SERIALIZER);
         assigner.registerVariable(ModifierVariable.SERIALIZER);
         assigner.registerVariable(OriginalVariable.SERIALIZER);
+
+        assigner.registerConditionCodec(Condition.And.ID, Condition.And.CODEC);
+        assigner.registerConditionCodec(Condition.Or.ID, Condition.Or.CODEC);
+        assigner.registerConditionCodec(Condition.Variable.ID, Condition.Variable.CODEC);
     }
 }

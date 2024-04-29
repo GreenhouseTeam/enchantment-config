@@ -6,7 +6,13 @@ import net.minecraft.resources.ResourceLocation;
 
 public class IntVariableType extends NumberVariableType<Integer> {
     public static final ResourceLocation ID = EnchantmentConfigUtil.asResource("int");
+
     public Codec<Integer> getValueCodec() {
         return Codec.INT;
+    }
+
+    @Override
+    public ResourceLocation id() {
+        return ID;
     }
 }

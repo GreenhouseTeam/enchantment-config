@@ -6,7 +6,7 @@ import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 
-public class NeoForgeEnchantmentConfigPlatformHelper implements EnchantmentConfigPlatformHelperCommon {
+public class EnchantmentConfigPlatformHelperNeoForge implements EnchantmentConfigPlatformHelperCommon {
     @Override
     public Platform getPlatform() {
         return Platform.NEOFORGE;

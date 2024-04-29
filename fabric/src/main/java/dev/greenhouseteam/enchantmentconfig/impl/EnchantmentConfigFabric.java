@@ -21,15 +21,15 @@ public class EnchantmentConfigFabric implements ModInitializer {
     @Override
     public void onInitialize() {
         EnchantmentConfigUtil.init(new EnchantmentConfigPlatformHelperFabric());
-        EnchantmentConfig.registerConditionCodecs(Registry::register);
-        EnchantmentConfig.registerVariableTypes(Registry::register);
 
         EnchantmentConfigAssignerImpl assigner = new EnchantmentConfigAssignerImpl();
-        FabricLoader.getInstance().getEntrypoints("enchantmentconfig", EnchantmentConfigPlugin.class).forEach(entryPoint -> entryPoint.register(assigner));
+        FabricLoader.getInstance().getEntrypoints("enchantmentconfig", EnchantmentConfigPlugin.class).forEach(plugin -> plugin.register(assigner));
         assigner.registerUnregisteredEnchantments();
 
         assigner.registerTypes(Registry::register);
+        assigner.registerVariableTypes(Registry::register);
         assigner.registerSerializers(Registry::register);
+        assigner.registerConditionCodecs(Registry::register);
         registerEvents();
 
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new EnchantmentConfigLoaderFabric());

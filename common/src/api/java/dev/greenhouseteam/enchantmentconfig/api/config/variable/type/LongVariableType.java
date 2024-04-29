@@ -10,4 +10,9 @@ public class LongVariableType extends NumberVariableType<Long> {
     public Codec<Long> getValueCodec() {
         return Codec.LONG;
     }
+
+    @Override
+    public ResourceLocation id() {
+        return ID;
+    }
 }

@@ -13,7 +13,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import java.util.List;
 
 public interface Condition {
-    Codec<Condition> CODEC = EnchantmentConfigRegistries.CONDITION_CODEC.byNameCodec().dispatch(condition -> condition.codec(), codec -> codec);
+    Codec<Condition> CODEC = EnchantmentConfigRegistries.CONDITION_CODEC.byNameCodec().dispatch(Condition::codec, codec -> codec);
 
     boolean compare(EnchantmentType<?> enchantment);
 

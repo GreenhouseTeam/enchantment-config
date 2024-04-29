@@ -1,8 +1,11 @@
 package dev.greenhouseteam.enchantmentconfig.impl;
 
+import com.mojang.serialization.MapCodec;
 import dev.greenhouseteam.enchantmentconfig.api.EnchantmentConfigAssigner;
+import dev.greenhouseteam.enchantmentconfig.api.config.condition.Condition;
 import dev.greenhouseteam.enchantmentconfig.api.config.configuration.NoneEnchantmentConfiguration;
 import dev.greenhouseteam.enchantmentconfig.api.config.variable.VariableSerializer;
+import dev.greenhouseteam.enchantmentconfig.api.config.variable.type.VariableType;
 import dev.greenhouseteam.enchantmentconfig.api.registries.EnchantmentConfigRegistryKeys;
 import dev.greenhouseteam.enchantmentconfig.api.config.configuration.EnchantmentConfiguration;
 import dev.greenhouseteam.enchantmentconfig.api.config.field.ExtraFieldType;
@@ -21,11 +24,18 @@ import java.util.Map;
 
 public class EnchantmentConfigAssignerImpl implements EnchantmentConfigAssigner {
     private static final Map<ResourceKey<EnchantmentType<?>>, EnchantmentType<?>> ENCHANTMENT_TYPE_MAP = new HashMap<>();
+    private static final Map<ResourceLocation, VariableType<?>> VARIABLE_TYPE_MAP = new HashMap<>();
     private static final Map<ResourceLocation, VariableSerializer<?, ?>> VARIABLE_SERIALIZER_MAP = new HashMap<>();
+    private static final Map<ResourceLocation, MapCodec<? extends Condition>> CONDITION_CODEC_MAP = new HashMap<>();
     private static final Map<ResourceKey<EnchantmentType<?>>, List<ExtraFieldType<?>>> EXTRA_FIELD_MAP = new HashMap<>();
 
     public <T extends EnchantmentType<C>, C extends EnchantmentConfiguration> void registerEnchantmentType(T enchantmentType) {
         ENCHANTMENT_TYPE_MAP.put(ResourceKey.create(EnchantmentConfigRegistryKeys.ENCHANTMENT_TYPE_KEY, enchantmentType.getPath()), enchantmentType);
+    }
+
+    @Override
+    public <T> void registerVariableType(VariableType<T> type) {
+        VARIABLE_TYPE_MAP.put(type.id(), type);
     }
 
     @Override
@@ -36,6 +46,11 @@ public class EnchantmentConfigAssignerImpl implements EnchantmentConfigAssigner 
     @Override
     public void addExtraField(ResourceKey<EnchantmentType<?>> enchantmentType, ExtraFieldType<?> extraFieldType) {
         EXTRA_FIELD_MAP.computeIfAbsent(enchantmentType, enchantmentTypeResourceKey -> new ArrayList<>()).add(extraFieldType);
+    }
+
+    @Override
+    public <T extends Condition> void registerConditionCodec(ResourceLocation id, MapCodec<T> condition) {
+        CONDITION_CODEC_MAP.put(id, condition);
     }
 
     protected void registerTypes(RegistrationCallback<EnchantmentType<?>> callback) {
@@ -52,9 +67,20 @@ public class EnchantmentConfigAssignerImpl implements EnchantmentConfigAssigner 
         EXTRA_FIELD_MAP.clear();
     }
 
+
+    protected void registerVariableTypes(RegistrationCallback<VariableType<?>> callback) {
+        VARIABLE_TYPE_MAP.forEach((id, type) -> callback.register(EnchantmentConfigRegistries.VARIABLE_TYPE, id, type));
+        VARIABLE_TYPE_MAP.clear();
+    }
+
     protected void registerSerializers(RegistrationCallback<VariableSerializer<?, ?>> callback) {
         VARIABLE_SERIALIZER_MAP.forEach((id, serializer) -> callback.register(EnchantmentConfigRegistries.VARIABLE_SERIALIZER, id, serializer));
         VARIABLE_SERIALIZER_MAP.clear();
+    }
+
+    protected void registerConditionCodecs(RegistrationCallback<MapCodec<? extends Condition>> callback) {
+        CONDITION_CODEC_MAP.forEach((id, codec) -> callback.register(EnchantmentConfigRegistries.CONDITION_CODEC, id, codec));
+        CONDITION_CODEC_MAP.clear();
     }
 
     protected void registerUnregisteredEnchantments() {

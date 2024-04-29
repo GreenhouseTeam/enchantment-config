@@ -10,4 +10,9 @@ public class FloatVariableType extends NumberVariableType<Float> {
     public Codec<Float> getValueCodec() {
         return Codec.FLOAT;
     }
+
+    @Override
+    public ResourceLocation id() {
+        return ID;
+    }
 }

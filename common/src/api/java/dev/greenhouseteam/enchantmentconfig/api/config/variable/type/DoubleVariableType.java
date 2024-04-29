@@ -10,4 +10,9 @@ public class DoubleVariableType extends NumberVariableType<Double> {
     public Codec<Double> getValueCodec() {
         return Codec.DOUBLE;
     }
+
+    @Override
+    public ResourceLocation id() {
+        return ID;
+    }
 }
