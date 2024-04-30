@@ -29,6 +29,7 @@
         "enchantmentconfig.mixins.json",
         "enchantmentconfig.fabric.mixins.json"
     ],
+    "accessWidener" : "${mod_id}.accesswidener",
     "depends": {
         "fabricloader": ">=0.15",
         "fabric": "*",
