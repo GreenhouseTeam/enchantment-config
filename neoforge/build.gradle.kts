@@ -7,14 +7,13 @@ plugins {
 }
 jarJar.enable()
 
-val at = file("src/main/resources/enchantmentconfig.cfg");
-if (at.exists()) {
-    minecraft.accessTransformers.file(at)
-}
-
 val mod_id: String by project
 val neoforge_version: String by project
 
+val at = file("src/main/resources/${mod_id}.cfg");
+if (at.exists()) {
+    minecraft.accessTransformers.file(at)
+}
 runs {
     configureEach {
         modSource(sourceSets["main"])
