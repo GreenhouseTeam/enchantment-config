@@ -8,7 +8,7 @@ public enum ModificationType implements StringRepresentable {
     NO_CONFIGS("no_configs"),
     ALL("all");
 
-    private String name;
+    private final String name;
 
     ModificationType(String name) {
         this.name = name;
