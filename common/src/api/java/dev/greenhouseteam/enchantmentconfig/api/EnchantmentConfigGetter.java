@@ -57,7 +57,7 @@ public interface EnchantmentConfigGetter {
     /**
      * Gets a configured enchantment for a specified enchantment.
      *
-     * @param enchantment   The enchantment to get a configured enchantment from.
+     * @param enchantment   The enchantment to find a configured enchantment from.
      * @return              Returns a configured enchantment.
      *
      * @param <C>           The configuration of the configured enchantment.
@@ -71,7 +71,7 @@ public interface EnchantmentConfigGetter {
     /**
      * Gets a configured enchantment from a {@link ResourceLocation}, or null if one is not specified.
      *
-     * @param id    The {@link ResourceLocation} to find an enchantment from.
+     * @param id    The {@link ResourceLocation} to find a configured enchantment from.
      *
      * @return      The configured enchantment associated with the {@link ResourceLocation}, or null if one is not present.
      * @param <C>   The configuration of the configured enchantment.
@@ -85,7 +85,7 @@ public interface EnchantmentConfigGetter {
     /**
      * Gets a configured enchantment from a {@link ResourceLocation}.
      *
-     * @param id                    The {@link ResourceLocation} to find an enchantment from.
+     * @param id                    The {@link ResourceLocation} to find a configured enchantment from.
      *
      * @return                      The configured enchantment associated with the {@link ResourceLocation}.
      * @param <C>                   The configuration of the configured enchantment.
@@ -99,7 +99,7 @@ public interface EnchantmentConfigGetter {
     /**
      * Gets a configured enchantment from a {@link ResourceKey}.
      *
-     * @param key                   The {@link ResourceKey} to find an enchantment from.
+     * @param key                   The {@link ResourceKey} to find a configured enchantment from..
      *
      * @return                      The configured enchantment associated with the {@link ResourceKey}.
      * @param <C>                   The configuration of the configured enchantment.
@@ -113,7 +113,7 @@ public interface EnchantmentConfigGetter {
     /**
      * Gets a configured enchantment from a {@link ResourceKey}.
      *
-     * @param key                   The {@link ResourceKey} to find an enchantment from.
+     * @param key                   The {@link ResourceKey} to find a configured enchantment from.
      *
      * @return                      The configured enchantment associated with the {@link ResourceKey}.
      * @param <C>                   The configuration of the configured enchantment.
