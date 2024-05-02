@@ -3,7 +3,7 @@ import org.apache.tools.ant.filters.LineContains
 
 plugins {
     id("enchantmentconfig.loader")
-    id("net.neoforged.gradle.userdev") version "7.0.118"
+    id("net.neoforged.gradle.userdev") version "7.0.117"
 }
 jarJar.enable()
 
